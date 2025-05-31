@@ -15,12 +15,13 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            background-image: url('background.jpg');
+            background-image: url('background/background.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: #ffffff;
             position: relative;
+            transition: background-image 0.5s ease;
         }
         
         body::before {
@@ -32,6 +33,7 @@
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
+            transition: background-color 0.3s ease;
         }
         
         .container {
@@ -166,6 +168,10 @@
             mask-position: center;
         }
 
+        body.light-theme .namemc-icon {
+            background-color: #0a0a0a;
+        }
+
         .menu-btn {
             position: absolute;
             top: 20px;
@@ -204,6 +210,8 @@
             box-sizing: border-box;
             box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
         }
 
         .menu-sidebar.active {
@@ -239,6 +247,10 @@
             transform: rotate(90deg);
         }
 
+        .menu-items {
+            flex: 1;
+        }
+
         .menu-item {
             padding: 12px 15px;
             margin-bottom: 8px;
@@ -258,6 +270,12 @@
             margin-right: 10px;
             width: 20px;
             text-align: center;
+        }
+
+        .menu-footer {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .modal {
@@ -400,7 +418,6 @@
             text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         }
 
-        /* Новые стили для проектов */
         .projects-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -448,7 +465,242 @@
             margin-left: 5px;
         }
 
-        /* Адаптация для мобильных */
+        /* Стили для выбора обоев */
+        .wallpapers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .wallpaper-option {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            aspect-ratio: 16/9;
+        }
+
+        .wallpaper-option:hover {
+            transform: scale(1.03);
+        }
+
+        .wallpaper-option.selected {
+            border-color: #2aabee;
+            box-shadow: 0 0 10px rgba(42, 171, 238, 0.5);
+        }
+
+        .wallpaper-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wallpaper-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        /* Стили для модального окна настроек */
+        .settings-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .settings-category {
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 3px solid #2aabee;
+        }
+
+        .settings-category-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #2aabee;
+            font-size: 1.1em;
+        }
+
+        .settings-category-title i {
+            margin-right: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+        }
+
+        .setting-label i {
+            margin-right: 10px;
+            color: #2aabee;
+            width: 20px;
+            text-align: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2aabee;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .select-wrapper select {
+            width: 100%;
+            padding: 8px 30px 8px 10px;
+            background-color: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(42, 171, 238, 0.3);
+            border-radius: 4px;
+            color: #e0e0e0;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .select-wrapper::after {
+            content: "▼";
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: #2aabee;
+            font-size: 0.7em;
+            pointer-events: none;
+        }
+
+        /* Стили для светлой темы */
+        body.light-theme {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        body.light-theme::before {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        body.light-theme .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .username {
+            color: #333;
+        }
+
+        body.light-theme .age {
+            color: #666;
+        }
+
+        body.light-theme .quote {
+            color: #555;
+        }
+
+        body.light-theme .menu-sidebar {
+            background-color: rgba(240, 240, 240, 0.95);
+            color: #333;
+        }
+
+        body.light-theme .menu-item {
+            color: #333;
+        }
+
+        body.light-theme .modal-content {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+
+        body.light-theme .info-item h4,
+        body.light-theme .project-title,
+        body.light-theme .modal-header h3 {
+            color: #2aabee;
+        }
+
+        body.light-theme .info-item p,
+        body.light-theme .project-description {
+            color: #555;
+        }
+
+        body.light-theme .project-card {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        body.light-theme .settings-category {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        body.light-theme .setting-item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .select-wrapper select {
+            background-color: rgba(240, 240, 240, 0.9);
+            color: #333;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -478,6 +730,10 @@
             .projects-container {
                 grid-template-columns: 1fr;
             }
+
+            .wallpapers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -492,19 +748,28 @@
             </button>
         </div>
         
-        <div class="menu-item" id="openProfileModal">
-            <i class="fas fa-user"></i>
-            <span>Информация о профиле</span>
+        <div class="menu-items">
+            <div class="menu-item" id="openProfileModal">
+                <i class="fas fa-user"></i>
+                <span>Информация о профиле</span>
+            </div>
+            
+            <div class="menu-item" id="openSkillsModal">
+                <i class="fas fa-code"></i>
+                <span>Навыки и работа</span>
+            </div>
+            
+            <div class="menu-item" id="openProjectsModal">
+                <i class="fas fa-project-diagram"></i>
+                <span>Мои проекты</span>
+            </div>
         </div>
-        
-        <div class="menu-item" id="openSkillsModal">
-            <i class="fas fa-code"></i>
-            <span>Навыки и работа</span>
-        </div>
-        
-        <div class="menu-item" id="openProjectsModal">
-            <i class="fas fa-project-diagram"></i>
-            <span>Мои проекты</span>
+
+        <div class="menu-footer">
+            <div class="menu-item" id="openSettingsModal">
+                <i class="fas fa-cog"></i>
+                <span>Настройки</span>
+            </div>
         </div>
     </div>
     
@@ -534,38 +799,38 @@
     
     <!-- Модальное окно навыков -->
     <div class="modal" id="skillsModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Навыки и работа</h3>
-            <button class="modal-close">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="info-item">
-                <h4>Род занятий</h4>
-                <p>Студент / Разработчик</p>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Навыки и работа</h3>
+                <button class="modal-close">&times;</button>
             </div>
-            <div class="info-item">
-                <h4>Навыки программирования</h4>
-                <div class="skills-container">
-                    <span class="skill">Python</span>
-                    <span class="skill">HTML/CSS</span>
-                    <span class="skill">JavaScript</span>
-                    <span class="skill">Java</span>
-                    <span class="skill">C++</span>
-                    <span class="skill">C#</span>
+            <div class="modal-body">
+                <div class="info-item">
+                    <h4>Род занятий</h4>
+                    <p>Студент / Разработчик</p>
                 </div>
-            </div>
-            <div class="info-item">
-                <h4>Текущие проекты</h4>
-                <p>Нет</p>
-            </div>
-            <div class="info-item">
-                <h4>Опыт</h4>
-                <p>Более 2 лет опыта программирования</p>
+                <div class="info-item">
+                    <h4>Навыки программирования</h4>
+                    <div class="skills-container">
+                        <span class="skill">Python</span>
+                        <span class="skill">HTML/CSS</span>
+                        <span class="skill">JavaScript</span>
+                        <span class="skill">Java</span>
+                        <span class="skill">C++</span>
+                        <span class="skill">C#</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <h4>Текущие проекты</h4>
+                    <p>В разработке...</p>
+                </div>
+                <div class="info-item">
+                    <h4>Опыт</h4>
+                    <p>Более 2 лет опыта программирования</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
     
     <!-- Модальное окно проектов -->
     <div class="modal" id="projectsModal">
@@ -593,7 +858,46 @@
                         <div class="project-description">
                             Скоро здесь появится новый проект
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Модальное окно настроек -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Настройки</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-container">
+                    <div class="settings-category">
+                        <div class="settings-category-title">
+                            <i class="fas fa-palette"></i>
+                            <span>Внешний вид</span>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-sun"></i>
+                                <span>Светлая тема</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-category">
+                        <div class="settings-category-title">
+                            <i class="fas fa-image"></i>
+                            <span>Фоновые изображения</span>
+                        </div>
+                        <div class="wallpapers-grid" id="wallpapersGrid">
+                            <!-- Опции обоев будут добавлены через JavaScript -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -603,7 +907,7 @@
     <div class="container">
         <div class="avatar-container" id="profileLink">
             <div class="avatar">
-                <img src="https://unavatar.io/telegram/dont65?size=160" width="160" height="160" alt="Аватар">
+                <img src="https://unavatar.io/telegram/dont65?tss=30m?side=160" width="160" height="160" alt="Аватар">
             </div>
             <div class="username">Dont65</div>
             <div class="age" id="age"></div>
@@ -633,7 +937,6 @@
     </div>
 
     <script>
-        // Дата рождения и возраст
         const birthDate = new Date('2008-01-02');
         const formattedBirthDate = '02.01.2008';
 
@@ -664,7 +967,6 @@
             });
         }
 
-        // Список цитат
         const quotes = [
             "Я не рвусь в центр — мне достаточно угла, где тень говорит громче света.",
             "Истинная сила — это когда тебя боятся даже в молчании.",
@@ -688,13 +990,11 @@
             "Юлианна не станет главной. Но ты всё равно будешь ждать её появления в каждой сцене."
         ];
 
-        // Функция для выбора случайной цитаты
         function getRandomQuote() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
             return quotes[randomIndex];
         }
 
-        // Обновление цитаты
         function updateQuote() {
             const quoteElement = document.getElementById('randomQuote');
             if (quoteElement) {
@@ -702,7 +1002,6 @@
             }
         }
 
-        // Меню
         const menuBtn = document.getElementById('menuBtn');
         const closeBtn = document.getElementById('closeBtn');
         const menuSidebar = document.getElementById('menuSidebar');
@@ -715,10 +1014,10 @@
             menuSidebar.classList.remove('active');
         });
 
-        // Модальные окна
         const profileModal = document.getElementById('profileModal');
         const skillsModal = document.getElementById('skillsModal');
         const projectsModal = document.getElementById('projectsModal');
+        const settingsModal = document.getElementById('settingsModal');
         
         document.getElementById('openProfileModal').addEventListener('click', () => {
             profileModal.classList.add('active');
@@ -735,23 +1034,98 @@
             menuSidebar.classList.remove('active');
         });
         
-        // Закрытие модальных окон
+        document.getElementById('openSettingsModal').addEventListener('click', () => {
+            settingsModal.classList.add('active');
+            menuSidebar.classList.remove('active');
+        });
+        
         document.querySelectorAll('.modal-close').forEach(btn => {
             btn.addEventListener('click', function() {
                 this.closest('.modal').classList.remove('active');
             });
         });
         
-        // Закрытие при клике вне окна
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 e.target.classList.remove('active');
             }
         });
 
+        const themeToggle = document.getElementById('themeToggle');
+        
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeToggle.checked = true;
+        }
+        
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.body.classList.remove('light-theme');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Функционал выбора обоев
+        const wallpapers = [
+            { name: 'Стандартные', file: 'background.jpg' },
+            { name: '2 девочки', file: '2girls.jpg' },
+            { name: 'Горничная', file: 'made.png' },
+            { name: 'Белый фон', file: 'white.jpg' },
+            { name: 'Windows 11', file: 'windows11.jpg' },
+            { name: 'Новый год', file: 'newyear.jpg' }
+        ];
+
+        function initWallpaperSettings() {
+            const wallpapersGrid = document.getElementById('wallpapersGrid');
+            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
+
+            wallpapers.forEach(wallpaper => {
+                const wallpaperOption = document.createElement('div');
+                wallpaperOption.className = `wallpaper-option ${savedWallpaper === wallpaper.file ? 'selected' : ''}`;
+                wallpaperOption.dataset.file = wallpaper.file;
+                
+                const img = document.createElement('img');
+                img.className = 'wallpaper-preview';
+                img.src = `background/${wallpaper.file}`;
+                img.alt = wallpaper.name;
+                img.onerror = function() {
+                    this.src = 'background/background.jpg';
+                };
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'wallpaper-name';
+                nameSpan.textContent = wallpaper.name;
+                
+                wallpaperOption.appendChild(img);
+                wallpaperOption.appendChild(nameSpan);
+                
+                wallpaperOption.addEventListener('click', function() {
+                    document.querySelectorAll('.wallpaper-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    const selectedFile = this.dataset.file;
+                    localStorage.setItem('wallpaper', selectedFile);
+                    document.body.style.backgroundImage = `url('background/${selectedFile}')`;
+                });
+                
+                wallpapersGrid.appendChild(wallpaperOption);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateAgeDisplay();
             updateQuote();
+            initWallpaperSettings();
+            
+            // Загружаем сохраненные обои
+            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
+            document.body.style.backgroundImage = `url('background/${savedWallpaper}')`;
             
             document.getElementById('profileLink').addEventListener('click', function() {
                 window.open('https://t.me/dont65', '_blank');
