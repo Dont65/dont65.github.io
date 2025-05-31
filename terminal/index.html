@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Терминал Dont65</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #f0f0f0;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #terminal-container {
+            padding: 20px;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        #output {
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        .input-line {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        #prompt {
+            color: #33ff33;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        #command {
+            background-color: transparent;
+            border: none;
+            color: #f0f0f0;
+            font-family: 'Courier New', monospace;
+            flex-grow: 1;
+            outline: none;
+            font-size: inherit;
+            caret-color: #f0f0f0;
+        }
+        .success { color: #33ff33; }
+        .error { color: #ff3333; }
+        .info { color: #3399ff; }
+        .warning { color: #ffff33; }
+        .system { color: #ff9933; }
+        
+        /* Курсор */
+        #command::after {
+            content: "▋";
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Полоса прокрутки */
+        #terminal-container::-webkit-scrollbar {
+            width: 10px;
+        }
+        #terminal-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        #terminal-container::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+        #terminal-container::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal-container">
+        <div id="output"></div>
+        <div class="input-line">
+            <span id="prompt">user@dont65:~$</span>
+            <input type="text" id="command" autofocus spellcheck="false">
+        </div>
+    </div>
+
+    <script>
+        const commandInput = document.getElementById('command');
+        const output = document.getElementById('output');
+        const prompt = document.getElementById('prompt');
+        const terminalContainer = document.getElementById('terminal-container');
+
+        let commandHistory = [];
+        let historyIndex = -1;
+        let currentCommand = '';
+
+        // Начальное сообщение
+        printWelcome();
+
+        const commands = {
+            'help': {
+                description: 'Показать список доступных команд',
+                execute: () => {
+                    let helpText = 'Доступные команды:\n';
+                    const cmdList = Object.keys(commands).sort();
+                    for (const cmd of cmdList) {
+                        helpText += `  <span class="info">${cmd.padEnd(15)}</span> - ${commands[cmd].description}\n`;
+                    }
+                    return helpText;
+                }
+            },
+            'love': {
+                description: 'Показывает любовь',
+                execute: () => {
+                    return '<span class="success">Моя любовь:</span> <span class="warning">t.me/koro_lechek</span> ❤️';
+                }
+            },
+            'friends': {
+                description: 'Показывает друзей',
+                execute: () => {
+                    return '<span class="error">Друзья:</span> <span class="system">null</span> 😢';
+                }
+            },
+            'developer': {
+                description: 'Показывает создателя',
+                execute: () => {
+                    return 'Создатель этого терминала: <span class="info">Dont65</span>';
+                }
+            },
+            'sudo rm -rf /*': {
+                description: 'Фейковая команда удаления',
+                execute: () => {
+                    return new Promise((resolve) => {
+                        // Имитация удаления
+                        const messages = [
+                            '<span class="error">Удаление системных файлов...</span>',
+                            '<span class="error">Удаление конфигураций...</span>',
+                            '<span class="error">Удаление пользовательских данных...</span>',
+                            '<span class="error">Очистка кеша...</span>',
+                            '<span class="error">Удаление ядра системы...</span>'
+                        ];
+                        
+                        let i = 0;
+                        const interval = setInterval(() => {
+                            if (i < messages.length) {
+                                printToTerminal(messages[i]);
+                                i++;
+                            } else {
+                                clearInterval(interval);
+                                printToTerminal('<span class="error">ВСЕ УДАЛЕНО!!!</span>');
+                                
+                                // Исчезновение терминала
+                                setTimeout(() => {
+                                    terminalContainer.style.opacity = '0';
+                                    terminalContainer.style.transition = 'opacity 0.5s';
+                                    
+                                    // Полная очистка и восстановление
+                                    setTimeout(() => {
+                                        output.innerHTML = '';
+                                        terminalContainer.style.opacity = '1';
+                                        printWelcome();
+                                        resolve('');
+                                    }, 1000);
+                                }, 1000);
+                            }
+                        }, 600);
+                    });
+                }
+            },
+            'exit': {
+                description: 'Выйти на главную страницу',
+                execute: () => {
+                    window.location.href = '/';
+                    return '<span class="info">Переход на главную страницу...</span>';
+                }
+            },
+            'clear': {
+                description: 'Очистить терминал',
+                execute: () => {
+                    output.innerHTML = '';
+                    return '';
+                }
+            },
+            'ls': {
+                description: 'Список файлов',
+                execute: () => {
+                    return '<span>love.txt</span>  <span>friends.txt</span>  <span>creator.txt</span>';
+                }
+            },
+            'whoami': {
+                description: 'Показать текущего пользователя',
+                execute: () => {
+                    return '<span class="system">user</span>';
+                }
+            },
+            // Новые команды
+            'echo': {
+                description: 'Повторить введённый текст',
+                execute: (args) => args.join(' ') || '<span class="error">Ошибка: не указан текст</span>'
+            },
+            'time': {
+                description: 'Показать текущее время',
+                execute: () => {
+                    const now = new Date();
+                    return `<span class="info">Текущее время:</span> ${now.toLocaleTimeString()}`;
+                }
+            },
+            '8ball': {
+                description: 'Магический шар (ответ на вопрос)',
+                execute: (args) => {
+                    if (args.length === 0) return '<span class="error">Задайте вопрос</span>';
+                    
+                    const answers = [
+                        "Бесспорно", "Предрешено", "Никаких сомнений", "Определённо да",
+                        "Можешь быть уверен в этом", "Мне кажется — «да»", "Вероятнее всего",
+                        "Хорошие перспективы", "Знаки говорят — «да»", "Да",
+                        "Пока не ясно, попробуй снова", "Спроси позже", "Лучше не рассказывать",
+                        "Сейчас нельзя предсказать", "Сконцентрируйся и спроси опять",
+                        "Даже не думай", "Мой ответ — «нет»", "По моим данным — «нет»",
+                        "Перспективы не очень хорошие", "Весьма сомнительно"
+                    ];
+                    const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+                    return `<span class="warning">🎱 Магический шар говорит:</span> ${randomAnswer}`;
+                }
+            },
+            'dice': {
+                description: 'Бросить кубик (1-6)',
+                execute: () => {
+                    const roll = Math.floor(Math.random() * 6) + 1;
+                    return `<span class="info">🎲 Выпало:</span> ${roll}`;
+                }
+            },
+            'calc': {
+                description: 'Простой калькулятор',
+                execute: (args) => {
+                    if (args.length === 0) return '<span class="error">Введите выражение, например: calc 2 + 2</span>';
+                    
+                    try {
+                        const expression = args.join(' ');
+                        const result = eval(expression); // Осторожно с eval!
+                        return `<span class="info">${expression} =</span> ${result}`;
+                    } catch (e) {
+                        return `<span class="error">Ошибка вычисления: ${e.message}</span>`;
+                    }
+                }
+            },
+            'ping': {
+                description: 'Проверить доступность сайта (симуляция). Параметры: -N (количество пингов), -result (только результат)',
+                execute: (args) => {
+                    if (args.length === 0) return '<span class="error">Укажите адрес, например: ping google.com</span>';
+                    
+                    // Парсинг аргументов
+                    let address = args[0];
+                    let count = 4; // По умолчанию 4 пинга
+                    let showDetails = true;
+                    let showOnlyResult = false;
+                    
+                    for (let i = 1; i < args.length; i++) {
+                        const arg = args[i].toLowerCase();
+                        if (arg.startsWith('-')) {
+                            if (!isNaN(arg.substring(1))) {
+                                count = parseInt(arg.substring(1));
+                            } else if (arg === '-result') {
+                                showOnlyResult = true;
+                                showDetails = false;
+                            }
+                        }
+                    }
+                    
+                    return new Promise(resolve => {
+                        if (showDetails) {
+                            printToTerminal(`<span class="info">PING ${address} (127.0.0.1):</span> 56 data bytes`);
+                        }
+                        
+                        let totalTime = 0;
+                        let minTime = Infinity;
+                        let maxTime = 0;
+                        let packetsTransmitted = count;
+                        let packetsReceived = 0;
+                        
+                        const doPing = (current) => {
+                            if (current >= count) {
+                                const packetLoss = ((packetsTransmitted - packetsReceived) / packetsTransmitted * 100).toFixed(1);
+                                const avgTime = totalTime / packetsReceived;
+                                
+                                const result = `<span class="success">--- ${address} ping statistics ---</span>\n` +
+                                    `${packetsTransmitted} packets transmitted, ${packetsReceived} received, ${packetLoss}% packet loss, time 0ms\n` +
+                                    `rtt min/avg/max = ${minTime}/${avgTime.toFixed(1)}/${maxTime} ms`;
+                                
+                                resolve(result);
+                                return;
+                            }
+                            
+                            const latency = Math.floor(Math.random() * 100) + 10;
+                            packetsReceived++;
+                            totalTime += latency;
+                            minTime = Math.min(minTime, latency);
+                            maxTime = Math.max(maxTime, latency);
+                            
+                            if (showDetails) {
+                                printToTerminal(`64 bytes from ${address}: icmp_seq=${current} ttl=64 time=${latency} ms`);
+                            }
+                            
+                            setTimeout(() => {
+                                doPing(current + 1);
+                            }, 800);
+                        };
+                        
+                        doPing(0);
+                    });
+                }
+            },
+            'ip': {
+                description: 'Показать IP-адрес (симуляция)',
+                execute: () => {
+                    const fakeIP = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+                    return `<span class="info">Ваш IP-адрес:</span> ${fakeIP}`;
+                }
+            }
+        };
+
+        // Обработка ввода команд
+        commandInput.addEventListener('keydown', (e) => {
+        // Tab - автодополнение
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const input = commandInput.value.trim();
+            if (input) {
+                const matches = Object.keys(commands).filter(cmd => 
+                    cmd.startsWith(input.split(' ')[0])
+                );
+                if (matches.length === 1) {
+                    commandInput.value = matches[0] + (input.includes(' ') ? ' ' : '');
+                } else if (matches.length > 1) {
+                    printToTerminal('<span class="info">Возможные команды:</span> ' + matches.join(', '));
+                }
+            }
+        }
+    
+        // Стрелка вверх - предыдущая команда
+        else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (commandHistory.length === 0) return;
+        
+            if (historyIndex === -1) {
+                currentCommand = commandInput.value;
+                historyIndex = commandHistory.length - 1;
+            } else if (historyIndex > 0) {
+                historyIndex--;
+            }
+        
+            commandInput.value = commandHistory[historyIndex];
+            moveCursorToEnd(commandInput);
+        }
+    
+        // Стрелка вниз - следующая команда
+        else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex === -1) return;
+        
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                commandInput.value = commandHistory[historyIndex];
+            } else {
+                historyIndex = -1;
+                commandInput.value = currentCommand;
+            }
+        
+            moveCursorToEnd(commandInput);
+        }
+    
+        // Enter - выполнение команды
+        else if (e.key === 'Enter') {
+                e.preventDefault();
+                const command = commandInput.value.trim();
+                commandInput.value = '';
+                
+                if (command === '') return;
+                
+                commandHistory.push(command);
+                historyIndex = -1;
+                
+                printToTerminal(`<span class="info">${prompt.textContent}</span> ${command}`);
+                
+                const commandParts = command.split(' ');
+                const commandName = commandParts[0].toLowerCase(); // Приводим имя команды к нижнему регистру
+                const args = commandParts.slice(1);
+                
+                // Находим команду без учёта регистра
+                const foundCommand = Object.keys(commands).find(cmd => cmd.toLowerCase() === commandName);
+                
+                if (foundCommand) {
+                    const result = commands[foundCommand].execute(args);
+                    
+                    if (result instanceof Promise) {
+                        result.then((message) => {
+                            if (message) printToTerminal(message);
+                        });
+                    } else {
+                        if (result) printToTerminal(result);
+                    }
+                } else {
+                    printToTerminal(`<span class="error">Команда не найдена:</span> ${commandName}. Введите '<span class="info">help</span>' для списка команд.`);
+                }
+            }
+    });
+
+        // Фокус на поле ввода при клике в любом месте
+        document.addEventListener('click', () => {
+            commandInput.focus();
+        });
+
+        // Функции помощники
+        function printToTerminal(text) {
+            output.innerHTML += `<div>${text}</div>`;
+            terminalContainer.scrollTop = terminalContainer.scrollHeight;
+        }
+        
+        function printPrompt() {
+            output.innerHTML += `<div class="input-line"><span class="info">${prompt.textContent}</span> <input type="text" class="hidden-input" value="${commandInput.value}" readonly></div>`;
+            terminalContainer.scrollTop = terminalContainer.scrollHeight;
+            commandInput.focus();
+        }
+        
+        function printWelcome() {
+            printToTerminal('<span class="system">Добро пожаловать в терминал Dont65!</span>');
+            printToTerminal('Введите <span class="info">help</span> для списка команд.');
+        }
+        
+        function moveCursorToEnd(input) {
+            input.selectionStart = input.selectionEnd = input.value.length;
+        }
+    </script>
+</body>
+</html>
