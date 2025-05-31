@@ -171,6 +171,23 @@
         body.light-theme .namemc-icon {
             background-color: #0a0a0a;
         }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #aaa;
+            font-size: 14px;
+            z-index: 1;
+        }
+
+body.light-theme .footer {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #666;
+}
 
         .menu-btn {
             position: absolute;
@@ -465,7 +482,7 @@
             margin-left: 5px;
         }
 
-        /* Стили для выбора обоев */
+
         .wallpapers-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -509,7 +526,7 @@
             text-align: center;
         }
 
-        /* Стили для модального окна настроек */
+
         .settings-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -631,7 +648,7 @@
             pointer-events: none;
         }
 
-        /* Стили для светлой темы */
+
         body.light-theme {
             background-color: #f5f5f5;
             color: #333;
@@ -773,7 +790,7 @@
         </div>
     </div>
     
-    <!-- Модальное окно профиля -->
+
     <div class="modal" id="profileModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -797,7 +814,7 @@
         </div>
     </div>
     
-    <!-- Модальное окно навыков -->
+
     <div class="modal" id="skillsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -832,7 +849,7 @@
         </div>
     </div>
     
-    <!-- Модальное окно проектов -->
+
     <div class="modal" id="projectsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -864,7 +881,7 @@
         </div>
     </div>
 
-    <!-- Модальное окно настроек -->
+
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -896,7 +913,7 @@
                             <span>Фоновые изображения</span>
                         </div>
                         <div class="wallpapers-grid" id="wallpapersGrid">
-                            <!-- Опции обоев будут добавлены через JavaScript -->
+
                         </div>
                     </div>
                 </div>
@@ -1069,7 +1086,7 @@
             }
         });
 
-        // Функционал выбора обоев
+
         const wallpapers = [
             { name: 'Стандартные', file: 'background.jpg' },
             { name: '2 девочки', file: '2girls.jpg' },
@@ -1123,7 +1140,7 @@
             updateQuote();
             initWallpaperSettings();
             
-            // Загружаем сохраненные обои
+
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
             document.body.style.backgroundImage = `url('background/${savedWallpaper}')`;
             
@@ -1132,5 +1149,20 @@
             });
         });
     </script>
+
+<footer style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #dadada;
+    font-size: 14px;
+    z-index: 1;
+">
+    © Dont65 - 2025
+</footer>    
 </body>
 </html>
