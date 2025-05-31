@@ -780,6 +780,11 @@ body.light-theme .footer {
                 <i class="fas fa-project-diagram"></i>
                 <span>Мои проекты</span>
             </div>
+            
+            <div class="menu-item" id="openTerminal">
+                <i class="fas fa-terminal"></i>
+                <span>Терминал</span>
+            </div>
         </div>
 
         <div class="menu-footer">
@@ -1056,6 +1061,11 @@ body.light-theme .footer {
             menuSidebar.classList.remove('active');
         });
         
+        document.getElementById('openTerminal').addEventListener('click', () => {
+            window.location.href = '/terminal';
+            menuSidebar.classList.remove('active');
+        });
+        
         document.querySelectorAll('.modal-close').forEach(btn => {
             btn.addEventListener('click', function() {
                 this.closest('.modal').classList.remove('active');
@@ -1093,7 +1103,10 @@ body.light-theme .footer {
             { name: 'Горничная', file: 'made.png' },
             { name: 'Белый фон', file: 'white.jpg' },
             { name: 'Windows 11', file: 'windows11.jpg' },
-            { name: 'Новый год', file: 'newyear.jpg' }
+            { name: 'Новый год', file: 'newyear.jpg' },
+            { name: 'Девушка с пушкой', file: 'girl_gun.jpg'},
+            { name: 'Нарисованный город', file: 'city_art.jpg'},
+            { name: 'Козел симулятор', file: 'goat.png'}
         ];
 
         function initWallpaperSettings() {
