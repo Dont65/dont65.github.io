@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dont65 - Главная страница</title>
+    <title>Dont65 | Главная страница</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -485,7 +485,7 @@ body.light-theme .footer {
 
         .wallpapers-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr));
             gap: 10px;
             margin-top: 15px;
         }
@@ -648,6 +648,98 @@ body.light-theme .footer {
             pointer-events: none;
         }
 
+        /* Стили для достижений */
+        .achievements-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .achievement-card {
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .achievement-card.locked {
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+
+        .achievement-card.unlocked {
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .achievement-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .achievement-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .achievement-desc {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .achievement-date {
+            font-size: 0.7em;
+            color: #2aabee;
+            margin-top: 5px;
+        }
+
+        /* Стили для уведомлений о достижениях */
+        .achievement-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(30, 30, 30, 0.9);
+            border-left: 4px solid #ffd700;
+            border-radius: 4px;
+            padding: 15px;
+            color: white;
+            max-width: 300px;
+            transform: translateX(120%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .achievement-notification.show {
+            transform: translateX(0);
+        }
+        
+        .achievement-notification-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+    
+        .achievement-notification-content i {
+            font-size: 24px;
+            color: #ffd700;
+        }
+        
+        .achievement-notification-title {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+        
+        .achievement-notification-name {
+            font-weight: bold;
+            margin-top: 3px;
+        }
 
         body.light-theme {
             background-color: #f5f5f5;
@@ -718,6 +810,19 @@ body.light-theme .footer {
             color: #333;
         }
 
+        body.light-theme .achievement-card {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        body.light-theme .achievement-desc {
+            color: #666;
+        }
+
+        body.light-theme .achievement-notification {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -749,6 +854,10 @@ body.light-theme .footer {
             }
 
             .wallpapers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .achievements-container {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -784,6 +893,11 @@ body.light-theme .footer {
             <div class="menu-item" id="openTerminal">
                 <i class="fas fa-terminal"></i>
                 <span>Терминал</span>
+            </div>
+
+            <div class="menu-item" id="openAchievementsModal">
+                <i class="fas fa-trophy"></i>
+                <span>Мои достижения</span>
             </div>
         </div>
 
@@ -893,6 +1007,19 @@ body.light-theme .footer {
         </div>
     </div>
 
+    <div class="modal" id="achievementsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-trophy"></i> Мои достижения</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="achievements-container" id="achievementsContainer">
+                    <!-- Достижения будут добавляться сюда динамически -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal" id="settingsModal">
         <div class="modal-content">
@@ -1047,28 +1174,45 @@ body.light-theme .footer {
         const skillsModal = document.getElementById('skillsModal');
         const projectsModal = document.getElementById('projectsModal');
         const settingsModal = document.getElementById('settingsModal');
+        const achievementsModal = document.getElementById('achievementsModal');
         
         document.getElementById('openProfileModal').addEventListener('click', () => {
             profileModal.classList.add('active');
             menuSidebar.classList.remove('active');
+            localStorage.setItem('modal_profileModal_opened', 'true');
+            checkAllModalsAchievement();
         });
         
         document.getElementById('openSkillsModal').addEventListener('click', () => {
             skillsModal.classList.add('active');
             menuSidebar.classList.remove('active');
+            localStorage.setItem('modal_skillsModal_opened', 'true');
+            checkAllModalsAchievement();
         });
         
         document.getElementById('openProjectsModal').addEventListener('click', () => {
             projectsModal.classList.add('active');
             menuSidebar.classList.remove('active');
+            localStorage.setItem('modal_projectsModal_opened', 'true');
+            checkAllModalsAchievement();
         });
         
         document.getElementById('openSettingsModal').addEventListener('click', () => {
             settingsModal.classList.add('active');
             menuSidebar.classList.remove('active');
+            unlockAchievement('settings_opened');
+            checkAllModalsAchievement();
+        });
+        
+        document.getElementById('openAchievementsModal').addEventListener('click', () => {
+            achievementsModal.classList.add('active');
+            menuSidebar.classList.remove('active');
+            renderAchievements();
         });
         
         document.getElementById('openTerminal').addEventListener('click', () => {
+            localStorage.setItem('terminal_visited', 'true');
+            unlockAchievement('terminal_visited');
             window.location.href = '/terminal';
             menuSidebar.classList.remove('active');
         });
@@ -1101,8 +1245,8 @@ body.light-theme .footer {
                 document.body.classList.remove('light-theme');
                 localStorage.setItem('theme', 'dark');
             }
+            unlockAchievement('theme_changed');
         });
-
 
         const wallpapers = [
             { name: 'Стандартные', file: 'background.jpg' },
@@ -1149,18 +1293,159 @@ body.light-theme .footer {
                     const selectedFile = this.dataset.file;
                     localStorage.setItem('wallpaper', selectedFile);
                     document.body.style.backgroundImage = `url('background/${selectedFile}')`;
+                    unlockAchievement('wallpaper_changed');
                 });
                 
                 wallpapersGrid.appendChild(wallpaperOption);
             });
         }
 
+        // Система достижений
+        const achievements = [
+            {
+                id: 'first_visit',
+                title: 'Первое посещение',
+                description: 'Посетить сайт',
+                icon: 'fa-door-open',
+                unlocked: false,
+                date: null
+            },
+            {
+                id: 'settings_opened',
+                title: 'Любопытство',
+                description: 'Открыть настройки',
+                icon: 'fa-cog',
+                unlocked: false,
+                date: null
+            },
+            {
+                id: 'theme_changed',
+                title: 'Смена стиля',
+                description: 'Изменить тему',
+                icon: 'fa-moon',
+                unlocked: false,
+                date: null
+            },
+            {
+                id: 'wallpaper_changed',
+                title: 'Декоратор',
+                description: 'Сменить фон',
+                icon: 'fa-image',
+                unlocked: false,
+                date: null
+            },
+
+            {
+                id: 'terminal_visited',
+                title: 'Командная строка',
+                description: 'Посетить терминал',
+                icon: 'fa-terminal',
+                unlocked: false,
+                date: null
+            }
+        ];
+
+        function checkAchievements() {
+            const savedAchievements = JSON.parse(localStorage.getItem('achievements')) || achievements;
+            
+            // Проверка первого посещения
+            if (!localStorage.getItem('first_visit')) {
+                unlockAchievement('first_visit');
+                localStorage.setItem('first_visit', new Date().toISOString());
+            }
+            
+            // Обновляем данные в массиве
+            achievements.forEach(ach => {
+                const savedAch = savedAchievements.find(a => a.id === ach.id);
+                if (savedAch) {
+                    ach.unlocked = savedAch.unlocked;
+                    ach.date = savedAch.date;
+                }
+            });
+            
+            renderAchievements();
+        }
+
+        function unlockAchievement(id) {
+            const achievement = achievements.find(a => a.id === id);
+            if (achievement && !achievement.unlocked) {
+                achievement.unlocked = true;
+                achievement.date = new Date().toISOString();
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+                
+                // Показываем уведомление
+                showAchievementNotification(achievement);
+                
+                return true;
+            }
+            return false;
+        }
+
+        function showAchievementNotification(achievement) {
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.innerHTML = `
+                <div class="achievement-notification-content">
+                    <i class="fas ${achievement.icon}"></i>
+                    <div>
+                        <div class="achievement-notification-title">Достижение разблокировано!</div>
+                        <div class="achievement-notification-name">${achievement.title}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        function renderAchievements() {
+            const container = document.getElementById('achievementsContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            achievements.forEach(achievement => {
+                const achievementCard = document.createElement('div');
+                achievementCard.className = `achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+                
+                achievementCard.innerHTML = `
+                    <div class="achievement-icon">
+                        <i class="fas ${achievement.icon}"></i>
+                    </div>
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-desc">${achievement.description}</div>
+                    ${achievement.unlocked ? `<div class="achievement-date">${new Date(achievement.date).toLocaleDateString()}</div>` : ''}
+                `;
+                
+                container.appendChild(achievementCard);
+            });
+        }
+
+        function checkAllModalsAchievement() {
+            const allModalsOpened = ['profileModal', 'skillsModal', 'projectsModal', 'settingsModal']
+                .every(id => localStorage.getItem(`modal_${id}_opened`));
+            
+            if (allModalsOpened) {
+                unlockAchievement('all_modals');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateAgeDisplay();
             updateQuote();
             initWallpaperSettings();
+            checkAchievements();
             
-
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
             document.body.style.backgroundImage = `url('background/${savedWallpaper}')`;
             
