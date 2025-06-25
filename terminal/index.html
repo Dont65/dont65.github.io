@@ -128,12 +128,32 @@
                     return 'Создатель этого терминала: <span class="info">Dont65</span>';
                 }
             },
-            'sudo rm -rf /*': {
-                description: 'Фейковая команда удаления',
+            'sysinfo': {
+                description: 'Показать информацию о системе (симуляция)',
                 execute: () => {
-                    return new Promise((resolve) => {
+                const os = ['Linux', 'Windows', 'macOS'][Math.floor(Math.random() * 3)];
+                const proc = ['Intel Core i9-14900K', 'AMD Ryzen 9 7950X3D', 'Apple M3 Max', 'Qualcomm Snapdragon 8 Gen 3', 'Эльбрус-16C', 'Intel Core i7-14700K', 'AMD Ryzen 7 7800X3D', 'Apple M2 Ultra', 'Samsung Exynos 2400', 'MediaTek Dimensity 9300', 'Эльбрус-8SV', 'Intel Core i5-14600K', 'AMD Ryzen 5 7600X', 'Apple M1 Pro', 'Qualcomm Snapdragon 7+ Gen 2', 'Эльбрус-4C', 'Intel Xeon Platinum 8490H', 'AMD EPYC 9654P', 'Apple A17 Pro', 'Google Tensor G3', 'Эльбрус-2SM', 'Intel Core i3-14100', 'AMD Ryzen 3 7300X', 'Apple A16 Bionic', 'HiSilicon Kirin 9000S', 'Эльбрус-1C+', 'Intel Pentium Gold G7400', 'AMD Athlon Gold 7220U', 'Apple A15 Bionic', 'Qualcomm Snapdragon 8s Gen 2', 'Эльбрус-8C', 'Intel Celeron G6900', 'AMD Threadripper PRO 7995WX', 'Apple M1', 'Samsung Exynos 2200', 'MediaTek Dimensity 9200+', 'Эльбрус-4S', 'Intel Core i9-13900KS', 'AMD Ryzen 9 7900X', 'Apple A14 Bionic', 'Qualcomm Snapdragon 888', 'Эльбрус-2C+', 'Intel Core i7-13700KF', 'AMD Ryzen 7 5800X3D', 'Apple A13 Bionic', 'MediaTek Dimensity 8200', 'Эльбрус-1SM', 'Intel Core i5-13600KF', 'AMD Ryzen 5 5600X', 'Apple A12Z Bionic', 'Qualcomm Snapdragon 865+', 'Эльбрус-16S', 'Intel Xeon W9-3495X', 'AMD EPYC 9554P', 'Apple A12X Bionic', 'Google Tensor G2', 'Эльбрус-8S', 'Intel Core i3-13100F', 'AMD Ryzen 3 5300G', 'Apple A11 Bionic', 'HiSilicon Kirin 990 5G', 'Эльбрус-4SM', 'Intel Atom x7-E3950', 'AMD FX-9590', 'Apple A10X Fusion', 'Qualcomm Snapdragon 7 Gen 1', 'Эльбрус-2S', 'Intel Core m3-8100Y', 'AMD A12-9800', 'Apple A9X', 'Samsung Exynos 1080', 'MediaTek Helio G99', 'Эльбрус-1S', 'Intel N100', 'AMD Ryzen 7 5700G', 'Apple A8X', 'Qualcomm Snapdragon 778G', 'Эльбрус-32C'][Math.floor(Math.random() * 70)];
+                const memory = Math.floor(Math.random() * 64) + 4;
+                const disk = Math.floor(Math.random() * 700) + 100;
+        
+                return `
+<span class="info">Системная информация:</span>
+ОС: ${os}
+Память: ${memory} GB
+Диск: ${disk} GB
+Процессор: ${proc}
+`;
+                }
+            },
+            'sudo': {
+                description: 'Для использования супер-пользователя',
+                execute: (args) => {
+                    const fullCommand = args.join(' ');
+        
+                    if (fullCommand === 'rm -rf /*') return new Promise((resolve) => {
                         // Имитация удаления
                         const messages = [
+                            'Пароль: <span class="system">****</splan>',
                             '<span class="error">Удаление системных файлов...</span>',
                             '<span class="error">Удаление конфигураций...</span>',
                             '<span class="error">Удаление пользовательских данных...</span>',
@@ -153,7 +173,7 @@
                                 // Исчезновение терминала
                                 setTimeout(() => {
                                     terminalContainer.style.opacity = '0';
-                                    terminalContainer.style.transition = 'opacity 0.5s';
+                                    terminalContainer.style.transition = 'opacity 0.2s';
                                     
                                     // Полная очистка и восстановление
                                     setTimeout(() => {
@@ -166,6 +186,9 @@
                             }
                         }, 600);
                     });
+                    else {
+                        printToTerminal('Пароль: <span class="system">****</splan>\n<span class="error">Не верно, попробуйте еще раз</splan>')
+                    }
                 }
             },
             'exit': {
