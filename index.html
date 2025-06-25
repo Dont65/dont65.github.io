@@ -6,6 +6,10 @@
     <title>Dont65 | Главная страница</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: 42, 171, 238;
+        }
+        
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -21,7 +25,7 @@
             background-attachment: fixed;
             color: #ffffff;
             position: relative;
-            transition: background-image 0.5s ease;
+            transition: background-image 0.5s ease, rgb(var(--primary-color)) 0.3s ease;
         }
         
         body::before {
@@ -33,7 +37,7 @@
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
-            transition: background-color 0.3s ease;
+            transition: rgb(var(--primary-color)) 0.3s ease;
         }
         
         .container {
@@ -86,15 +90,15 @@
         }
 
         .age:hover {
-            color: #2aabee;
+            color: rgb(var(--primary-color));
         }
 
         .quote-container {
             margin: 20px 0;
             padding: 15px;
-            background-color: rgba(42, 171, 238, 0.1);
+            background-color: rgba(var(--primary-color), 0.1);
             border-radius: 8px;
-            border-left: 3px solid #2aabee;
+            border-left: 3px solid rgb(var(--primary-color));
         }
 
         .quote {
@@ -129,11 +133,11 @@
         }
 
         .discord-icon {
-            background-color: #5865F2;
+            background-color: #2f3ee2;
         }
 
         .telegram-icon {
-            background-color: #2AABEE;
+            background-color: #2aabee;
         }
 
         .email-icon {
@@ -209,7 +213,7 @@ body.light-theme .footer {
         }
 
         .menu-btn:hover {
-            background-color: rgba(42, 171, 238, 0.2);
+            background-color: rgba(var(--primary-color), 0.2);
         }
 
         .menu-sidebar {
@@ -280,7 +284,7 @@ body.light-theme .footer {
         }
 
         .menu-item:hover {
-            background-color: rgba(42, 171, 238, 0.1);
+            background-color: rgba(var(--primary-color), 0.1);
         }
 
         .menu-item i {
@@ -344,7 +348,7 @@ body.light-theme .footer {
 
         .modal-header h3 {
             margin: 0;
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             font-size: 1.5em;
         }
 
@@ -358,7 +362,7 @@ body.light-theme .footer {
         }
 
         .modal-close:hover {
-            color: #2aabee;
+            color: rgb(var(--primary-color));
         }
 
         .info-item {
@@ -368,7 +372,7 @@ body.light-theme .footer {
 
         .info-item h4 {
             margin: 0 0 8px 0;
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             font-size: 1.1em;
         }
 
@@ -386,12 +390,12 @@ body.light-theme .footer {
         }
 
         .skill {
-            background-color: rgba(42, 171, 238, 0.1);
+            background-color: rgba(var(--primary-color), 0.1);
             padding: 5px 12px;
             border-radius: 15px;
             font-size: 0.9em;
-            color: #2aabee;
-            border: 1px solid rgba(42, 171, 238, 0.3);
+            color: rgba(var(--primary-color), 0.9);
+            border: 1px solid rgba(var(--primary-color), 0.3);
         }
 
         .skill-meter {
@@ -420,7 +424,7 @@ body.light-theme .footer {
 
         .battery-level {
             height: 100%;
-            background-color: #2aabee;
+            background-color: rgb(var(--primary-color));
             border-radius: 3px;
             transition: width 0.5s ease;
         }
@@ -446,7 +450,7 @@ body.light-theme .footer {
             background-color: rgba(30, 30, 30, 0.7);
             border-radius: 8px;
             padding: 15px;
-            border-left: 3px solid #2aabee;
+            border-left: 3px solid rgb(var(--primary-color));
             transition: all 0.3s ease;
             cursor: pointer;
             text-decoration: none;
@@ -456,12 +460,12 @@ body.light-theme .footer {
 
         .project-card:hover {
             transform: translateY(-5px);
-            background-color: rgba(42, 171, 238, 0.1);
+            background-color: rgba(var(--primary-color), 0.1);
         }
 
         .project-title {
             font-weight: bold;
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             margin-bottom: 8px;
         }
 
@@ -472,7 +476,7 @@ body.light-theme .footer {
         }
 
         .project-link-indicator {
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             font-size: 0.8em;
             display: flex;
             align-items: center;
@@ -485,7 +489,7 @@ body.light-theme .footer {
 
         .wallpapers-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-top: 15px;
         }
@@ -505,7 +509,7 @@ body.light-theme .footer {
         }
 
         .wallpaper-option.selected {
-            border-color: #2aabee;
+            border-color: rgb(var(--primary-color));
             box-shadow: 0 0 10px rgba(42, 171, 238, 0.5);
         }
 
@@ -537,14 +541,14 @@ body.light-theme .footer {
             background-color: rgba(30, 30, 30, 0.7);
             border-radius: 8px;
             padding: 15px;
-            border-left: 3px solid #2aabee;
+            border-left: 3px solid rgb(var(--primary-color));
         }
 
         .settings-category-title {
             display: flex;
             align-items: center;
             margin-bottom: 15px;
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             font-size: 1.1em;
         }
 
@@ -557,7 +561,7 @@ body.light-theme .footer {
             align-items: center;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(var(--primary-color), 0.1);
         }
 
         .setting-item:last-child {
@@ -571,7 +575,7 @@ body.light-theme .footer {
 
         .setting-label i {
             margin-right: 10px;
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             width: 20px;
             text-align: center;
         }
@@ -613,7 +617,7 @@ body.light-theme .footer {
         }
 
         input:checked + .slider {
-            background-color: #2aabee;
+            background-color: rgb(var(--primary-color));
         }
 
         input:checked + .slider:before {
@@ -630,7 +634,7 @@ body.light-theme .footer {
             width: 100%;
             padding: 8px 30px 8px 10px;
             background-color: rgba(30, 30, 30, 0.8);
-            border: 1px solid rgba(42, 171, 238, 0.3);
+            border: 1px solid rgba(var(--primary-color), 0.3);
             border-radius: 4px;
             color: #e0e0e0;
             appearance: none;
@@ -643,7 +647,7 @@ body.light-theme .footer {
             top: 50%;
             right: 10px;
             transform: translateY(-50%);
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             font-size: 0.7em;
             pointer-events: none;
         }
@@ -672,14 +676,14 @@ body.light-theme .footer {
         }
 
         .achievement-card.unlocked {
-            border-color: #ffd700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            border-color: rgb(var(--primary-color));
+            box-shadow: 0 0 10px rgba(var(--primary-color), 0.3);
         }
 
         .achievement-icon {
             font-size: 30px;
             margin-bottom: 10px;
-            color: #ffd700;
+            color: rgb(var(--primary-color));
         }
 
         .achievement-title {
@@ -695,7 +699,7 @@ body.light-theme .footer {
 
         .achievement-date {
             font-size: 0.7em;
-            color: #2aabee;
+            color: rgb(var(--primary-color));
             margin-top: 5px;
         }
 
@@ -705,7 +709,7 @@ body.light-theme .footer {
             bottom: 20px;
             right: 20px;
             background-color: rgba(30, 30, 30, 0.9);
-            border-left: 4px solid #ffd700;
+            border-left: 4px solid rgb(var(--primary-color));
             border-radius: 4px;
             padding: 15px;
             color: white;
@@ -728,7 +732,7 @@ body.light-theme .footer {
     
         .achievement-notification-content i {
             font-size: 24px;
-            color: #ffd700;
+            color: rgb(var(--primary-color));
         }
         
         .achievement-notification-title {
@@ -785,7 +789,7 @@ body.light-theme .footer {
         body.light-theme .info-item h4,
         body.light-theme .project-title,
         body.light-theme .modal-header h3 {
-            color: #2aabee;
+            color: var(--primary-color);
         }
 
         body.light-theme .info-item p,
@@ -823,6 +827,29 @@ body.light-theme .footer {
             color: #333;
         }
 
+        /* Цветовые темы */
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            transform: scale(1.1);
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -854,7 +881,7 @@ body.light-theme .footer {
             }
 
             .wallpapers-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
             }
 
             .achievements-container {
@@ -897,7 +924,7 @@ body.light-theme .footer {
 
             <div class="menu-item" id="openAchievementsModal">
                 <i class="fas fa-trophy"></i>
-                <span>Мои достижения</span>
+                <span>Ваши достижения</span>
             </div>
         </div>
 
@@ -1010,7 +1037,7 @@ body.light-theme .footer {
     <div class="modal" id="achievementsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-trophy"></i> Мои достижения</h3>
+                <h3><i class="fas fa-trophy"></i> Ваши достижения</h3>
                 <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
@@ -1032,7 +1059,7 @@ body.light-theme .footer {
                     <div class="settings-category">
                         <div class="settings-category-title">
                             <i class="fas fa-palette"></i>
-                            <span>Внешний вид</span>
+                            <span>Цветовая схема</span>
                         </div>
                         <div class="setting-item">
                             <div class="setting-label">
@@ -1044,6 +1071,23 @@ body.light-theme .footer {
                                 <span class="slider"></span>
                             </label>
                         </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-fill-drip"></i>
+                                <span>Основной цвет</span>
+                            </div>
+                            <div class="color-options" id="colorOptions">
+                                <div class="color-option" style="background-color: rgb(42, 171, 238);" data-color="42, 171, 238"></div>
+                                <div class="color-option" style="background-color: rgb(88, 101, 242);" data-color="88, 101, 242"></div>
+                                <div class="color-option" style="background-color: rgb(87, 242, 135);" data-color="87, 242, 135"></div>
+                                <div class="color-option" style="background-color: rgb(254, 231, 92);" data-color="254, 231, 92"></div>
+                                <div class="color-option" style="background-color: rgb(235, 69, 158);" data-color="235, 69, 158"></div>
+                                <div class="color-option" style="background-color: rgb(237, 66, 69);" data-color="237, 66, 69"></div>
+                                <div class="color-option" style="background-color: rgb(155, 89, 182);" data-color="155, 89, 182"></div>
+                                <div class="color-option" style="background-color: rgb(230, 126, 34);" data-color="230, 126, 34"></div>
+                                <div class="color-option" style="background-color: rgb(255, 255, 255);" data-color="255, 255, 255"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="settings-category">
@@ -1052,7 +1096,7 @@ body.light-theme .footer {
                             <span>Фоновые изображения</span>
                         </div>
                         <div class="wallpapers-grid" id="wallpapersGrid">
-
+                            <!-- Фоны будут добавляться сюда динамически -->
                         </div>
                     </div>
                 </div>
@@ -1271,6 +1315,34 @@ body.light-theme .footer {
             unlockAchievement('theme_changed');
         });
 
+        // Цветовые схемы
+        function initColorSettings() {
+            const colorOptions = document.getElementById('colorOptions');
+            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+            
+            // Устанавливаем начальный цвет
+            document.documentElement.style.setProperty('--primary-color', savedColor);
+            
+            // Отмечаем выбранный цвет
+            document.querySelectorAll('.color-option').forEach(option => {
+                if (option.dataset.color === savedColor) {
+                    option.classList.add('selected');
+                }
+                
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.color-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    const selectedColor = this.dataset.color;
+                    localStorage.setItem('primaryColor', selectedColor);
+                    document.documentElement.style.setProperty('--primary-color', selectedColor);
+                    unlockAchievement('color_changed');
+                });
+            });
+        }
+
         const wallpapers = [
             { name: 'Стандартные', file: 'background.jpg' },
             { name: '2 девочки', file: '2girls.jpg' },
@@ -1357,7 +1429,14 @@ body.light-theme .footer {
                 unlocked: false,
                 date: null
             },
-
+            {
+                id: 'color_changed',
+                title: 'Художник',
+                description: 'Изменить основной цвет',
+                icon: 'fa-palette',
+                unlocked: false,
+                date: null
+            },
             {
                 id: 'terminal_visited',
                 title: 'Командная строка',
@@ -1466,6 +1545,7 @@ body.light-theme .footer {
         document.addEventListener('DOMContentLoaded', function() {
             updateAgeDisplay();
             updateQuote();
+            initColorSettings();
             initWallpaperSettings();
             checkAchievements();
             
