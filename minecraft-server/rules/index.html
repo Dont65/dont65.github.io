@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dont65 | Правила сервера Minecraft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: 42, 171, 238;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            text-align: center;
+            background-image: url('/background/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            position: relative;
+            transition: background-image 0.5s ease, rgb(var(--primary-color)) 0.3s ease;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+            transition: rgb(var(--primary-color)) 0.3s ease;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(var(--primary-color), 0.3);
+        }
+
+        .header h1 {
+            margin: 0;
+            color: rgb(var(--primary-color));
+            font-size: 2em;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            color: #aaa;
+            font-size: 1em;
+        }
+
+        .rules-section {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .rules-section h2 {
+            color: rgb(var(--primary-color));
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+        }
+
+        .rules-section h2 i {
+            margin-right: 10px;
+        }
+
+        .rule-item {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .rule-item:before {
+            content: "•";
+            color: rgb(var(--primary-color));
+            font-size: 1.5em;
+            position: absolute;
+            left: 0;
+            top: -3px;
+        }
+
+        .rule-item.rule {
+            color: #e6e6e6;
+        }
+
+
+        .rule-item.info {
+            color: #e6e6e6;
+            font-style: italic;  
+            text-decoration: underline; 
+        }
+
+
+        .rule-subitem {
+            color: rgba(var(--primary-color), 0.8);
+            margin-left: 20px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .rule-subitem:before {
+            content: "⁎";
+            color: #fcb738;
+            position: absolute;
+            left: 0;
+        }
+
+        .consequences {
+            background-color: rgba(var(--primary-color), 0.1);
+            border-left: 3px solid rgb(var(--primary-color));
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .consequences h3 {
+            margin-top: 0;
+            color: rgb(var(--primary-color));
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: rgba(var(--primary-color), 0.2);
+            color: rgb(var(--primary-color));
+            border: 1px solid rgb(var(--primary-color));
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(var(--primary-color), 0.4);
+        }
+
+        /* Меню и настройки */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(14, 14, 14, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .menu-btn:hover {
+            background-color: rgba(var(--primary-color), 0.2);
+        }
+
+        .menu-sidebar {
+            position: fixed;
+            top: 0;
+            left: -350px;
+            width: 350px;
+            height: 100vh;
+            background-color: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            z-index: 100;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .menu-items {
+            flex: 1;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            color: #e0e0e0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(var(--primary-color), 0.1);
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-footer {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Настройки */
+        .settings-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .settings-category {
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 3px solid rgb(var(--primary-color));
+        }
+
+        .settings-category-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: rgb(var(--primary-color));
+            font-size: 1.1em;
+        }
+
+        .settings-category-title i {
+            margin-right: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(var(--primary-color), 0.1);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+        }
+
+        .setting-label i {
+            margin-right: 10px;
+            color: rgb(var(--primary-color));
+            width: 20px;
+            text-align: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: rgb(var(--primary-color));
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .wallpapers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .wallpaper-option {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            aspect-ratio: 16/9;
+        }
+
+        .wallpaper-option:hover {
+            transform: scale(1.03);
+        }
+
+        .wallpaper-option.selected {
+            border-color: rgb(var(--primary-color));
+            box-shadow: 0 0 10px rgba(42, 171, 238, 0.5);
+        }
+
+        .wallpaper-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wallpaper-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: rgba(0, 0, 0, 0.95);
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: rgb(var(--primary-color));
+            font-size: 1.5em;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: rgb(var(--primary-color));
+        }
+
+        /* Светлая тема */
+        body.light-theme {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        body.light-theme::before {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        body.light-theme .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .rules-section h2 {
+            color: rgb(var(--primary-color));
+        }
+
+        body.light-theme .rule-item.rule {
+            color: #202020;
+        }
+        body.light-theme .rule-subitem {
+            color: rgb(var(--primary-color));
+
+        }
+        body.light-theme .rule-item.warning {
+            color: #f39c12;
+        }
+
+        body.light-theme .rule-item.info {
+            color: #202020;
+        }
+
+        body.light-theme .rule-item.good {
+            color: #2ecc71;
+        }
+
+        body.light-theme .menu-sidebar {
+            background-color: rgba(240, 240, 240, 0.95);
+            color: #333;
+        }
+
+        body.light-theme .menu-item {
+            color: #333;
+        }
+
+        body.light-theme .modal-content {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+
+        body.light-theme .modal-header h3 {
+            color: rgb(var(--primary-color));
+        }
+
+        body.light-theme .settings-category {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        body.light-theme .setting-item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .menu-sidebar {
+                width: 280px;
+            }
+            
+            .modal-content {
+                width: 90%;
+                padding: 15px;
+            }
+            
+            .wallpapers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <div class="sidebar-header">
+            <h2>Меню</h2>
+            <button class="close-btn" id="closeBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="menu-items">
+            <a href="/" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Главная страница</span>
+            </a>
+            
+            <a href="/minecraft-server/rules" class="menu-item">
+                <i class="fas fa-book"></i>
+                <span>Правила сервера</span>
+            </a>
+            
+            <a href="/terminal" class="menu-item">
+                <i class="fas fa-terminal"></i>
+                <span>Терминал</span>
+            </a>
+        </div>
+
+        <div class="menu-footer">
+            <div class="menu-item" id="openSettingsModal">
+                <i class="fas fa-cog"></i>
+                <span>Настройки</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Настройки</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-container">
+                    <div class="settings-category">
+                        <div class="settings-category-title">
+                            <i class="fas fa-palette"></i>
+                            <span>Цветовая схема</span>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-sun"></i>
+                                <span>Светлая тема</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-fill-drip"></i>
+                                <span>Основной цвет</span>
+                            </div>
+                            <div class="color-options" id="colorOptions">
+                                <div class="color-option" style="background-color: rgb(42, 171, 238);" data-color="42, 171, 238"></div>
+                                <div class="color-option" style="background-color: rgb(88, 101, 242);" data-color="88, 101, 242"></div>
+                                <div class="color-option" style="background-color: rgb(87, 242, 135);" data-color="87, 242, 135"></div>
+                                <div class="color-option" style="background-color: rgb(254, 231, 92);" data-color="254, 231, 92"></div>
+                                <div class="color-option" style="background-color: rgb(235, 69, 158);" data-color="235, 69, 158"></div>
+                                <div class="color-option" style="background-color: rgb(237, 66, 69);" data-color="237, 66, 69"></div>
+                                <div class="color-option" style="background-color: rgb(155, 89, 182);" data-color="155, 89, 182"></div>
+                                <div class="color-option" style="background-color: rgb(230, 126, 34);" data-color="230, 126, 34"></div>
+                                <div class="color-option" style="background-color: rgb(255, 255, 255);" data-color="255, 255, 255"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-category">
+                        <div class="settings-category-title">
+                            <i class="fas fa-image"></i>
+                            <span>Фоновые изображения</span>
+                        </div>
+                        <div class="wallpapers-grid" id="wallpapersGrid">
+                            <!-- Фоны будут добавляться сюда динамически -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-book"></i> Правила сервера Minecraft</h1>
+            <p>Обязательны к прочтению и соблюдению всеми игроками</p>
+        </div>
+
+        <div class="rules-section">
+            <h2><i class="fas fa-exclamation-circle"></i> 1. Общие правила</h2>
+            <div class="rule-item rule">1.1 Запрещена ненормативная лексика. Мат разрешен в неоскорбительном для других пользователей контексте. Однако злоупотребление матом наказывается</div>
+            <div class="rule-item rule">1.2 Запрещено писать бессмысленную или малосодержательную информацию, не несущую смысловой нагрузки (флудить)</div>
+            <div class="rule-item rule">1.3 Запрещено обсуждать действия администрации</div>
+            <div class="rule-item rule">1.4 Запрещается публикация материалов грубого, насильственного характера, жестокости, призывы к таковым, сообщения экстремистского толка</div>
+            <div class="rule-item rule">1.5 Запрещается оскорблять других пользователей и администрации канала. Оскорбление остается нарушением, даже если оно скрыто под сарказмом или косвенной инсинуацией</div>
+            <div class="rule-item rule">1.6 Запрещается дискриминация по любому признаку — расовому, национальному, гражданскому, половому, религиозному, возрастному, по инвалидности, роду занятий или сексуальной ориентации</div>
+            <div class="rule-item rule">1.7 Запрещается употребление уничижительных определений различных национальностей, народов и групп, таких как "пиндосы", "хохлы", "москали" и пр.</div>
+            <div class="rule-item rule">1.8 Запрещается разглашение чьей бы то ни было персональной информации. Это относится как к собственным данным, так и полученным от других пользователей</div>
+            <div class="rule-item rule">1.9 Запрещается обсуждение и публичное осуждение действий представителей Команды — админов и модераторов</div>
+            <div class="rule-item rule">1.10 Запрещена публикация сообщений, призывающих к суициду</div>
+            <div class="rule-item rule">1.11 Запрещено Приглашение на сервер твинк-аккаунтов (перманент бан твинк-аккаунту)</div>
+            <div class="rule-item rule">1.12 Запрещено угрожать серверу/проекту/администратору (перманент бан аккаунта)</div>
+        </div>
+
+        <div class="rules-section">
+            <h2><i class="fas fa-gamepad"></i> 2. Игровой процесс</h2>
+            <div class="rule-item rule">2.1 Запрещено нарушение ролевого порядка, использование чатов не по назначению или отыгровки не при помощи /me и /do или /try</div>
+            <div class="rule-item rule">2.2 Запрещено пренебрежение RP терминами:</div>
+            <div class="rule-subitem rule">FunRP (несерьезные, скорее отыгровки по приколу, например /me перданул)</div>
+            <div class="rule-subitem rule">LeaveRP (уход от RP-отыгровок любыми методами)</div>
+            <div class="rule-subitem rule">FearRP (неотыгровка страха)</div>
+            <div class="rule-subitem rule">DeathMatch (убийство без IC причины)</div>
+            <div class="rule-subitem rule">PowerGaming (присвоение свойств персонажу, несоответствующему реальности)</div>
+            <div class="rule-subitem rule">MetaGaming (использование информации из OOC в IC)</div>
+            <div class="rule-item rule">2.3 Запрещено злоупотребление RP командами</div>
+            <div class="rule-subitem">Пример: Прописать "/try выбил оружие из рук", после чего выпало "неудачно", а вы начали повторять команду до строчки "удачно"</div>
+            <div class="rule-item rule">2.4 Запрещены попытки обхода наказаний</div>
+            <div class="rule-item rule">2.5 Запрещена покупка/продажа/попытка продажи любого имущества за реальные деньги или какой-либо их эквивалент</div>
+            <div class="rule-item rule">2.6 Запрещено искажать в оскорбительной форме ники игроков/администраторов</div>
+            <div class="rule-item rule">2.7 Запрещена регистрация имен схожих с никами других игроков/администрации</div>
+            <div class="rule-item rule">2.8 Запрещено вставать AFK, в местах, где Вы можете помешать другим игрокам</div>
+        </div>
+
+        <div class="rules-section">
+            <h2><i class="fas fa-user"></i> 3. Аккаунт</h2>
+            <div class="rule-item rule">3.1 Запрещены ники не носящие какого-либо смысла и нечитабельные ники (Пример: "asd", "123", "sfkwerqeq1" и т. д.)</div>
+            <div class="rule-item rule">3.2 Запрещены ники, которые тем или иным образом могут оскорбить другого человека</div>
+            <div class="rule-item rule">3.3 Запрещается использование нецензурных слов в профиле — в никах/аватарах/описании</div>
+            <div class="rule-item rule">3.4 Запрещается использовать в никах адреса веб–сайтов, адреса email и прочую контактную информацию</div>
+            <div class="rule-item rule">3.5 Запрещено размещать в своём профиле/никнейме рекламные ссылки на сторонние ресурсы/проекты</div>
+            <div class="rule-item rule">3.6 Запрещено размещать в своей аватарке фотографии порнографического или экстремистского характера, а так же фашистскую символику</div>
+        </div>
+
+        <div class="rules-section">
+            <h2><i class="fas fa-user-astronaut"></i> 4. Скины</h2>
+            <div class="rule-item info">4.1 Рекомендуется отключить скины лаунчеров</div>
+            <div class="rule-item rule">4.2 Запрещены скины несоответствие тематике проекта</div>
+            <div class="rule-item rule">4.3 Запрещены скины Non-RP</div>
+            <div class="rule-item rule">4.4 Запрещены скины оскорбляющие кого-либо</div>
+        </div>
+
+        <div class="rules-section">
+            <h2><i class="fas fa-info-circle"></i> 5. Информация</h2>
+            <div class="rule-item rule">5.1 Администрация проекта в праве в любой момент, без объяснения причин, прекратить предоставление доступа к серверу конкретному пользователю или подсети в целом</div>
+            <div class="rule-item rule">5.2 Администрация проекта в праве в любой момент, без предупреждения, изменить текущие правила</div>
+            <div class="rule-item rule">5.3 При осознании вины в нарушениях правил, игрок может быть разбанен (на усмотрение администрации проекта)</div>
+            <div class="rule-item rule">5.4 Ваш компьютер и вы отвечаете за нарушения. Нас не интересует, нарушил ли Ваш друг/брат/мама/папа/кот правила для всех одни</div>
+            <div class="rule-item rule">5.5 Данные правила являются обязательными для ознакомления</div>
+            <div class="rule-item rule">5.6 Незнание правил не освобождает Вас от ответственности</div>
+        </div>
+
+        <a href="/minecraft-server" class="back-btn"><i class="fas fa-arrow-left"></i> Вернуться на главную</a>
+    </div>
+
+    <script>
+  
+
+        // Настройки темы
+        const themeToggle = document.getElementById('themeToggle');
+        
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeToggle.checked = true;
+        }
+        
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.body.classList.remove('light-theme');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Настройки цвета
+        function initColorSettings() {
+            const colorOptions = document.getElementById('colorOptions');
+            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+            
+            // Устанавливаем начальный цвет
+            document.documentElement.style.setProperty('--primary-color', savedColor);
+            
+            // Отмечаем выбранный цвет
+            document.querySelectorAll('.color-option').forEach(option => {
+                if (option.dataset.color === savedColor) {
+                    option.classList.add('selected');
+                }
+                
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.color-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    const selectedColor = this.dataset.color;
+                    localStorage.setItem('primaryColor', selectedColor);
+                    document.documentElement.style.setProperty('--primary-color', selectedColor);
+                });
+            });
+        }
+
+        // Настройки фона
+        const wallpapers = [
+            { name: 'Стандартные', file: 'background.jpg' },
+            { name: '2 девочки', file: '2girls.jpg' },
+            { name: 'Горничная', file: 'made.png' },
+            { name: 'Белый фон', file: 'white.jpg' },
+            { name: 'Windows 11', file: 'windows11.jpg' },
+            { name: 'Новый год', file: 'newyear.jpg' },
+            { name: 'Девушка с пушкой', file: 'girl_gun.jpg'},
+            { name: 'Нарисованный город', file: 'city_art.jpg'},
+            { name: 'Козел симулятор', file: 'goat.png'}
+        ];
+
+        function initWallpaperSettings() {
+            const wallpapersGrid = document.getElementById('wallpapersGrid');
+            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
+
+            wallpapers.forEach(wallpaper => {
+                const wallpaperOption = document.createElement('div');
+                wallpaperOption.className = `wallpaper-option ${savedWallpaper === wallpaper.file ? 'selected' : ''}`;
+                wallpaperOption.dataset.file = wallpaper.file;
+                
+                const img = document.createElement('img');
+                img.className = 'wallpaper-preview';
+                img.src = `/background/${wallpaper.file}`;
+                img.alt = wallpaper.name;
+                img.onerror = function() {
+                    this.src = '/background/background.jpg';
+                };
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'wallpaper-name';
+                nameSpan.textContent = wallpaper.name;
+                
+                wallpaperOption.appendChild(img);
+                wallpaperOption.appendChild(nameSpan);
+                
+                wallpaperOption.addEventListener('click', function() {
+                    document.querySelectorAll('.wallpaper-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    const selectedFile = this.dataset.file;
+                    localStorage.setItem('wallpaper', selectedFile);
+                    document.body.style.backgroundImage = `url('/background/${selectedFile}')`;
+                });
+                
+                wallpapersGrid.appendChild(wallpaperOption);
+            });
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initColorSettings();
+            initWallpaperSettings();
+            
+            // Устанавливаем сохранённый фон
+            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
+            document.body.style.backgroundImage = `url('/background/${savedWallpaper}')`;
+        });
+    </script>
+
+    <footer style="
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #dadada;
+        font-size: 14px;
+        z-index: 1;
+    ">
+        © Dont65 - 2025
+    </footer>
+</body>
+</html>

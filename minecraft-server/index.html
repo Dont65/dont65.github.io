@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dont65 | Minecraft Сервера</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: 42, 171, 238;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            background-image: url('../background/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            position: relative;
+            transition: background-image 0.5s ease, rgb(var(--primary-color)) 0.3s ease;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+            transition: rgb(var(--primary-color)) 0.3s ease;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 20px;
+        }
+
+        .server-list {
+            width: 100%;
+            text-align: left;
+        }
+
+        .server-card {
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid rgb(var(--primary-color));
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .server-card:hover {
+            transform: translateY(-3px);
+            background-color: rgba(var(--primary-color), 0.1);
+        }
+
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .server-name {
+            font-weight: bold;
+            color: rgb(var(--primary-color));
+            font-size: 1.2em;
+        }
+
+        .server-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-online {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+
+        .status-offline {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+            border: 1px solid #F44336;
+        }
+
+        .status-unknown {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border: 1px solid #FFC107;
+        }
+
+        .server-ip {
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .server-description {
+            font-size: 0.9em;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .server-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .server-card.active .server-details {
+            max-height: 500px;
+            padding: 10px;
+        }
+
+        .server-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-item i {
+            margin-right: 5px;
+            color: rgb(var(--primary-color));
+        }
+
+        .server-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn i {
+            font-size: 0.9em;
+        }
+
+        .rules-btn {
+            background-color: rgba(var(--primary-color), 0.2);
+            border: 1px solid rgb(var(--primary-color));
+        }
+
+        .rules-btn:hover {
+            background-color: rgba(var(--primary-color), 0.4);
+        }
+
+        .connect-btn {
+            background-color: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+        }
+        .disrord-btn {
+            background-color: rgba(86, 98, 246, 0.2);
+            border: 1px solid rgba(86, 98, 246);
+        }
+        .disrord-btn:hover {
+            background-color: rgba(86, 98, 246, 0.4);
+        }
+        .connect-btn:hover {
+            background-color: rgba(76, 175, 80, 0.4);
+        }
+
+        .back-to-main {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 15px;
+            background-color: rgba(var(--primary-color), 0.2);
+            color: rgb(var(--primary-color));
+            border: 1px solid rgb(var(--primary-color));
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-main:hover {
+            background-color: rgba(var(--primary-color), 0.4);
+        }
+
+        body.light-theme {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        body.light-theme::before {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        body.light-theme .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .server-card {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        body.light-theme .server-description {
+            color: #555;
+        }
+
+        body.light-theme .server-ip {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        body.light-theme .server-details {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .server-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .server-stats {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Мои Minecraft Сервера</h1>
+        
+        <div class="server-list">
+            <div class="server-card" onclick="toggleServerDetails(this)">
+                <div class="server-header">
+                    <div class="server-name">Statistic RP</div>
+                    <div class="server-status status-unknown">Unknown</div>
+                </div>
+                <div class="server-ip">IP: Unknown</div>
+                <div class="server-description">
+                    РП сервер (Пока никак)
+                </div>
+                <div class="server-details">
+                    <div class="server-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span>Игроков: Unknown</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-code-branch"></i>
+                            <span>Версия: Unknown</span>
+                        </div>
+                    </div>
+                    <div class="server-actions">
+                        <button class="action-btn rules-btn" onclick="window.location.href='rules'; event.stopPropagation();">
+                            <i class="fas fa-book"></i> Правила
+                        </button>
+                        <button class="action-btn disrord-btn" onclick="window.open('https://discord.gg/UZZUAy3M5p', '_blank'); event.stopPropagation();">
+                            <i class="fab fa-discord"></i> Сообщество
+                        </button>
+                        <button class="action-btn connect-btn" onclick="event.stopPropagation();">
+                            <i class="fas fa-plug"></i> Подключиться
+                        </button>
+                <!--    <button class="action-btn connect-btn" onclick="copyToClipboard('Unknown'); event.stopPropagation();">
+                            <i class="fas fa-plug"></i> Подключиться
+                        </button> -->
+                    </div>
+                </div>
+            </div>
+        <a href="/" class="back-to-main">
+            <i class="fas fa-arrow-left"></i> Вернуться на главную
+        </a>
+    </div>
+
+    <script>
+        // Функция для переключения деталей сервера
+        function toggleServerDetails(card) {
+            card.classList.toggle('active');
+        }
+
+        // Функция для копирования IP в буфер обмена
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('IP адрес скопирован: ' + text);
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+            });
+        }
+
+        // Проверка темы из localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+
+            // Проверка выбранного фона
+            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
+            document.body.style.backgroundImage = `url('../background/${savedWallpaper}')`;
+
+            // Проверка основного цвета
+            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+            document.documentElement.style.setProperty('--primary-color', savedColor);
+        });
+    </script>
+</body>
+</html>
