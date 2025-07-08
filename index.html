@@ -921,6 +921,10 @@ body.light-theme .footer {
                 <i class="fas fa-terminal"></i>
                 <span>Терминал</span>
             </div>
+            <div class="menu-item" id="openServer">
+                <i class="fa fa-tag"></i>
+                <span>Мои сервера Minecraft</span>
+            </div>
 
             <div class="menu-item" id="openAchievementsModal">
                 <i class="fas fa-trophy"></i>
@@ -1281,6 +1285,10 @@ body.light-theme .footer {
             localStorage.setItem('terminal_visited', 'true');
             unlockAchievement('terminal_visited');
             window.location.href = '/terminal';
+            menuSidebar.classList.remove('active');
+        });
+         document.getElementById('openServer').addEventListener('click', () => {
+            window.location.href = '/minecraft-server';
             menuSidebar.classList.remove('active');
         });
         
