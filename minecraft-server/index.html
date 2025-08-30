@@ -344,9 +344,21 @@
             document.body.style.backgroundImage = `url('../background/${savedWallpaper}')`;
 
             // Проверка основного цвета
+                        function adjustColorForTheme(color) {
+                if (document.body.classList.contains('light-theme') && color === '255, 255, 255') {
+                    return '0, 0, 0'; // Заменяем белый на черный в светлой теме
+                }
+                return color;
+            }
+
+            function updatePrimaryColor(color) {
+                const adjustedColor = adjustColorForTheme(color);
+                document.documentElement.style.setProperty('--primary-color', adjustedColor);
+            }
             const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
-            document.documentElement.style.setProperty('--primary-color', savedColor);
+            updatePrimaryColor(savedColor);
         });
     </script>
 </body>
+
 </html>
