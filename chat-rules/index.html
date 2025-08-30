@@ -849,8 +849,19 @@
             initWallpaperSettings();
             
             // Устанавливаем сохранённый фон
-            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            document.body.style.backgroundImage = `url('/background/${savedWallpaper}')`;
+                       function adjustColorForTheme(color) {
+                if (document.body.classList.contains('light-theme') && color === '255, 255, 255') {
+                    return '0, 0, 0'; // Заменяем белый на черный в светлой теме
+                }
+                return color;
+            }
+
+            function updatePrimaryColor(color) {
+                const adjustedColor = adjustColorForTheme(color);
+                document.documentElement.style.setProperty('--primary-color', adjustedColor);
+            }
+            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+            updatePrimaryColor(savedColor);
         });
     </script>
 
@@ -870,3 +881,4 @@
     </footer>
 </body>
 </html>
+
