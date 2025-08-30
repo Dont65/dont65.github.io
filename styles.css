@@ -352,7 +352,9 @@ body.light-theme .footer {
     cursor: pointer;
     transition: color 0.3s;
 }
-
+body.light-theme .modal-close {
+    color: black;
+}
 .modal-close:hover {
     color: rgb(var(--primary-color));
 }
