@@ -56,7 +56,7 @@ const quotes = [
     "Когда рушится мир — я не плачу. Я наблюдаю.",
     "Я не потерялась — я спряталась в щелях между измерениями.",
     "Мне не нужно имя, чтобы остаться в памяти.",
-    "Тишина камеры громче любых вопросов. Особенно, когда я не моргаю.",
+    "Тишина камеря громче любых вопросов. Особенно, когда я не моргаю.",
     "Он всегда стоял выше, но только я знала, как холодно бывает там, где нет сомнений.",
     "Мне не нужны цепи. Я остаюсь, потому что хочу.",
     "Всё, что обо мне написано, — наблюдение. Всё, что не написано, — угроза.",
@@ -69,7 +69,7 @@ const quotes = [
     "Первая встреча была не словом — взгляд. Он не отпрянул.",
    "Я тогда улыбнулась впервые. И мир потрескался по границам между добром и тем, что скрывается за ним.",
     "Мы не сражались. Мы узнали друг друга среди криков павших и тишины Небес.",
-    "Он не был спасением. Он был напоминанием, что даже божественное способно дрогнуть.",
+    "Он не был спасением. Он был напоминанием, что даже божественное способна дрогнуть.",
     "Некоторые стоят на стороне света. Некоторые — в тени. А я стояла между ним и погибелью, чтобы он сделал выбор.",
 ];
 
@@ -160,6 +160,20 @@ window.addEventListener('click', (e) => {
     }
 });
 
+// Функция для корректировки цвета в зависимости от темы
+function adjustColorForTheme(color) {
+    if (document.body.classList.contains('light-theme') && color === '255, 255, 255') {
+        return '0, 0, 0'; // Заменяем белый на черный в светлой теме
+    }
+    return color;
+}
+
+// Функция для обновления основного цвета
+function updatePrimaryColor(color) {
+    const adjustedColor = adjustColorForTheme(color);
+    document.documentElement.style.setProperty('--primary-color', adjustedColor);
+}
+
 const themeToggle = document.getElementById('themeToggle');
 
 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -176,6 +190,11 @@ themeToggle.addEventListener('change', function() {
         document.body.classList.remove('light-theme');
         localStorage.setItem('theme', 'dark');
     }
+    
+    // Обновляем цвет с учетом новой темы
+    const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+    updatePrimaryColor(savedColor);
+    
     unlockAchievement('theme_changed');
 });
 
@@ -185,7 +204,7 @@ function initColorSettings() {
     const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
     
     // Устанавливаем начальный цвет
-    document.documentElement.style.setProperty('--primary-color', savedColor);
+    updatePrimaryColor(savedColor);
     
     // Отмечаем выбранный цвет
     document.querySelectorAll('.color-option').forEach(option => {
@@ -201,7 +220,7 @@ function initColorSettings() {
             
             const selectedColor = this.dataset.color;
             localStorage.setItem('primaryColor', selectedColor);
-            document.documentElement.style.setProperty('--primary-color', selectedColor);
+            updatePrimaryColor(selectedColor);
             unlockAchievement('color_changed');
         });
     });
