@@ -834,8 +834,11 @@ body.light-theme .achievement-notification {
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.3s ease;
+    background-color: rgb(255, 255, 255);
 }
-
+body.light-theme .color-option {
+     background-color: rgb(0, 0, 0);
+}    
 .color-option.selected {
     border-color: white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -879,4 +882,13 @@ body.light-theme .achievement-notification {
     .achievements-container {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+body.light-theme .color-option.selected {
+    border-color: #333;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+body.light-theme .settings-category-title,
+body.light-theme .setting-label span {
+    color: #333;
 }
