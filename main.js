@@ -282,7 +282,7 @@ function initWallpaperSettings() {
 const achievements = [
     {
         id: 'first_visit',
-        title: 'Первое посещение',
+        title: 'Добро пожаловать!',
         description: 'Посетить сайт',
         icon: 'fa-door-open',
         unlocked: false,
@@ -298,15 +298,15 @@ const achievements = [
     },
     {
         id: 'theme_changed',
-        title: 'Смена стиля',
-        description: 'Изменить тему',
-        icon: 'fa-moon',
+        title: 'Ааа, флешка',
+        description: 'Изменить тему на белую',
+        icon: 'fa-sun',
         unlocked: false,
         date: null
     },
     {
         id: 'wallpaper_changed',
-        title: 'Декоратор',
+        title: 'Тут есть фоны?',
         description: 'Сменить фон',
         icon: 'fa-image',
         unlocked: false,
@@ -314,7 +314,7 @@ const achievements = [
     },
     {
         id: 'color_changed',
-        title: 'Художник',
+        title: 'Я дизайнер, я так вижу',
         description: 'Изменить основной цвет',
         icon: 'fa-palette',
         unlocked: false,
