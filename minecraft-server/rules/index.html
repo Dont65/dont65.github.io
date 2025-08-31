@@ -353,7 +353,7 @@
 
 
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            document.body.style.backgroundImage = `url('../background/${savedWallpaper}')`;
+            document.body.style.backgroundImage = `url('/background/${savedWallpaper}')`;
 
 
                         function adjustColorForTheme(color) {
@@ -388,3 +388,4 @@
     </footer>
 </body>
 </html>
+
