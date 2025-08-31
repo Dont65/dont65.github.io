@@ -355,6 +355,9 @@ body.light-theme .footer {
 body.light-theme .modal-close {
     color: black;
 }
+body.light-theme .modal-close:hover {
+    color: rgb(var(--primary-color));
+}
 .modal-close:hover {
     color: rgb(var(--primary-color));
 }
