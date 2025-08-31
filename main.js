@@ -439,3 +439,26 @@ document.addEventListener('DOMContentLoaded', function() {
         window.open('https://t.me/dont65', '_blank');
     });
 });
+
+document.getElementById('refreshQuoteBtn').addEventListener('click', function() {
+    updateQuote();
+   
+    this.classList.add('rotating');
+    setTimeout(() => {
+        this.classList.remove('rotating');
+    }, 1000);
+});
+
+
+function updateQuote() {
+    const quoteElement = document.getElementById('randomQuote');
+    if (quoteElement) {
+        
+        quoteElement.style.opacity = '0';
+        setTimeout(() => {
+            quoteElement.textContent = getRandomQuote();
+            
+            quoteElement.style.opacity = '1';
+        }, 300);
+    }
+}
