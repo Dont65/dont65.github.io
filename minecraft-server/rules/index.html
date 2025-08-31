@@ -754,29 +754,20 @@
         });
 
         // Настройки цвета
-        function initColorSettings() {
-            const colorOptions = document.getElementById('colorOptions');
-            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
-            
-            // Устанавливаем начальный цвет
-            document.documentElement.style.setProperty('--primary-color', savedColor);
-            
-            // Отмечаем выбранный цвет
-            document.querySelectorAll('.color-option').forEach(option => {
-                if (option.dataset.color === savedColor) {
-                    option.classList.add('selected');
+
+        function adjustColorForTheme(color) {
+                if (document.body.classList.contains('light-theme') && color === '255, 255, 255') {
+                    return '0, 0, 0'; // Заменяем белый на черный в светлой теме
                 }
-                
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.color-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                    
-                    const selectedColor = this.dataset.color;
-                    localStorage.setItem('primaryColor', selectedColor);
-                    document.documentElement.style.setProperty('--primary-color', selectedColor);
-                });
+                return color;
+            }
+
+            function updatePrimaryColor(color) {
+                const adjustedColor = adjustColorForTheme(color);
+                document.documentElement.style.setProperty('--primary-color', adjustedColor);
+            }
+            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+            updatePrimaryColor(savedColor);
             });
         }
 
@@ -859,3 +850,4 @@
     </footer>
 </body>
 </html>
+
