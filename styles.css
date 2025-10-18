@@ -102,6 +102,20 @@ body::before {
     text-align: center;
 }
 
+.quote-author {
+    font-size: 0.9em;
+    color: rgba(var(--primary-color), 0.8);
+    font-style: italic;
+    margin-top: 8px;
+    text-align: right;
+    transition: opacity 0.3s ease;
+    padding-right: 10px;
+}
+
+body.light-theme .quote-author {
+    color: rgba(var(--primary-color), 0.9);
+}
+
 .quote-refresh-container {
     display: flex;
     justify-content: center;
@@ -891,6 +905,16 @@ body.light-theme .color-option {
     transform: scale(1.1);
 }
 
+body.light-theme .color-option.selected {
+    border-color: #333;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+body.light-theme .settings-category-title,
+body.light-theme .setting-label span {
+    color: #333;
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 20px;
@@ -928,13 +952,4 @@ body.light-theme .color-option {
     .achievements-container {
         grid-template-columns: repeat(2, 1fr);
     }
-}
-body.light-theme .color-option.selected {
-    border-color: #333;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-body.light-theme .settings-category-title,
-body.light-theme .setting-label span {
-    color: #333;
 }
