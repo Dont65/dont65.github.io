@@ -19,7 +19,7 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            background-image: url('../background/background.jpg');
+            background-image: url('../assets/background/background.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -300,7 +300,7 @@
                         <button class="action-btn rules-btn" onclick="window.location.href='rules'; event.stopPropagation();">
                             <i class="fas fa-book"></i> Правила
                         </button>
-                        <button class="action-btn disrord-btn" onclick="window.open('https://discord.gg/UZZUAy3M5p', '_blank'); event.stopPropagation();">
+                        <button class="action-btn disrord-btn" onclick="window.open('', '_blank'); event.stopPropagation();">
                             <i class="fab fa-discord"></i> Сообщество
                         </button>
                         <button class="action-btn connect-btn" onclick="event.stopPropagation();">
@@ -341,10 +341,10 @@
 
             // Проверка выбранного фона
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            document.body.style.backgroundImage = `url('../background/${savedWallpaper}')`;
+            document.body.style.backgroundImage = `url('../assets/background/${savedWallpaper}')`;
 
             // Проверка основного цвета
-                        function adjustColorForTheme(color) {
+            function adjustColorForTheme(color) {
                 if (document.body.classList.contains('light-theme') && color === '255, 255, 255') {
                     return '0, 0, 0'; // Заменяем белый на черный в светлой теме
                 }
@@ -358,6 +358,7 @@
             const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
             updatePrimaryColor(savedColor);
         });
+
     </script>
 </body>
 
