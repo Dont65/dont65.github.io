@@ -39,7 +39,7 @@
                 <span>Терминал</span>
             </div>
             <div class="menu-item" id="openServer">
-                <i class="fa fa-tag"></i>
+                <i class="block-icon"></i>
                 <span>Мои сервера Minecraft</span>
             </div>
 
@@ -56,7 +56,14 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- Звезда активации -->
+    <div id="activationStar" class="activation-star">
+        <i class="fas fa-star"></i>
+    </div>
+
+    <!-- Контейнер для снежинок -->
+    <div id="snowContainer"></div>
 
     <div class="modal" id="profileModal">
         <div class="modal-content">
@@ -81,7 +88,6 @@
         </div>
     </div>
     
-
     <div class="modal" id="skillsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -116,7 +122,6 @@
         </div>
     </div>
     
-
     <div class="modal" id="projectsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -220,6 +225,53 @@
                             
                         </div>
                     </div>
+
+                    <!-- Раздел разработчика (скрыт по умолчанию) -->
+                    <div class="settings-category" id="developerSettingsCategory" style="display: none;">
+                        <div class="settings-category-title">
+                            <i class="fas fa-tools"></i>
+                            <span>Разработчик</span>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-snowflake"></i>
+                                <span>Принудительный снег</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="snowToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-note">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Эта функция может повлиять на производительность устройства</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>Тематические паки иконок</span>
+                            </div>
+                            <select id="iconPackSelect">
+                                <option value="default">Стандартные</option>
+                                <option value="halloween">Хэллоуин</option>
+                                <option value="newyear">Новый год</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Время и дата -->
+                        <div class="developer-info">
+                            <div class="info-item">
+                                <h4>Текущее время</h4>
+                                <p id="currentTime"></p>
+                            </div>
+                            <div class="info-item">
+                                <h4>Текущая дата</h4>
+                                <p id="currentDate"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -230,7 +282,7 @@
             <div class="avatar">
                 <img src="https://t.me/i/userpic/160/dont65.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="Аватар">
             </div>
-            <div class="username">Dont65</div>
+            <div class="username">Dont65<span id="usernameEmoji"></span></div>
             <div class="age" id="age"></div>
         </div>
 
@@ -281,4 +333,3 @@
 </footer>    
 </body>
 </html>
-

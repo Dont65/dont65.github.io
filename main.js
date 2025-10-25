@@ -1,4 +1,3 @@
-
 const birthDate = new Date('2008-01-02');
 const formattedBirthDate = '02.01.2008';
 
@@ -47,16 +46,12 @@ const quotes = [
     {text:"Безумие — это точное повторение одного и того же действия, раз за разом, в надежде на изменение. Это и есть безумие", author:"Ваас Монтенегро"},
     {text:"Порно — лучший учитель жизни. Оно показывает в каких позах и в какие щели жизнь долбить будет", author:"Dont65"},
     {text:"За свою жизнь я промахнулся много тысяч раз... Я терплю поражения день за днем — и именно поэтому я ЧЕМПИОН!", author:"Майкл Джордан"},
-    {text:"Когда ты поднимаешься, друзья узнают, кто ты. Когда ты падаешь, ты узнаешь, кто друзья.", author:"Майк Тайсон"},
-    {text:"Умей пережить ту минуту, когда кажется что всё уже потеряно.", author:"Уэйн Руни"},
+    {text:"Когда ты поднимаешься, друзья узнают, кто ты. Когда ты падаешь, ты узнаешь, кто друзья.", author:"Майкл Тайсон"},
+    {text:"Умей пережить ту минута, когда кажется что всё уже потеряно.", author:"Уэйн Руни"},
     {text:"Бог не дал нам крылья, но подарил мяч... Он знал, что нам это понравится больше.", author:"Мирослав Клозе"},
     {text:"Я могу принять поражение, но я не могу принять отсутствие попыток.", author:"Майкл Джордан"},
     {text:"Если ты не сделал ни одной попытки попасть в цель, то промахнулся на все сто.", author:"Уэйн Дуглас Гретцки"},
     {text:"Кто хочет, тот найдет тысячу возможностей. Кто не хочет, тот найдет тысячу причин", author:"Сократ"},
-
-   // {text:"", author:""},
-
-
 ];
 
 function getRandomQuote() {
@@ -159,18 +154,98 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Функция для корректировки цвета в зависимости от темы
+
 function adjustColorForTheme(color) {
     if (document.body.classList.contains('light-theme') && color === '255, 255, 255') {
-        return '0, 0, 0'; // Заменяем белый на черный в светлой теме
+        return '0, 0, 0'; 
     }
     return color;
 }
 
-// Функция для обновления основного цвета
+
 function updatePrimaryColor(color) {
     const adjustedColor = adjustColorForTheme(color);
     document.documentElement.style.setProperty('--primary-color', adjustedColor);
+}
+
+
+let themeToggleCounter = 0;
+let lastThemeToggleTime = 0;
+
+
+function showActivationStar() {
+    const star = document.getElementById('activationStar');
+    if (star) {
+        star.classList.add('show');
+        setTimeout(() => {
+            star.classList.remove('show');
+           
+            activateDeveloperSection();
+        }, 500);
+    }
+}
+
+
+function activateDeveloperSection() {
+    const developerSettingsCategory = document.getElementById('developerSettingsCategory');
+    if (developerSettingsCategory) {
+        developerSettingsCategory.style.display = 'block';
+        localStorage.setItem('developerSectionActivated', 'true');
+
+        unlockAchievement('developer_mode');
+        
+        updateDeveloperTime();
+        setInterval(updateDeveloperTime, 1000);
+        
+        initIconPackSettings();
+    }
+}
+
+function checkDeveloperModeActivation() {
+    const currentTime = Date.now();
+    
+
+    if (currentTime - lastThemeToggleTime > 3000) {
+        themeToggleCounter = 0;
+    }
+    
+    themeToggleCounter++;
+    lastThemeToggleTime = currentTime;
+    
+    console.log(`Переключение темы: ${themeToggleCounter}/5`);
+    
+
+    if (themeToggleCounter >= 5) {
+        themeToggleCounter = 0;
+        showActivationStar();
+    }
+}
+
+
+function updateDeveloperTime() {
+    const now = new Date();
+    const currentTimeElement = document.getElementById('currentTime');
+    const currentDateElement = document.getElementById('currentDate');
+    
+    if (currentTimeElement) {
+        currentTimeElement.textContent = now.toLocaleTimeString();
+    }
+    
+    if (currentDateElement) {
+        currentDateElement.textContent = now.toLocaleDateString('ru-RU', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+}
+
+
+function checkExistingDeveloperSection() {
+    if (localStorage.getItem('developerSectionActivated') === 'true') {
+        activateDeveloperSection();
+    }
 }
 
 const themeToggle = document.getElementById('themeToggle');
@@ -182,6 +257,8 @@ if (savedTheme === 'light') {
 }
 
 themeToggle.addEventListener('change', function() {
+    checkDeveloperModeActivation();
+    
     if (this.checked) {
         document.body.classList.add('light-theme');
         localStorage.setItem('theme', 'light');
@@ -190,22 +267,21 @@ themeToggle.addEventListener('change', function() {
         localStorage.setItem('theme', 'dark');
     }
     
-    // Обновляем цвет с учетом новой темы
+
     const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
     updatePrimaryColor(savedColor);
     
     unlockAchievement('theme_changed');
 });
 
-// Цветовые схемы
+
 function initColorSettings() {
     const colorOptions = document.getElementById('colorOptions');
     const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
-    
-    // Устанавливаем начальный цвет
+
     updatePrimaryColor(savedColor);
     
-    // Отмечаем выбранный цвет
+
     document.querySelectorAll('.color-option').forEach(option => {
         if (option.dataset.color === savedColor) {
             option.classList.add('selected');
@@ -240,7 +316,7 @@ const wallpapers = [
 
 function initWallpaperSettings() {
     const wallpapersGrid = document.getElementById('wallpapersGrid');
-    const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
+    const savedWallpaper = localStorage.getItem('assets/wallpaper') || 'background.jpg';
 
     wallpapers.forEach(wallpaper => {
         const wallpaperOption = document.createElement('div');
@@ -249,10 +325,10 @@ function initWallpaperSettings() {
         
         const img = document.createElement('img');
         img.className = 'wallpaper-preview';
-        img.src = `background/${wallpaper.file}`;
+        img.src = `assets/background/${wallpaper.file}`;
         img.alt = wallpaper.name;
         img.onerror = function() {
-            this.src = 'background/background.jpg';
+            this.src = 'assets/background/background.jpg';
         };
         
         const nameSpan = document.createElement('span');
@@ -270,7 +346,7 @@ function initWallpaperSettings() {
             
             const selectedFile = this.dataset.file;
             localStorage.setItem('wallpaper', selectedFile);
-            document.body.style.backgroundImage = `url('background/${selectedFile}')`;
+            document.body.style.backgroundImage = `url('assets//background/${selectedFile}')`;
             unlockAchievement('wallpaper_changed');
         });
         
@@ -278,7 +354,304 @@ function initWallpaperSettings() {
     });
 }
 
-// Система достижений
+
+let snowInterval = null;
+let snowflakes = [];
+
+function startSnow() {
+    const snowContainer = document.getElementById('snowContainer');
+    if (!snowContainer) return;
+    
+
+    stopSnow();
+    
+
+    const snowflakeCount = 100; 
+    
+    for (let i = 0; i < snowflakeCount; i++) {
+        createSnowflake();
+    }
+    
+
+    snowInterval = setInterval(() => {
+        moveSnowflakes();
+    }, 50);
+}
+
+function stopSnow() {
+    if (snowInterval) {
+        clearInterval(snowInterval);
+        snowInterval = null;
+    }
+    
+    const snowContainer = document.getElementById('snowContainer');
+    if (snowContainer) {
+        snowContainer.innerHTML = '';
+    }
+    
+    snowflakes = [];
+}
+
+function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.className = 'snowflake';
+    snowflake.innerHTML = '❄';
+    
+
+    const size = Math.random() * 15 + 10;
+    snowflake.style.fontSize = `${size}px`;
+    
+
+    const startX = Math.random() * window.innerWidth;
+    snowflake.style.left = `${startX}px`;
+    snowflake.style.top = `-20px`;
+    
+
+    const speed = Math.random() * 3 + 2;
+    const sway = Math.random() * 2 - 1;
+    
+    document.getElementById('snowContainer').appendChild(snowflake);
+    
+    snowflakes.push({
+        element: snowflake,
+        x: startX,
+        y: -20,
+        speed: speed,
+        sway: sway,
+        swayDirection: Math.random() > 0.5 ? 1 : -1
+    });
+}
+
+function moveSnowflakes() {
+    const container = document.getElementById('snowContainer');
+    if (!container) return;
+    
+    for (let i = snowflakes.length - 1; i >= 0; i--) {
+        const snowflake = snowflakes[i];
+        
+   
+        snowflake.y += snowflake.speed;
+        
+
+        snowflake.x += snowflake.sway * snowflake.swayDirection;
+        snowflake.swayDirection *= Math.random() > 0.99 ? -1 : 1;
+        
+
+        if (snowflake.y > window.innerHeight) {
+            container.removeChild(snowflake.element);
+            snowflakes.splice(i, 1);
+            createSnowflake();
+        } else {
+
+            snowflake.element.style.transform = `translate(${snowflake.x}px, ${snowflake.y}px)`;
+        }
+    }
+}
+
+function initSnowSettings() {
+    const snowToggle = document.getElementById('snowToggle');
+    if (!snowToggle) return;
+    
+
+    const snowEnabled = localStorage.getItem('snowEnabled') === 'true';
+    snowToggle.checked = snowEnabled;
+    
+    if (snowEnabled) {
+        startSnow();
+    }
+    
+    snowToggle.addEventListener('change', function() {
+        if (this.checked) {
+            startSnow();
+        } else {
+            stopSnow();
+        }
+        localStorage.setItem('snowEnabled', this.checked);
+    });
+}
+
+
+function applyIconPack(packName) {
+    const pack = iconPacks[packName];
+    
+
+    document.querySelectorAll('.menu-item').forEach(item => {
+        const icon = item.querySelector('i');
+        if (icon) {
+            const iconType = getIconTypeFromClass(icon.className);
+            if (pack[iconType]) {
+                icon.className = `fas ${pack[iconType]}`;
+            }
+        }
+    });
+    
+    
+    document.querySelectorAll('.settings-category-title i, .setting-label i').forEach(icon => {
+        const iconType = getIconTypeFromClass(icon.className);
+        if (pack[iconType]) {
+            icon.className = `fas ${pack[iconType]}`;
+        }
+    });
+    
+    
+    document.querySelectorAll('.modal-header i').forEach(icon => {
+        const iconType = getIconTypeFromClass(icon.className);
+        if (pack[iconType]) {
+            icon.className = `fas ${pack[iconType]}`;
+        }
+    });
+    
+    
+    const usernameEmoji = document.getElementById('usernameEmoji');
+    if (usernameEmoji) {
+        usernameEmoji.textContent = pack.usernameEmoji;
+    }
+    
+    localStorage.setItem('iconPack', packName);
+}
+
+function getIconTypeFromClass(className) {
+    if (className.includes('fa-user')) return 'profile';
+    if (className.includes('fa-code')) return 'skills';
+    if (className.includes('fa-project-diagram')) return 'projects';
+    if (className.includes('fa-terminal')) return 'terminal';
+    if (className.includes('fa-trophy')) return 'achievements';
+    if (className.includes('fa-cog')) return 'settings';
+    if (className.includes('fa-image')) return 'image';
+    if (className.includes('fa-fill-drip')) return 'fill';
+    return '';
+}
+
+function initIconPackSettings() {
+    const iconPackSelect = document.getElementById('iconPackSelect');
+    if (!iconPackSelect) return;
+    
+    // Проверяем, активирован ли режим разработчика
+    const isDeveloperMode = localStorage.getItem('developerSectionActivated') === 'true';
+    
+    if (isDeveloperMode) {
+        // В режиме разработчика используем сохраненную тему
+        const savedIconPack = localStorage.getItem('iconPack') || 'default';
+        iconPackSelect.value = savedIconPack;
+        applyIconPack(savedIconPack);
+    } else {
+        // В обычном режиме проверяем сезонную тему
+        const currentSeason = getCurrentSeason();
+        if (currentSeason) {
+            applyIconPack(currentSeason);
+        } else {
+            const savedIconPack = localStorage.getItem('iconPack') || 'default';
+            applyIconPack(savedIconPack);
+        }
+    }
+    
+    iconPackSelect.addEventListener('change', function() {
+        const selectedPack = this.value;
+        applyIconPack(selectedPack);
+        unlockAchievement('icon_pack_changed');
+        
+        // Показываем уведомление о перезагрузке
+        const notification = document.createElement('div');
+        notification.className = 'reload-notification';
+        notification.innerHTML = `
+            <i class="fas fa-sync-alt fa-spin" style="margin-bottom: 10px; font-size: 24px;"></i>
+            <div>Тема иконок применена</div>
+            <div style="font-size: 0.8em; margin-top: 5px; opacity: 0.8;">Страница перезагрузится через 1 секунду...</div>
+        `;
+        document.body.appendChild(notification);
+        
+        // Перезагружаем страницу через 1 секунду
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    });
+}
+
+// Также обновляем функцию checkSeasonalTheme
+function checkSeasonalTheme() {
+    // Проверяем, активирован ли режим разработчика
+    const isDeveloperMode = localStorage.getItem('developerSectionActivated') === 'true';
+    
+    // Если режим разработчика активирован, не применяем сезонные темы
+    if (isDeveloperMode) return;
+    
+    const currentSeason = getCurrentSeason();
+    
+    if (currentSeason === 'halloween') {
+        applyIconPack('halloween');
+        if (localStorage.getItem('snowEnabled') !== 'true') {
+            stopSnow();
+        }
+    } else if (currentSeason === 'newyear') {
+        applyIconPack('newyear');
+        startSnow();
+        localStorage.setItem('snowEnabled', 'true');
+        const snowToggle = document.getElementById('snowToggle');
+        if (snowToggle) {
+            snowToggle.checked = true;
+        }
+    }
+}
+
+// Вспомогательная функция для определения текущего сезона
+function getCurrentSeason() {
+    const now = new Date();
+    const month = now.getMonth() + 1; // 1-12
+    const date = now.getDate();
+    
+    // Хэллоуин: с 24.10 по 07.11
+    if ((month === 10 && date >= 24) || (month === 11 && date <= 7)) {
+        return 'halloween';
+    }
+    
+    // Новый год: с 25.12 по 08.01
+    if ((month === 12 && date >= 25) || (month === 1 && date <= 8)) {
+        return 'newyear';
+    }
+    
+    return null;
+}
+
+
+const iconPacks = {
+    default: {
+        profile: 'fas fa-user',
+        skills: 'fas fa-code',
+        projects: 'fas fa-project-diagram',
+        terminal: 'fas fa-terminal',
+        achievements: 'fas fa-trophy',
+        settings: 'fas fa-cog',
+        palette: 'fas fa-palette',
+        image: 'fas fa-image',
+        tools: 'fas fa-tools',
+        fill: 'fas fa-fill-drip',
+        usernameEmoji: ''
+    },
+    halloween: {
+        profile: 'fas fa-ghost',
+        skills: 'fas fa-skull',
+        projects: 'fas fa-spider',
+        terminal: 'fas fa-broom',
+        achievements: 'fa-solid fa-crow', 
+        settings: 'candy-icon',
+        image: 'fas fa-bat',
+        fill: 'fas fa-fill',
+        usernameEmoji: ' 🎃'
+    },
+    newyear: {
+        profile: 'fas fa-snowman',
+        skills: 'fas fa-gift',
+        projects: 'fas fa-tree',
+        terminal: 'fas fa-star',
+        achievements: 'fas fa-medal',
+        settings: 'fas fa-snowflake',
+        image: 'fas fa-snowflake',
+        fill: 'fas fa-fill-drip',
+        usernameEmoji: ' 🎅'
+    }
+};
+
+
 const achievements = [
     {
         id: 'first_visit',
@@ -327,19 +700,35 @@ const achievements = [
         icon: 'fa-terminal',
         unlocked: false,
         date: null
+    },
+    {
+        id: 'developer_mode',
+        title: 'Режим разработчика',
+        description: 'Активировать режим разработчика',
+        icon: 'fa-tools',
+        unlocked: false,
+        date: null
+    },
+    {
+        id: 'icon_pack_changed',
+        title: 'Смена облика',
+        description: 'Сменить тему иконок',
+        icon: 'fa-paint-brush',
+        unlocked: false,
+        date: null
     }
 ];
 
 function checkAchievements() {
     const savedAchievements = JSON.parse(localStorage.getItem('achievements')) || achievements;
     
-    // Проверка первого посещения
+
     if (!localStorage.getItem('first_visit')) {
         unlockAchievement('first_visit');
         localStorage.setItem('first_visit', new Date().toISOString());
     }
     
-    // Обновляем данные в массиве
+
     achievements.forEach(ach => {
         const savedAch = savedAchievements.find(a => a.id === ach.id);
         if (savedAch) {
@@ -358,7 +747,7 @@ function unlockAchievement(id) {
         achievement.date = new Date().toISOString();
         localStorage.setItem('achievements', JSON.stringify(achievements));
         
-        // Показываем уведомление
+
         showAchievementNotification(achievement);
         
         return true;
@@ -431,9 +820,14 @@ document.addEventListener('DOMContentLoaded', function() {
     initColorSettings();
     initWallpaperSettings();
     checkAchievements();
+    checkExistingDeveloperSection();
+    initSnowSettings();
+    
+    // Проверяем и применяем сезонную тему
+    checkSeasonalTheme();
     
     const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-    document.body.style.backgroundImage = `url('background/${savedWallpaper}')`;
+    document.body.style.backgroundImage = `url('assets/background/${savedWallpaper}')`;
     
     document.getElementById('profileLink').addEventListener('click', function() {
         window.open('https://t.me/dont65', '_blank');
