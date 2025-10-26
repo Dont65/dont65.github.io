@@ -1082,6 +1082,146 @@ body.light-theme .snowflake {
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
+/* Glitch эффекты */
+body.glitched {
+    overflow: hidden;
+}
+
+.glitched .container {
+    animation: glitch 0.3s infinite;
+}
+
+.glitched .menu-sidebar {
+    animation: shake 0.5s infinite;
+}
+
+.glitched .modal-content {
+    animation: distort 0.4s infinite;
+}
+
+.glitched .social-icon {
+    animation: float 0.7s infinite alternate;
+}
+
+/* Текст глитч */
+.glitched-text {
+    position: relative;
+    display: inline-block;
+}
+
+.glitched-text::before,
+.glitched-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitched-text::before {
+    animation: glitch-1 0.5s infinite linear alternate-reverse;
+    color: #ff00ff;
+    z-index: -1;
+}
+
+.glitched-text::after {
+    animation: glitch-2 0.5s infinite linear alternate-reverse;
+    color: #00ffff;
+    z-index: -2;
+}
+
+/* Анимации глитчей */
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes distort {
+    0% { transform: skew(0deg); }
+    50% { transform: skew(2deg); }
+    100% { transform: skew(0deg); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+
+@keyframes glitch-1 {
+    0% { transform: translate(0); opacity: 0.7; }
+    33% { transform: translate(-2px, -2px); opacity: 0.5; }
+    66% { transform: translate(2px, 2px); opacity: 0.3; }
+    100% { transform: translate(0); opacity: 0.7; }
+}
+
+@keyframes glitch-2 {
+    0% { transform: translate(0); opacity: 0.7; }
+    33% { transform: translate(2px, 2px); opacity: 0.5; }
+    66% { transform: translate(-2px, -2px); opacity: 0.3; }
+    100% { transform: translate(0); opacity: 0.7; }
+}
+
+/* Эффект сканирующей линии */
+.scan-line {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ffff, transparent);
+    animation: scan 2s linear infinite;
+    z-index: 9999;
+    pointer-events: none;
+    display: none;
+}
+
+.glitched .scan-line {
+    display: block;
+}
+
+@keyframes scan {
+    0% { top: 0%; }
+    100% { top: 100%; }
+}
+
+/* Случайные пиксели */
+.pixel-noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255,0,0,0.1) 1px, transparent 1px),
+        radial-gradient(circle at 90% 60%, rgba(0,255,255,0.1) 1px, transparent 1px),
+        radial-gradient(circle at 50% 80%, rgba(255,0,255,0.1) 1px, transparent 1px);
+    background-size: 200px 200px;
+    animation: noise 0.2s infinite;
+    pointer-events: none;
+    z-index: 9998;
+    display: none;
+}
+
+.glitched .pixel-noise {
+    display: block;
+}
+
+@keyframes noise {
+    0% { background-position: 0 0; }
+    100% { background-position: 100px 100px; }
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 20px;

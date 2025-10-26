@@ -198,6 +198,7 @@ function activateDeveloperSection() {
         setInterval(updateDeveloperTime, 1000);
         
         initIconPackSettings();
+        initGlitchMode();
     }
 }
 
@@ -716,6 +717,14 @@ const achievements = [
         icon: 'fa-paint-brush',
         unlocked: false,
         date: null
+    },
+    {
+        id: 'glitch_mode',
+        title: 'MATRIX HAS YOU',
+        description: 'Активировать глитч-режим',
+        icon: 'fa-bug',
+        unlocked: false,
+        date: null
     }
 ];
 
@@ -814,6 +823,218 @@ function checkAllModalsAchievement() {
     }
 }
 
+// Glitch режим
+function initGlitchMode() {
+    const glitchToggle = document.getElementById('glitchToggle');
+    if (!glitchToggle) return;
+
+    // Проверяем сохранённые настройки
+    const glitchEnabled = localStorage.getItem('glitchEnabled') === 'true';
+    glitchToggle.checked = glitchEnabled;
+    
+    if (glitchEnabled) {
+        enableGlitchMode();
+    }
+    
+    glitchToggle.addEventListener('change', function() {
+        if (this.checked) {
+            enableGlitchMode();
+            unlockAchievement('glitch_mode');
+        } else {
+            disableGlitchMode();
+        }
+        localStorage.setItem('glitchEnabled', this.checked);
+    });
+}
+
+function enableGlitchMode() {
+    document.body.classList.add('glitched');
+    
+    // Добавляем сканирующую линию
+    const scanLine = document.createElement('div');
+    scanLine.className = 'scan-line';
+    document.body.appendChild(scanLine);
+    
+    // Добавляем пиксельный шум
+    const pixelNoise = document.createElement('div');
+    pixelNoise.className = 'pixel-noise';
+    document.body.appendChild(pixelNoise);
+    
+    // Глитч-эффект для текста
+    document.querySelectorAll('.username, .menu-item span, .modal-header h3').forEach(element => {
+        if (!element.classList.contains('glitched-text')) {
+            const text = element.textContent;
+            element.classList.add('glitched-text');
+            element.setAttribute('data-text', text);
+        }
+    });
+    
+    // Случайные дергания интерфейса
+    startRandomGlitches();
+    
+    // Звуковые эффекты (опционально)
+    playGlitchSounds();
+}
+
+function disableGlitchMode() {
+    document.body.classList.remove('glitched');
+    
+    // Удаляем добавленные элементы
+    document.querySelectorAll('.scan-line, .pixel-noise').forEach(el => el.remove());
+    
+    // Убираем глитч с текста
+    document.querySelectorAll('.glitched-text').forEach(element => {
+        element.classList.remove('glitched-text');
+        element.removeAttribute('data-text');
+    });
+    
+    // Останавливаем случайные глитчи
+    stopRandomGlitches();
+    
+    // Останавливаем звуки
+    stopGlitchSounds();
+    
+    // Полностью сбрасываем все стили элементов
+    resetAllElementsStyles();
+}
+
+function resetAllElementsStyles() {
+    // Сбрасываем стили всех элементов, которые могли быть затронуты
+    const affectedElements = document.querySelectorAll(
+        '.container, .menu-sidebar, .modal-content, .social-icon, .avatar, .quote-container'
+    );
+    
+    affectedElements.forEach(el => {
+        el.style.transform = '';
+        el.style.opacity = '';
+        el.style.animation = '';
+        el.style.filter = '';
+        el.style.transition = '';
+    });
+    
+    // Сбрасываем основной цвет
+    const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+    document.documentElement.style.setProperty('--primary-color', savedColor);
+    
+    // Принудительно перерисовываем страницу
+    document.body.style.display = 'none';
+    document.body.offsetHeight; // Trigger reflow
+    document.body.style.display = '';
+}
+
+let glitchInterval;
+
+function startRandomGlitches() {
+    glitchInterval = setInterval(() => {
+        // Случайное подрагивание элементов
+        const elements = document.querySelectorAll('.container, .modal-content, .social-icon');
+        elements.forEach(el => {
+            if (Math.random() > 0.7) {
+                el.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+                
+                // Временное исчезновение
+                if (Math.random() > 0.9) {
+                    el.style.opacity = '0.3';
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                    }, 100);
+                }
+            }
+        });
+        
+        // Случайное изменение цвета
+        if (Math.random() > 0.8) {
+            document.documentElement.style.setProperty('--primary-color', 
+                `${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}`);
+            setTimeout(() => {
+                const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
+                document.documentElement.style.setProperty('--primary-color', savedColor);
+            }, 200);
+        }
+        
+    }, 300);
+}
+
+function stopRandomGlitches() {
+    if (glitchInterval) {
+        clearInterval(glitchInterval);
+        glitchInterval = null;
+    }
+    
+    // Возвращаем элементы в нормальное состояние
+    const elements = document.querySelectorAll('*');
+    elements.forEach(el => {
+        el.style.transform = '';
+        el.style.opacity = '';
+        el.style.animation = '';
+        el.style.filter = '';
+    });
+}
+
+// Звуковые эффекты (опционально)
+let glitchAudioContext;
+
+function playGlitchSounds() {
+    if (typeof AudioContext !== 'undefined') {
+        glitchAudioContext = new AudioContext();
+        
+        // Периодические глитч-звуки
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                playRandomGlitchSound();
+            }
+        }, 2000);
+    }
+}
+
+function playRandomGlitchSound() {
+    if (!glitchAudioContext) return;
+    
+    const oscillator = glitchAudioContext.createOscillator();
+    const gainNode = glitchAudioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(glitchAudioContext.destination);
+    
+    oscillator.type = ['sine', 'square', 'sawtooth', 'triangle'][Math.floor(Math.random() * 4)];
+    oscillator.frequency.setValueAtTime(100 + Math.random() * 800, glitchAudioContext.currentTime);
+    
+    gainNode.gain.setValueAtTime(0.1, glitchAudioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, glitchAudioContext.currentTime + 0.1);
+    
+    oscillator.start(glitchAudioContext.currentTime);
+    oscillator.stop(glitchAudioContext.currentTime + 0.1);
+}
+
+function stopGlitchSounds() {
+    if (glitchAudioContext) {
+        glitchAudioContext.close();
+        glitchAudioContext = null;
+    }
+}
+function cleanupGlitchMode() {
+    // Останавливаем все интервалы
+    if (glitchInterval) {
+        clearInterval(glitchInterval);
+        glitchInterval = null;
+    }
+    
+    // Удаляем все добавленные элементы
+    document.querySelectorAll('.scan-line, .pixel-noise').forEach(el => el.remove());
+    
+    // Сбрасываем все стили
+    resetAllElementsStyles();
+    
+    // Убираем классы глитча
+    document.body.classList.remove('glitched');
+    document.querySelectorAll('.glitched-text').forEach(el => {
+        el.classList.remove('glitched-text');
+        el.removeAttribute('data-text');
+    });
+    
+    // Останавливаем звуки
+    stopGlitchSounds();
+}
 document.addEventListener('DOMContentLoaded', function() {
     updateAgeDisplay();
     updateQuote();
