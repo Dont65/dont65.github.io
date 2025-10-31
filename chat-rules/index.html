@@ -16,7 +16,7 @@
             padding: 0;
             min-height: 100vh;
             text-align: center;
-            background-image: url('../assets/background/background.jpg');
+            background-image: url('../.assets/background/background.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -502,7 +502,7 @@
         }
 
         body.light-theme::before {
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         body.light-theme .container {
@@ -744,113 +744,19 @@
 </div>
    
     <script>
-  
-
-        // Настройки темы
-        const themeToggle = document.getElementById('themeToggle');
-        
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            themeToggle.checked = true;
-        }
-        
-        themeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                document.body.classList.add('light-theme');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.body.classList.remove('light-theme');
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-
-        // Настройки цвета
-        function initColorSettings() {
-            const colorOptions = document.getElementById('colorOptions');
-            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
-            
-            // Устанавливаем начальный цвет
-            document.documentElement.style.setProperty('--primary-color', savedColor);
-            
-            // Отмечаем выбранный цвет
-            document.querySelectorAll('.color-option').forEach(option => {
-                if (option.dataset.color === savedColor) {
-                    option.classList.add('selected');
-                }
-                
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.color-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                    
-                    const selectedColor = this.dataset.color;
-                    localStorage.setItem('primaryColor', selectedColor);
-                    document.documentElement.style.setProperty('--primary-color', selectedColor);
-                });
-            });
-        }
-
-        // Настройки фона
-        const wallpapers = [
-            { name: 'Стандартные', file: 'background.jpg' },
-            { name: '2 девочки', file: '2girls.jpg' },
-            { name: 'Горничная', file: 'made.png' },
-            { name: 'Белый фон', file: 'white.jpg' },
-            { name: 'Windows 11', file: 'windows11.jpg' },
-            { name: 'Новый год', file: 'newyear.jpg' },
-            { name: 'Девушка с пушкой', file: 'girl_gun.jpg'},
-            { name: 'Нарисованный город', file: 'city_art.jpg'},
-            { name: 'Козел симулятор', file: 'goat.png'}
-        ];
-
-        function initWallpaperSettings() {
-            const wallpapersGrid = document.getElementById('wallpapersGrid');
-            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-
-            wallpapers.forEach(wallpaper => {
-                const wallpaperOption = document.createElement('div');
-                wallpaperOption.className = `wallpaper-option ${savedWallpaper === wallpaper.file ? 'selected' : ''}`;
-                wallpaperOption.dataset.file = wallpaper.file;
-                
-                const img = document.createElement('img');
-                img.className = 'wallpaper-preview';
-                img.src = `/background/${wallpaper.file}`;
-                img.alt = wallpaper.name;
-                img.onerror = function() {
-                    this.src = '/background/background.jpg';
-                };
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'wallpaper-name';
-                nameSpan.textContent = wallpaper.name;
-                
-                wallpaperOption.appendChild(img);
-                wallpaperOption.appendChild(nameSpan);
-                
-                wallpaperOption.addEventListener('click', function() {
-                    document.querySelectorAll('.wallpaper-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                    
-                    const selectedFile = this.dataset.file;
-                    localStorage.setItem('wallpaper', selectedFile);
-                    document.body.style.backgroundImage = `url('/background/${selectedFile}')`;
-                });
-                
-                wallpapersGrid.appendChild(wallpaperOption);
-            });
-        }
-
-        // Инициализация при загрузке страницы
+      // Проверка темы из localStorage
         document.addEventListener('DOMContentLoaded', function() {
-            initColorSettings();
-            initWallpaperSettings();
-            
-            // Устанавливаем сохранённый фон
-                       function adjustColorForTheme(color) {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+
+            // Проверка выбранного фона
+            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
+            document.body.style.backgroundImage = `url('/.assets/background/${savedWallpaper}')`;
+
+            // Проверка основного цвета
+            function adjustColorForTheme(color) {
                 if (document.body.classList.contains('light-theme') && color === '255, 255, 255') {
                     return '0, 0, 0'; // Заменяем белый на черный в светлой теме
                 }
@@ -878,7 +784,7 @@
         font-size: 14px;
         z-index: 1;
     ">
-        © Dont65(Все права защещены) - 2025
+        © Dont65 - 2025 (Все права защещены) 
     </footer>
 </body>
 </html>

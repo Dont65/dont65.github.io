@@ -19,7 +19,7 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            background-image: url('../assets/background/background.jpg');
+            background-image: url('/.assets/background/background.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -227,7 +227,7 @@
         }
 
         body.light-theme::before {
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         body.light-theme .container {
@@ -341,7 +341,7 @@
 
             // Проверка выбранного фона
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            document.body.style.backgroundImage = `url('../assets/background/${savedWallpaper}')`;
+            document.body.style.backgroundImage = `url('/.assets/background/${savedWallpaper}')`;
 
             // Проверка основного цвета
             function adjustColorForTheme(color) {

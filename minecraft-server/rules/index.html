@@ -14,9 +14,12 @@
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             text-align: center;
-            background-image: url('/background/background.jpg');
+            background-image: url('/.assets/background/background.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -24,7 +27,6 @@
             position: relative;
             transition: background-image 0.5s ease, rgb(var(--primary-color)) 0.3s ease;
         }
-        
         body::before {
             content: '';
             position: absolute;
@@ -353,7 +355,7 @@
 
 
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            document.body.style.backgroundImage = `url('/background/${savedWallpaper}')`;
+            document.body.style.backgroundImage = `url('/.assets/background/${savedWallpaper}')`;
 
 
                         function adjustColorForTheme(color) {
