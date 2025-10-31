@@ -54,9 +54,9 @@ body {
     width: 50px;
     height: 50px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/arch.svg') no-repeat center;
+    mask: url('assets/icons/arch.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/arch.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/arch.svg') no-repeat center;
     -webkit-mask-size: contain;
 }
 
@@ -64,9 +64,9 @@ body {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/cobweb.svg') no-repeat center;
+    mask: url('assets/icons/cobweb.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/cobweb.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/cobweb.svg') no-repeat center;
     -webkit-mask-size: contain;
 
 }
@@ -75,9 +75,9 @@ body {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/crutch.svg') no-repeat center;
+    mask: url('assets/icons/crutch.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/crutch.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/crutch.svg') no-repeat center;
     -webkit-mask-size: contain;
 
 }
@@ -89,9 +89,9 @@ body.light-theme .crutch-icon {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/html.svg') no-repeat center;
+    mask: url('assets/icons/html.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/html.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/html.svg') no-repeat center;
     -webkit-mask-size: contain;
 
 }
@@ -100,9 +100,9 @@ body.light-theme .crutch-icon {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/python.svg') no-repeat center;
+    mask: url('assets/icons/python.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/python.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/python.svg') no-repeat center;
     -webkit-mask-size: contain;
 
 }
@@ -111,9 +111,9 @@ body.light-theme .crutch-icon {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/java.svg') no-repeat center;
+    mask: url('assets/icons/java.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/java.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/java.svg') no-repeat center;
     -webkit-mask-size: contain;
 
 }
@@ -122,9 +122,9 @@ body.light-theme .crutch-icon {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/javascript.svg') no-repeat center;
+    mask: url('assets/icons/javascript.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/javascript.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/javascript.svg') no-repeat center;
     -webkit-mask-size: contain;
 
 }
@@ -132,9 +132,9 @@ body.light-theme .crutch-icon {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/candy.svg') no-repeat center;
+    mask: url('assets/icons/candy.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/candy.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/candy.svg') no-repeat center;
     -webkit-mask-size: contain;
 
 }
