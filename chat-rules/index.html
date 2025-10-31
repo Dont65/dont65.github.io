@@ -16,7 +16,7 @@
             padding: 0;
             min-height: 100vh;
             text-align: center;
-            background-image: url('../.assets/background/background.jpg');
+            background-image: url('/assets/background/background.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -753,7 +753,7 @@
 
             // Проверка выбранного фона
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            document.body.style.backgroundImage = `url('/.assets/background/${savedWallpaper}')`;
+            document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
 
             // Проверка основного цвета
             function adjustColorForTheme(color) {

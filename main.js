@@ -317,7 +317,7 @@ const wallpapers = [
 
 function initWallpaperSettings() {
     const wallpapersGrid = document.getElementById('wallpapersGrid');
-    const savedWallpaper = localStorage.getItem('.assets/wallpaper') || 'background.jpg';
+    const savedWallpaper = localStorage.getItem('assets/wallpaper') || 'background.jpg';
 
     wallpapers.forEach(wallpaper => {
         const wallpaperOption = document.createElement('div');
@@ -326,10 +326,10 @@ function initWallpaperSettings() {
         
         const img = document.createElement('img');
         img.className = 'wallpaper-preview';
-        img.src = `.assets/background/${wallpaper.file}`;
+        img.src = `assets/background/${wallpaper.file}`;
         img.alt = wallpaper.name;
         img.onerror = function() {
-            this.src = '.assets/background/background.jpg';
+            this.src = 'assets/background/background.jpg';
         };
         
         const nameSpan = document.createElement('span');
@@ -347,7 +347,7 @@ function initWallpaperSettings() {
             
             const selectedFile = this.dataset.file;
             localStorage.setItem('wallpaper', selectedFile);
-            document.body.style.backgroundImage = `url('.assets//background/${selectedFile}')`;
+            document.body.style.backgroundImage = `url('assets//background/${selectedFile}')`;
             unlockAchievement('wallpaper_changed');
         });
         
@@ -1048,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkSeasonalTheme();
     
     const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-    document.body.style.backgroundImage = `url('.assets/background/${savedWallpaper}')`;
+    document.body.style.backgroundImage = `url('assets/background/${savedWallpaper}')`;
     
     document.getElementById('profileLink').addEventListener('click', function() {
         window.open('https://t.me/dont65', '_blank');

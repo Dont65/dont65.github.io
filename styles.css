@@ -11,7 +11,7 @@ body {
     align-items: center;
     min-height: 100vh;
     text-align: center;
-    background-image: url('.assets/background/background.jpg');
+    background-image: url('assets/background/background.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -24,9 +24,9 @@ body {
     width: 20px;
     height: 20px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/block.svg') no-repeat center;
+    mask: url('assets/icons/block.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/block.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/block.svg') no-repeat center;
     -webkit-mask-size: contain;
 }
 
@@ -34,9 +34,9 @@ body {
     width: 35px;
     height: 35px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/icons.svg') no-repeat center;
+    mask: url('assets/icons/icons.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/icons.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/icons.svg') no-repeat center;
     -webkit-mask-size: contain;
 }
 
@@ -44,9 +44,9 @@ body {
     width: 35px;
     height: 35px;
     background-color: rgb(var(--primary-color));
-    mask: url('.assets/icons/flash_bank.svg') no-repeat center;
+    mask: url('assets/icons/flash_bank.svg') no-repeat center;
     mask-size: contain;
-    -webkit-mask: url('.assets/icons/flash_bank.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/flash_bank.svg') no-repeat center;
     -webkit-mask-size: contain;
 }
 
