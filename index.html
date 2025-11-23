@@ -43,6 +43,11 @@
                 <span>Мои сервера Minecraft</span>
             </div>
 
+            <div class="menu-item" id="openRules">
+                <i class="fas fa-book"></i>
+                <span>Правила чата</span>
+            </div>
+
             <div class="menu-item" id="openAchievementsModal">
                 <i class="fas fa-trophy"></i>
                 <span>Ваши достижения</span>
@@ -57,13 +62,15 @@
         </div>
     </div>
 
-    <!-- Звезда активации -->
     <div id="activationStar" class="activation-star">
         <i class="fas fa-star"></i>
     </div>
 
-    <!-- Контейнер для снежинок -->
+    <canvas id="snowCanvas"></canvas>
+    
     <div id="snowContainer"></div>
+    
+    <div id="cursorHeater"></div>
 
     <div class="modal" id="profileModal">
         <div class="modal-content">
@@ -166,8 +173,7 @@
             </div>
             <div class="modal-body">
                 <div class="achievements-container" id="achievementsContainer">
-                    <!-- Достижения будут добавляться сюда динамически -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -216,6 +222,27 @@
 
                     <div class="settings-category">
                         <div class="settings-category-title">
+                            <i class="fas fa-mouse-pointer"></i>
+                            <span>Взаимодействие</span>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-fire"></i>
+                                <span>Теплый курсор</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="cursorHeaterToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Курсор будет светиться и топить снег на фоне.</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-category">
+                        <div class="settings-category-title">
                             <i class="fas fa-image"></i>
                             <span>Фоновые изображения</span>
                         </div>
@@ -224,7 +251,6 @@
                         </div>
                     </div>
 
-                    <!-- Раздел разработчика (скрыт по умолчанию) -->
                     <div class="settings-category" id="developerSettingsCategory" style="display: none;">
                         <div class="settings-category-title">
                             <i class="fas fa-tools"></i>
@@ -243,15 +269,16 @@
                         </div>
                         <div class="setting-note">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <span>Эта функция может повлиять на производительность устройства</span>
+                            <span>Снег будет постепенно заметать экран (1 час до полного покрытия).</span>
                         </div>
 
-                        <div class="setting-item">
+                      <div class="setting-item">
                             <div class="setting-label">
                                 <i class="fas fa-paint-brush"></i>
-                                <span>Тематические паки иконок</span>
+                                <span>Тема иконок</span>
                             </div>
                             <select id="iconPackSelect">
+                                <option value="auto">Зависит от даты</option>
                                 <option value="default">Стандартные</option>
                                 <option value="halloween">Хэллоуин</option>
                                 <option value="newyear">Новый год</option>
@@ -272,6 +299,22 @@
                             <i class="fas fa-exclamation-triangle"></i>
                             <span>ВНИМАНИЕ: Может вызвать эпилепсию! Использовать с осторожностью.</span>
                         </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <i class="fas fa-braille"></i>
+                                <span>Шрифт Брайля</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="brailleToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Переводит весь текст на странице в рельефно-точечный шрифт.</span>
+                        </div>
+
                         <div class="developer-info">
                             <div class="info-item">
                                 <h4>Текущее время</h4>
@@ -340,7 +383,7 @@
     font-size: 14px;
     z-index: 1;
 ">
-    © Dont65 - 2025 (Все права защещены)
+    © Dont65 - 2025 (Все права защищены)
 </footer>    
 </body>
 </html>

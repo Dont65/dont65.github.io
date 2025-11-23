@@ -749,6 +749,7 @@ body.light-theme .modal-close:hover {
 .setting-label {
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .setting-label i {
@@ -1145,61 +1146,89 @@ body.light-theme #iconPackSelect {
     border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
-/* Стили для снежинок */
-#snowContainer {
+/* Стили для снежинок (канвас) */
+#snowCanvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 9999;
+    z-index: -1; /* Под контентом, но над фоном */
+    display: block;
 }
 
-.snowflake {
-    position: absolute;
-    color: white;
-    user-select: none;
+/* Теплый курсор */
+#cursorHeater {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 200, 100, 0.4) 0%, rgba(255, 150, 50, 0.1) 50%, transparent 100%);
+    box-shadow: 0 0 20px rgba(255, 150, 50, 0.5), 0 0 40px rgba(255, 100, 0, 0.3);
     pointer-events: none;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    animation: sparkle 2s infinite alternate;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    display: none; /* Скрыт по умолчанию */
+    mix-blend-mode: screen;
 }
 
-@keyframes sparkle {
-    0% { opacity: 0.8; }
-    100% { opacity: 1; }
-}
+/* --- DIGITAL GLITCH (ЦИФРОВЫЕ ПОМЕХИ) --- */
 
-body.light-theme .snowflake {
-    color: #888;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-/* Glitch эффекты */
 body.glitched {
-    overflow: hidden;
+    overflow-x: hidden;
+    /* Легкий сдвиг всего фона */
+    animation: bg-shift 0.2s infinite steps(2); 
 }
 
-.glitched .container {
-    animation: glitch 0.3s infinite;
-}
-
-.glitched .menu-sidebar {
-    animation: shake 0.5s infinite;
-}
-
+/* Отключаем старые плавные анимации */
+.glitched .container,
+.glitched .menu-sidebar,
 .glitched .modal-content {
-    animation: distort 0.4s infinite;
+    animation: none; 
 }
 
-.glitched .social-icon {
-    animation: float 0.7s infinite alternate;
+/* Резкое смещение контейнера (рывки) */
+.glitched .container {
+    animation: jerk-effect 2s infinite steps(1); /* steps(1) делает движение резким */
 }
 
-/* Текст глитч */
+/* Эффект битых пикселей (шум) - делаем его более цифровым/блочным */
+.pixel-noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(90deg, rgba(255,0,0,0.05), rgba(0,255,0,0.05), rgba(0,0,255,0.05)),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.15;
+    z-index: 9990;
+    pointer-events: none;
+    display: none;
+    mix-blend-mode: hard-light;
+}
+
+.glitched .pixel-noise {
+    display: block;
+    animation: noise-flash 0.1s infinite;
+}
+
+/* Битые сектора (квадраты) */
+.glitch-block-artifact {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    background: #39FF14; /* Ядрено-зеленый цвет */
+    mix-blend-mode: exclusion; /* Инверсия цветов под блоком */
+    animation: flash-block 0.1s steps(1) forwards;
+}
+/* Глитч текста (RGB сдвиг + срезы) */
 .glitched-text {
     position: relative;
     display: inline-block;
+    color: #fff;
 }
 
 .glitched-text::before,
@@ -1210,154 +1239,96 @@ body.glitched {
     left: 0;
     width: 100%;
     height: 100%;
+    background: rgba(0,0,0,0.5); /* Небольшой фон чтобы перекрывать оригинал */
 }
 
 .glitched-text::before {
-    animation: glitch-1 0.5s infinite linear alternate-reverse;
-    color: #ff00ff;
-    z-index: -1;
+    left: 2px;
+    text-shadow: -1px 0 #ff00c1;
+    clip-path: inset(0 0 0 0);
+    animation: slice-top 3s infinite linear alternate-reverse;
 }
 
 .glitched-text::after {
-    animation: glitch-2 0.5s infinite linear alternate-reverse;
-    color: #00ffff;
-    z-index: -2;
+    left: -2px;
+    text-shadow: -1px 0 #00fff9;
+    clip-path: inset(0 0 0 0);
+    animation: slice-bottom 2.5s infinite linear alternate-reverse;
 }
 
-/* Анимации глитчей */
-@keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+/* --- KEYFRAMES (АНИМАЦИИ) --- */
+
+/* Резкое дерганье блока */
+@keyframes jerk-effect {
+    0% { transform: translate(0, 0); filter: none; }
+    90% { transform: translate(0, 0); filter: none; }
+    91% { transform: translate(-5px, 2px); filter: contrast(1.5); }
+    92% { transform: translate(5px, -2px); filter: hue-rotate(90deg); }
+    93% { transform: translate(0, 0); filter: none; }
+    98% { transform: translate(0, 5px); }
+    99% { transform: translate(0, 0); }
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
+/* Мерцание шума */
+@keyframes noise-flash {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.2; transform: scale(1.01); }
 }
 
-@keyframes distort {
-    0% { transform: skew(0deg); }
-    50% { transform: skew(2deg); }
-    100% { transform: skew(0deg); }
+/* Появление и исчезновение битого сектора */
+@keyframes flash-block {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
-@keyframes float {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-10px); }
+/* Срезы текста (верхняя часть) */
+@keyframes slice-top {
+    0% { clip-path: inset(0 0 0 0); }
+    2% { clip-path: inset(10% 0 60% 0); transform: translate(-2px, 0); }
+    4% { clip-path: inset(80% 0 5% 0); transform: translate(2px, 0); }
+    6% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+    100% { clip-path: inset(0 0 0 0); }
 }
 
-@keyframes glitch-1 {
-    0% { transform: translate(0); opacity: 0.7; }
-    33% { transform: translate(-2px, -2px); opacity: 0.5; }
-    66% { transform: translate(2px, 2px); opacity: 0.3; }
-    100% { transform: translate(0); opacity: 0.7; }
+/* Срезы текста (нижняя часть) */
+@keyframes slice-bottom {
+    0% { clip-path: inset(0 0 0 0); }
+    3% { clip-path: inset(40% 0 10% 0); transform: translate(2px, 0); }
+    5% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 0); }
+    7% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+    100% { clip-path: inset(0 0 0 0); }
 }
 
-@keyframes glitch-2 {
-    0% { transform: translate(0); opacity: 0.7; }
-    33% { transform: translate(2px, 2px); opacity: 0.5; }
-    66% { transform: translate(-2px, -2px); opacity: 0.3; }
-    100% { transform: translate(0); opacity: 0.7; }
+/* Сдвиг фона */
+@keyframes bg-shift {
+    0% { background-position: center center; }
+    10% { background-position: center center; }
+    11% { background-position: calc(50% + 5px) center; }
+    12% { background-position: center center; }
+    50% { background-position: center center; }
+    51% { background-position: center calc(50% - 5px); filter: invert(1); } /* Инверсия цветов на миг */
+    52% { background-position: center center; filter: none; }
 }
 
-/* Эффект сканирующей линии */
-.scan-line {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00ffff, transparent);
-    animation: scan 2s linear infinite;
-    z-index: 9999;
-    pointer-events: none;
-    display: none;
+/* Стиль для режима Брайля */
+body.braille-active {
+    font-size: 1.1em;
+    letter-spacing: 1px;
 }
 
-.glitched .scan-line {
-    display: block;
+body.braille-active h1, 
+body.braille-active h2, 
+body.braille-active h3, 
+body.braille-active h4 {
+    letter-spacing: 2px;
 }
 
-@keyframes scan {
-    0% { top: 0%; }
-    100% { top: 100%; }
+/* Стиль для селекта в автоматическом режиме */
+#iconPackSelect option[value="auto"] {
+    font-style: italic;
+    color: rgb(var(--primary-color));
 }
 
-/* Случайные пиксели */
-.pixel-noise {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255,0,0,0.1) 1px, transparent 1px),
-        radial-gradient(circle at 90% 60%, rgba(0,255,255,0.1) 1px, transparent 1px),
-        radial-gradient(circle at 50% 80%, rgba(255,0,255,0.1) 1px, transparent 1px);
-    background-size: 200px 200px;
-    animation: noise 0.2s infinite;
-    pointer-events: none;
-    z-index: 9998;
-    display: none;
-}
-
-.glitched .pixel-noise {
-    display: block;
-}
-
-@keyframes noise {
-    0% { background-position: 0 0; }
-    100% { background-position: 100px 100px; }
-}
-
-@media (max-width: 600px) {
-    .container {
-        padding: 20px;
-        margin: 20px;
-    }
-    
-    .avatar {
-        width: 35vw;
-        height: 35vw;
-        max-width: 140px;
-        max-height: 140px;
-        min-width: 80px;
-        min-height: 80px;
-    }
-    
-    .social-icon, .namemc-icon {
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
-    }
-    
-    .menu-sidebar {
-        width: 280px;
-    }
-    
-    .modal-content {
-        width: 90%;
-        padding: 15px;
-    }
-    
-    .projects-container {
-        grid-template-columns: 1fr;
-    }
-
-    .wallpapers-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .achievements-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .activation-star {
-        font-size: 60px;
-    }
+body.light-theme #iconPackSelect option[value="auto"] {
+    color: rgb(var(--primary-color));
 }

@@ -142,6 +142,12 @@ document.getElementById('openTerminal').addEventListener('click', () => {
     menuSidebar.classList.remove('active');
 });
 
+// Обработчик для кнопки правил
+document.getElementById('openRules').addEventListener('click', () => {
+    window.location.href = '/chat-rules';
+    menuSidebar.classList.remove('active');
+});
+
 document.querySelectorAll('.modal-close').forEach(btn => {
     btn.addEventListener('click', function() {
         this.closest('.modal').classList.remove('active');
@@ -199,6 +205,7 @@ function activateDeveloperSection() {
         
         initIconPackSettings();
         initGlitchMode();
+        initBrailleMode();
     }
 }
 
@@ -317,7 +324,7 @@ const wallpapers = [
 
 function initWallpaperSettings() {
     const wallpapersGrid = document.getElementById('wallpapersGrid');
-    const savedWallpaper = localStorage.getItem('assets/wallpaper') || 'background.jpg';
+    const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
 
     wallpapers.forEach(wallpaper => {
         const wallpaperOption = document.createElement('div');
@@ -355,96 +362,145 @@ function initWallpaperSettings() {
     });
 }
 
+// --- ОБНОВЛЕННАЯ ЛОГИКА СНЕГА (ФИЗИКА СЫПУЧЕСТИ И ОПТИМИЗАЦИЯ) ---
+let snowCanvas = null;
+let snowCtx = null;
+let snowAccumulationFrame = null;
+let isHeaterActive = false;
 
-let snowInterval = null;
-let snowflakes = [];
+// Физическая сетка снега
+let snowGrid = [];
+const SNOW_BLOCK_SIZE = 4; // Размер "пикселя" снега. 4 - компромисс между качеством и нагрузкой.
+let gridCols = 0;
+let gridRows = 0;
+let frameSkipper = 0; // Счетчик для пропуска кадров
 
-function startSnow() {
-    const snowContainer = document.getElementById('snowContainer');
-    if (!snowContainer) return;
-    
-
-    stopSnow();
-    
-
-    const snowflakeCount = 60; 
-    
-    for (let i = 0; i < snowflakeCount; i++) {
-        createSnowflake();
+function initSnowCanvas() {
+    snowCanvas = document.getElementById('snowCanvas');
+    if (snowCanvas) {
+        snowCtx = snowCanvas.getContext('2d');
+        resizeSnowCanvas();
+        window.addEventListener('resize', resizeSnowCanvas);
     }
     
+    initCursorHeater();
+}
 
-    snowInterval = setInterval(() => {
-        moveSnowflakes();
-    }, 50);
+function resizeSnowCanvas() {
+    if (snowCanvas) {
+        snowCanvas.width = window.innerWidth;
+        snowCanvas.height = window.innerHeight;
+        
+        gridCols = Math.ceil(snowCanvas.width / SNOW_BLOCK_SIZE);
+        gridRows = Math.ceil(snowCanvas.height / SNOW_BLOCK_SIZE);
+        
+        // Пересоздаем сетку при ресайзе
+        snowGrid = new Array(gridCols * gridRows).fill(0);
+    }
+}
+
+function startSnow() {
+    // Гарантируем, что канвас инициализирован
+    if (!snowCanvas) {
+        initSnowCanvas();
+    }
+
+    stopSnow(); // Сброс перед запуском
+
+    // Запуск физического накопления (Canvas)
+    if (snowCtx) {
+        updateSnowLoop();
+    }
 }
 
 function stopSnow() {
-    if (snowInterval) {
-        clearInterval(snowInterval);
-        snowInterval = null;
+    if (snowAccumulationFrame) {
+        cancelAnimationFrame(snowAccumulationFrame);
+        snowAccumulationFrame = null;
     }
-    
-    const snowContainer = document.getElementById('snowContainer');
-    if (snowContainer) {
-        snowContainer.innerHTML = '';
-    }
-    
-    snowflakes = [];
+    // Очистка сетки не требуется, так как мы перезагружаем страницу
 }
 
-function createSnowflake() {
-    const snowflake = document.createElement('div');
-    snowflake.className = 'snowflake';
-    snowflake.innerHTML = '❄';
-    
 
-    const size = Math.random() * 15 + 10;
-    snowflake.style.fontSize = `${size}px`;
-    
+// Физика снега (клеточный автомат) с замедлением
+function updateSnowLoop() {
+    // ОПТИМИЗАЦИЯ: Пропускаем каждый второй кадр
+    // Это снижает FPS физики с 60 до 30, делая снег медленнее и легче для процессора
+    frameSkipper++;
+    if (frameSkipper % 2 !== 0) {
+         snowAccumulationFrame = requestAnimationFrame(updateSnowLoop);
+         return;
+    }
 
-    const startX = Math.random() * window.innerWidth;
-    snowflake.style.left = `${startX}px`;
-    snowflake.style.top = `-20px`;
+    // 1. Добавляем новый снег сверху
+    // Рассчитываем интенсивность, чтобы заполнить за час очень медленно.
+    const totalCells = gridCols * gridRows;
+    // Делим на большее число, чтобы снег падал реже
+    const cellsPerFrame = Math.max(1, Math.ceil(totalCells / 400000)); 
     
+    for (let i = 0; i < cellsPerFrame; i++) {
+        const x = Math.floor(Math.random() * gridCols);
+        // Добавляем снег в верхний ряд
+        if (x >= 0 && x < gridCols) {
+            snowGrid[x] = 1; // index = y * cols + x, где y=0
+        }
+    }
 
-    const speed = Math.random() * 3 + 2;
-    const sway = Math.random() * 2 - 1;
-    
-    document.getElementById('snowContainer').appendChild(snowflake);
-    
-    snowflakes.push({
-        element: snowflake,
-        x: startX,
-        y: -20,
-        speed: speed,
-        sway: sway,
-        swayDirection: Math.random() > 0.5 ? 1 : -1
-    });
+    // 2. Обновляем физику (снизу вверх)
+    for (let y = gridRows - 2; y >= 0; y--) {
+        for (let x = 0; x < gridCols; x++) {
+            const idx = y * gridCols + x;
+            
+            if (snowGrid[idx] === 1) {
+                const belowIdx = (y + 1) * gridCols + x;
+                
+                // Если внизу пусто -> падаем
+                if (snowGrid[belowIdx] === 0) {
+                    snowGrid[belowIdx] = 1;
+                    snowGrid[idx] = 0;
+                } else {
+                    // Внизу занято, пробуем скатиться влево или вправо
+                    const leftIdx = (y + 1) * gridCols + (x - 1);
+                    const rightIdx = (y + 1) * gridCols + (x + 1);
+                    
+                    const canGoLeft = x > 0 && snowGrid[leftIdx] === 0;
+                    const canGoRight = x < gridCols - 1 && snowGrid[rightIdx] === 0;
+
+                    if (canGoLeft && canGoRight) {
+                        if (Math.random() > 0.5) {
+                            snowGrid[leftIdx] = 1;
+                            snowGrid[idx] = 0;
+                        } else {
+                            snowGrid[rightIdx] = 1;
+                            snowGrid[idx] = 0;
+                        }
+                    } else if (canGoLeft) {
+                        snowGrid[leftIdx] = 1;
+                        snowGrid[idx] = 0;
+                    } else if (canGoRight) {
+                        snowGrid[rightIdx] = 1;
+                        snowGrid[idx] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. Рисуем
+    drawSnowGrid();
+
+    snowAccumulationFrame = requestAnimationFrame(updateSnowLoop);
 }
 
-function moveSnowflakes() {
-    const container = document.getElementById('snowContainer');
-    if (!container) return;
-    
-    for (let i = snowflakes.length - 1; i >= 0; i--) {
-        const snowflake = snowflakes[i];
-        
-   
-        snowflake.y += snowflake.speed;
-        
+function drawSnowGrid() {
+    snowCtx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+    snowCtx.fillStyle = "rgba(255, 255, 255, 0.8)";
 
-        snowflake.x += snowflake.sway * snowflake.swayDirection;
-        snowflake.swayDirection *= Math.random() > 0.99 ? -1 : 1;
-        
-
-        if (snowflake.y > window.innerHeight) {
-            container.removeChild(snowflake.element);
-            snowflakes.splice(i, 1);
-            createSnowflake();
-        } else {
-
-            snowflake.element.style.transform = `translate(${snowflake.x}px, ${snowflake.y}px)`;
+    for (let y = 0; y < gridRows; y++) {
+        for (let x = 0; x < gridCols; x++) {
+            if (snowGrid[y * gridCols + x] === 1) {
+                snowCtx.fillRect(x * SNOW_BLOCK_SIZE, y * SNOW_BLOCK_SIZE, SNOW_BLOCK_SIZE, SNOW_BLOCK_SIZE);
+            }
         }
     }
 }
@@ -453,28 +509,96 @@ function initSnowSettings() {
     const snowToggle = document.getElementById('snowToggle');
     if (!snowToggle) return;
     
-
     const snowEnabled = localStorage.getItem('snowEnabled') === 'true';
     snowToggle.checked = snowEnabled;
+    
+    // Сначала инициализируем канвас
+    initSnowCanvas();
     
     if (snowEnabled) {
         startSnow();
     }
     
     snowToggle.addEventListener('change', function() {
-        if (this.checked) {
-            startSnow();
-        } else {
-            stopSnow();
-        }
         localStorage.setItem('snowEnabled', this.checked);
+        // ПЕРЕЗАГРУЗКА СТРАНИЦЫ ДЛЯ ПОЛНОЙ ОЧИСТКИ
+        location.reload();
     });
 }
 
-
-function applyIconPack(packName) {
-    const pack = iconPacks[packName];
+// --- ЛОГИКА ТЕПЛОГО КУРСОРА (ВЫЖИГАНИЕ СЕТКИ) ---
+function initCursorHeater() {
+    const toggle = document.getElementById('cursorHeaterToggle');
+    const heater = document.getElementById('cursorHeater');
     
+    if (!toggle || !heater) return;
+    
+    const savedState = localStorage.getItem('cursorHeaterEnabled') === 'true';
+    toggle.checked = savedState;
+    isHeaterActive = savedState;
+    
+    if (isHeaterActive) {
+        heater.style.display = 'block';
+    }
+    
+    toggle.addEventListener('change', function() {
+        isHeaterActive = this.checked;
+        localStorage.setItem('cursorHeaterEnabled', isHeaterActive);
+        
+        if (isHeaterActive) {
+            heater.style.display = 'block';
+        } else {
+            heater.style.display = 'none';
+        }
+    });
+    
+    document.addEventListener('mousemove', function(e) {
+        if (isHeaterActive) {
+            // Двигаем визуальный эффект
+            heater.style.left = e.clientX + 'px';
+            heater.style.top = e.clientY + 'px';
+            
+            // Топим снег в сетке
+            if (snowGrid.length > 0) {
+                meltSnowAt(e.clientX, e.clientY, 40); // Радиус таяния
+            }
+        }
+    });
+}
+
+function meltSnowAt(mouseX, mouseY, radius) {
+    // Переводим координаты мыши в координаты сетки
+    const gridX = Math.floor(mouseX / SNOW_BLOCK_SIZE);
+    const gridY = Math.floor(mouseY / SNOW_BLOCK_SIZE);
+    const gridRadius = Math.floor(radius / SNOW_BLOCK_SIZE);
+
+    // Очищаем квадрат/круг вокруг курсора
+    for (let y = gridY - gridRadius; y <= gridY + gridRadius; y++) {
+        for (let x = gridX - gridRadius; x <= gridX + gridRadius; x++) {
+            if (x >= 0 && x < gridCols && y >= 0 && y < gridRows) {
+                // Простая проверка на круг
+                const dx = x - gridX;
+                const dy = y - gridY;
+                if (dx*dx + dy*dy <= gridRadius*gridRadius) {
+                    snowGrid[y * gridCols + x] = 0;
+                }
+            }
+        }
+    }
+}
+
+
+// --- НОВАЯ ЛОГИКА ИКОНОК ---
+function applyIconPack(packName) {
+    // Если передан 'auto', вычисляем актуальный пак
+    let actualPackName = packName;
+    
+    if (packName === 'auto') {
+        const season = getCurrentSeason();
+        actualPackName = season ? season : 'default';
+    }
+
+    const pack = iconPacks[actualPackName] || iconPacks['default'];
 
     document.querySelectorAll('.menu-item').forEach(item => {
         const icon = item.querySelector('i');
@@ -486,14 +610,12 @@ function applyIconPack(packName) {
         }
     });
     
-    
     document.querySelectorAll('.settings-category-title i, .setting-label i').forEach(icon => {
         const iconType = getIconTypeFromClass(icon.className);
         if (pack[iconType]) {
             icon.className = `fas ${pack[iconType]}`;
         }
     });
-    
     
     document.querySelectorAll('.modal-header i').forEach(icon => {
         const iconType = getIconTypeFromClass(icon.className);
@@ -502,12 +624,12 @@ function applyIconPack(packName) {
         }
     });
     
-    
     const usernameEmoji = document.getElementById('usernameEmoji');
     if (usernameEmoji) {
         usernameEmoji.textContent = pack.usernameEmoji;
     }
     
+    // В localStorage сохраняем то, что выбрал пользователь (например, 'auto' или 'halloween')
     localStorage.setItem('iconPack', packName);
 }
 
@@ -523,32 +645,37 @@ function getIconTypeFromClass(className) {
     return '';
 }
 
+function loadAndApplyIconPack() {
+    const savedChoice = localStorage.getItem('iconPack');
+    
+    // Если нет сохраненного выбора, используем автоматический режим
+    if (!savedChoice) {
+        applyIconPack('auto');
+        // Сохраняем автоматический режим как значение по умолчанию
+        localStorage.setItem('iconPack', 'auto');
+    } else {
+        applyIconPack(savedChoice);
+    }
+}
+
 function initIconPackSettings() {
     const iconPackSelect = document.getElementById('iconPackSelect');
     if (!iconPackSelect) return;
     
-    // Проверяем, активирован ли режим разработчика
-    const isDeveloperMode = localStorage.getItem('developerSectionActivated') === 'true';
+    // Загружаем сохраненный выбор или ставим 'auto' по умолчанию
+    const savedChoice = localStorage.getItem('iconPack') || 'auto';
     
-    if (isDeveloperMode) {
-        // В режиме разработчика используем сохраненную тему
-        const savedIconPack = localStorage.getItem('iconPack') || 'default';
-        iconPackSelect.value = savedIconPack;
-        applyIconPack(savedIconPack);
-    } else {
-        // В обычном режиме проверяем сезонную тему
-        const currentSeason = getCurrentSeason();
-        if (currentSeason) {
-            applyIconPack(currentSeason);
-        } else {
-            const savedIconPack = localStorage.getItem('iconPack') || 'default';
-            applyIconPack(savedIconPack);
-        }
-    }
+    // Устанавливаем значение селекта (визуально)
+    iconPackSelect.value = savedChoice;
     
+    // Применяем пак
+    applyIconPack(savedChoice);
+    
+    // Обработчик изменений
     iconPackSelect.addEventListener('change', function() {
-        const selectedPack = this.value;
-        applyIconPack(selectedPack);
+        const selectedChoice = this.value;
+        applyIconPack(selectedChoice);
+        localStorage.setItem('iconPack', selectedChoice);
         unlockAchievement('icon_pack_changed');
         
         // Показываем уведомление о перезагрузке
@@ -561,35 +688,28 @@ function initIconPackSettings() {
         `;
         document.body.appendChild(notification);
         
-        // Перезагружаем страницу через 1 секунду
         setTimeout(() => {
             location.reload();
         }, 1000);
     });
 }
 
-// Также обновляем функцию checkSeasonalTheme
 function checkSeasonalTheme() {
-    // Проверяем, активирован ли режим разработчика
-    const isDeveloperMode = localStorage.getItem('developerSectionActivated') === 'true';
+    const savedChoice = localStorage.getItem('iconPack') || 'auto';
     
-    // Если режим разработчика активирован, не применяем сезонные темы
-    if (isDeveloperMode) return;
-    
-    const currentSeason = getCurrentSeason();
-    
-    if (currentSeason === 'halloween') {
-        applyIconPack('halloween');
-        if (localStorage.getItem('snowEnabled') !== 'true') {
-            stopSnow();
-        }
-    } else if (currentSeason === 'newyear') {
-        applyIconPack('newyear');
-        startSnow();
-        localStorage.setItem('snowEnabled', 'true');
-        const snowToggle = document.getElementById('snowToggle');
-        if (snowToggle) {
-            snowToggle.checked = true;
+    // Если стоит авто-выбор, проверяем, нужно ли включить снег (для Нового года)
+    if (savedChoice === 'auto') {
+        const currentSeason = getCurrentSeason();
+        
+        if (currentSeason === 'newyear') {
+            // В Новый год включаем снег, если пользователь явно не отключил его раньше
+            if (localStorage.getItem('snowEnabled') === null) {
+                const snowToggle = document.getElementById('snowToggle');
+                if (snowToggle) snowToggle.checked = true;
+                localStorage.setItem('snowEnabled', 'true');
+                // Перезагрузка для применения (так как это происходит при загрузке, можно вызвать старт)
+                startSnow();
+            }
         }
     }
 }
@@ -823,12 +943,15 @@ function checkAllModalsAchievement() {
     }
 }
 
-// Glitch режим
+// --- ЦИФРОВОЙ GLITCH РЕЖИМ (ОБНОВЛЕННЫЙ) ---
+
+let glitchIntervals = []; // Хранилище для всех таймеров глитча
+let glitchAudio = null; // Глобальный объект для звука
+
 function initGlitchMode() {
     const glitchToggle = document.getElementById('glitchToggle');
     if (!glitchToggle) return;
 
-    // Проверяем сохранённые настройки
     const glitchEnabled = localStorage.getItem('glitchEnabled') === 'true';
     glitchToggle.checked = glitchEnabled;
     
@@ -839,7 +962,7 @@ function initGlitchMode() {
     glitchToggle.addEventListener('change', function() {
         if (this.checked) {
             enableGlitchMode();
-            unlockAchievement('glitch_mode');
+            // unlockAchievement('glitch_mode'); // Раскомментируйте, если используете
         } else {
             disableGlitchMode();
         }
@@ -847,55 +970,180 @@ function initGlitchMode() {
     });
 }
 
+function playGlitchSounds() {
+    // Файл должен быть: assets/music/glitch_noise.mp3
+    if (glitchAudio) stopGlitchSounds(); 
+
+    glitchAudio = new Audio('assets/music/glitch_noise.mp3');
+    glitchAudio.loop = true;
+    glitchAudio.volume = 0.4; // Не слишком громко
+
+    // Пытаемся проиграть звук. Если браузер блокирует, он покажет ошибку в консоли.
+    glitchAudio.play().catch(e => console.warn("Не удалось воспроизвести glitch audio, требуется взаимодействие с пользователем.", e));
+}
+
+function stopGlitchSounds() {
+    // Останавливаем HTML5 Audio
+    if (glitchAudio) {
+        glitchAudio.pause();
+        glitchAudio.currentTime = 0;
+        glitchAudio = null;
+    }
+    
+    // Останавливаем Web Audio API
+    if (glitchAudioContext) {
+        glitchAudioContext.close();
+        glitchAudioContext = null;
+    }
+}
+
 function enableGlitchMode() {
     document.body.classList.add('glitched');
     
-    // Добавляем сканирующую линию
-    const scanLine = document.createElement('div');
-    scanLine.className = 'scan-line';
-    document.body.appendChild(scanLine);
+    // Создаем слой для цифрового шума
+    let pixelNoise = document.querySelector('.pixel-noise');
+    if (!pixelNoise) {
+        pixelNoise = document.createElement('div');
+        pixelNoise.className = 'pixel-noise';
+        document.body.appendChild(pixelNoise);
+    }
     
-    // Добавляем пиксельный шум
-    const pixelNoise = document.createElement('div');
-    pixelNoise.className = 'pixel-noise';
-    document.body.appendChild(pixelNoise);
-    
-    // Глитч-эффект для текста
-    document.querySelectorAll('.username, .menu-item span, .modal-header h3').forEach(element => {
-        if (!element.classList.contains('glitched-text')) {
-            const text = element.textContent;
-            element.classList.add('glitched-text');
-            element.setAttribute('data-text', text);
-        }
+    // Включаем эффекты на тексте
+    document.querySelectorAll('.username, .menu-item span, .modal-header h3, .project-title').forEach(element => {
+        const text = element.textContent;
+        element.classList.add('glitched-text');
+        element.setAttribute('data-text', text);
     });
     
-    // Случайные дергания интерфейса
-    startRandomGlitches();
+    // Запускаем генераторы хаоса
+    startDigitalChaos();
     
-    // Звуковые эффекты (опционально)
+    // Звук
     playGlitchSounds();
 }
 
 function disableGlitchMode() {
     document.body.classList.remove('glitched');
     
-    // Удаляем добавленные элементы
-    document.querySelectorAll('.scan-line, .pixel-noise').forEach(el => el.remove());
+    // Удаляем шум
+    const pixelNoise = document.querySelector('.pixel-noise');
+    if (pixelNoise) pixelNoise.remove();
     
-    // Убираем глитч с текста
+    // Удаляем битые сектора, если остались
+    document.querySelectorAll('.glitch-block-artifact').forEach(el => el.remove());
+    
+    // Чистим текст
     document.querySelectorAll('.glitched-text').forEach(element => {
         element.classList.remove('glitched-text');
         element.removeAttribute('data-text');
+        // Восстанавливаем оригинальный текст если он был искажен
+        if (element.dataset.originalText) {
+             element.textContent = element.dataset.originalText;
+             delete element.dataset.originalText;
+        }
     });
     
-    // Останавливаем случайные глитчи
-    stopRandomGlitches();
-    
-    // Останавливаем звуки
+    // Останавливаем все эффекты и звуки
+    stopDigitalChaos();
     stopGlitchSounds();
+    stopRandomGlitches();
+    cleanupGlitchMode();
+}
+
+function startDigitalChaos() {
+    // 1. Генерация битых секторов (квадратов)
+    glitchIntervals.push(setInterval(() => {
+        if (Math.random() > 0.3) spawnGlitchBlock(); // 70% шанс спавна блока
+    }, 150));
+
+    // 2. Искажение текста (Text Corruption)
+    glitchIntervals.push(setInterval(() => {
+        if (Math.random() > 0.7) corruptRandomText();
+    }, 500));
     
-    // Полностью сбрасываем все стили элементов
-    resetAllElementsStyles();
+    // 3. Резкие сдвиги контента
+    glitchIntervals.push(setInterval(() => {
+        if (Math.random() > 0.95) { // Редко
+            const container = document.querySelector('.container');
+            if(container) {
+                const originalTransform = container.style.transform;
+                const shiftX = (Math.random() - 0.5) * 10 + 'px'; // Сильный сдвиг
+                container.style.transform = `translateX(${shiftX})`;
+                
+                // Возвращаем на место мгновенно (эффект пропущенного кадра)
+                setTimeout(() => {
+                     container.style.transform = originalTransform;
+                }, 50);
+            }
+        }
+    }, 2000));
+}
+
+function stopDigitalChaos() {
+    glitchIntervals.forEach(interval => clearInterval(interval));
+    glitchIntervals = [];
+}
+
+// Создает визуальный артефакт "Битый сектор"
+function spawnGlitchBlock() {
+    const block = document.createElement('div');
+    block.className = 'glitch-block-artifact';
+    
+    // Случайные размеры и позиция
+    const width = Math.floor(Math.random() * 200) + 20;
+    const height = Math.floor(Math.random() * 50) + 5;
+    const top = Math.floor(Math.random() * 100);
+    const left = Math.floor(Math.random() * 100);
+    
+    block.style.width = width + 'px';
+    block.style.height = height + 'px';
+    block.style.top = top + '%';
+    block.style.left = left + '%';
+    
+    // 90% шанс, что блок будет ядрено-зеленым (цвет по умолчанию из CSS)
+    // 10% шанс на другой, более "жесткий" цвет.
+    if (Math.random() > 0.9) {
+        const colors = ['#ff00c1', '#00fff9', '#ffff00', '#000000', '#ffffff'];
+        block.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        block.style.mixBlendMode = 'normal';
+    } else {
+        // Оставляем цвет по умолчанию (#39FF14) и режим exclusion из CSS
+    }
+
+    document.body.appendChild(block);
+    
+    // Удаляем блок очень быстро
+    setTimeout(() => {
+        block.remove();
+    }, Math.random() * 200 + 50);
+}
+
+// Временно заменяет текст на "мусор"
+function corruptRandomText() {
+    const elements = document.querySelectorAll('.glitched-text');
+    if (elements.length === 0) return;
+    
+    const target = elements[Math.floor(Math.random() * elements.length)];
+    const originalText = target.textContent;
+    
+    // Сохраняем оригинал, если еще не сохранен
+    if (!target.dataset.originalText) {
+        target.dataset.originalText = originalText;
+    }
+    
+    // Генерируем мусор
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*<>[]{}";
+    let corrupted = "";
+    for(let i=0; i < originalText.length; i++) {
+        corrupted += (Math.random() > 0.5) ? chars[Math.floor(Math.random() * chars.length)] : originalText[i];
+    }
+    
+    target.textContent = corrupted;
+    
+    // Восстанавливаем очень быстро
+    setTimeout(() => {
+        target.textContent = originalText;
+    }, 100);
 }
 
 function resetAllElementsStyles() {
@@ -974,44 +1222,7 @@ function stopRandomGlitches() {
 // Звуковые эффекты (опционально)
 let glitchAudioContext;
 
-function playGlitchSounds() {
-    if (typeof AudioContext !== 'undefined') {
-        glitchAudioContext = new AudioContext();
-        
-        // Периодические глитч-звуки
-        setInterval(() => {
-            if (Math.random() > 0.7) {
-                playRandomGlitchSound();
-            }
-        }, 2000);
-    }
-}
 
-function playRandomGlitchSound() {
-    if (!glitchAudioContext) return;
-    
-    const oscillator = glitchAudioContext.createOscillator();
-    const gainNode = glitchAudioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(glitchAudioContext.destination);
-    
-    oscillator.type = ['sine', 'square', 'sawtooth', 'triangle'][Math.floor(Math.random() * 4)];
-    oscillator.frequency.setValueAtTime(100 + Math.random() * 800, glitchAudioContext.currentTime);
-    
-    gainNode.gain.setValueAtTime(0.1, glitchAudioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, glitchAudioContext.currentTime + 0.1);
-    
-    oscillator.start(glitchAudioContext.currentTime);
-    oscillator.stop(glitchAudioContext.currentTime + 0.1);
-}
-
-function stopGlitchSounds() {
-    if (glitchAudioContext) {
-        glitchAudioContext.close();
-        glitchAudioContext = null;
-    }
-}
 function cleanupGlitchMode() {
     // Останавливаем все интервалы
     if (glitchInterval) {
@@ -1035,6 +1246,79 @@ function cleanupGlitchMode() {
     // Останавливаем звуки
     stopGlitchSounds();
 }
+
+// Логика шрифта Брайля
+const brailleMap = {
+    // Русский
+    'а': '⠁', 'б': '⠃', 'в': '⠺', 'г': '⠛', 'д': '⠙', 'е': '⠑', 'ё': '⠡',
+    'ж': '⠚', 'з': '⠵', 'и': '⠊', 'й': '⠯', 'к': '⠅', 'л': '⠇', 'м': '⠍',
+    'н': '⠝', 'о': '⠕', 'п': '⠏', 'р': '⠗', 'с': '⠎', 'т': '⠞', 'у': '⠥',
+    'ф': '⠋', 'х': '⠓', 'ц': '⠉', 'ч': '⠟', 'ш': '⠱', 'щ': '⠭', 'ъ': '⠷',
+    'ы': '⠮', 'ь': '⠾', 'э': '⠪', 'ю': '⠳', 'я': '⠫',
+    // Английский
+    'a': '⠁', 'b': '⠃', 'c': '⠉', 'd': '⠙', 'e': '⠑', 'f': '⠋', 'g': '⠛',
+    'h': '⠓', 'i': '⠊', 'j': '⠚', 'k': '⠅', 'l': '⠇', 'm': '⠍', 'n': '⠝',
+    'o': '⠕', 'p': '⠏', 'q': '⠟', 'r': '⠗', 's': '⠎', 't': '⠞', 'u': '⠥',
+    'v': '⠧', 'w': '⠺', 'x': '⠭', 'y': '⠽', 'z': '⠵',
+    // Цифры (упрощенно, без цифрового знака для интерфейса)
+    '1': '⠁', '2': '⠃', '3': '⠉', '4': '⠙', '5': '⠑', 
+    '6': '⠋', '7': '⠛', '8': '⠓', '9': '⠊', '0': '⠚',
+    // Символы
+    ' ': ' ', '.': '⠲', ',': '⠂', '!': '⠖', '?': '⠦', '-': '⠤'
+};
+
+function initBrailleMode() {
+    const brailleToggle = document.getElementById('brailleToggle');
+    if (!brailleToggle) return;
+
+    const brailleEnabled = localStorage.getItem('brailleEnabled') === 'true';
+    brailleToggle.checked = brailleEnabled;
+
+    if (brailleEnabled) {
+        enableBrailleMode();
+    }
+
+    brailleToggle.addEventListener('change', function() {
+        if (this.checked) {
+            localStorage.setItem('brailleEnabled', 'true');
+            enableBrailleMode();
+            unlockAchievement('developer_mode');
+        } else {
+            localStorage.setItem('brailleEnabled', 'false');
+            // Для корректного возврата текста проще всего перезагрузить страницу,
+            // так как мы меняем текстовые узлы напрямую
+            location.reload();
+        }
+    });
+}
+
+function enableBrailleMode() {
+    document.body.classList.add('braille-active');
+    
+    // Рекурсивная функция для обхода всех текстовых узлов
+    function traverseAndTranslate(node) {
+        if (node.nodeType === 3) { // Text node
+            // Пропускаем пустые узлы и скрипты
+            if (node.nodeValue.trim() !== '' && node.parentNode.tagName !== 'SCRIPT' && node.parentNode.tagName !== 'STYLE') {
+                node.nodeValue = translateTextToBraille(node.nodeValue);
+            }
+        } else {
+            for (let i = 0; i < node.childNodes.length; i++) {
+                traverseAndTranslate(node.childNodes[i]);
+            }
+        }
+    }
+
+    traverseAndTranslate(document.body);
+}
+
+function translateTextToBraille(text) {
+    return text.split('').map(char => {
+        const lowerChar = char.toLowerCase();
+        return brailleMap[lowerChar] || char;
+    }).join('');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     updateAgeDisplay();
     updateQuote();
@@ -1042,9 +1326,14 @@ document.addEventListener('DOMContentLoaded', function() {
     initWallpaperSettings();
     checkAchievements();
     checkExistingDeveloperSection();
-    initSnowSettings();
+    initSnowSettings(); 
     
-    // Проверяем и применяем сезонную тему
+    // Автоматически применяем иконки в зависимости от даты при первой загрузке
+    loadAndApplyIconPack();
+    
+    // Инициализируем настройки иконок (для селекта в настройках)
+    initIconPackSettings();
+    
     checkSeasonalTheme();
     
     const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
