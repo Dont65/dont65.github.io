@@ -4,17 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dont65 | Главная страница</title>
+    <!-- Шрифт Roboto для MD3 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Иконки FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="menu-btn" id="menuBtn">☰</button>
+    <!-- Кнопка меню -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
     
+    <!-- Боковое меню -->
     <div class="menu-sidebar" id="menuSidebar">
         <div class="sidebar-header">
             <h2>Меню</h2>
             <button class="close-btn" id="closeBtn">
-                <i class="fas fa-times"></i>
+                <i class="fas fa-arrow-left"></i>
             </button>
         </div>
         
@@ -39,7 +49,7 @@
                 <span>Терминал</span>
             </div>
             <div class="menu-item" id="openServer">
-                <i class="block-icon"></i>
+                <i class="block-icon"></i> <!-- SVG Mask -->
                 <span>Мои сервера Minecraft</span>
             </div>
 
@@ -62,34 +72,38 @@
         </div>
     </div>
 
+    <!-- Скрытые элементы эффектов -->
     <div id="activationStar" class="activation-star">
         <i class="fas fa-star"></i>
     </div>
 
-    <canvas id="snowCanvas"></canvas>
+    <!-- Элементы для глитч-эффектов -->
+    <div id="glitchPixelsContainer"></div>
+    <div id="glitchSectorsContainer"></div>
     
-    <div id="snowContainer"></div>
+    <canvas id="snowCanvas"></canvas>
     
     <div id="cursorHeater"></div>
 
+    <!-- Модальные окна -->
     <div class="modal" id="profileModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Информация о профиле</h3>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div class="info-item">
-                    <h4>Имя</h4>
-                    <p>Dont65</p>
+                <div class="info-card">
+                    <div class="info-label">Имя</div>
+                    <div class="info-value">Dont65</div>
                 </div>
-                <div class="info-item">
-                    <h4>Возраст</h4>
-                    <p><span id="age"></span></p>
+                <div class="info-card">
+                    <div class="info-label">Возраст</div>
+                    <div class="info-value"><span id="age"></span></div>
                 </div>
-                <div class="info-item">
-                    <h4>Местоположение</h4>
-                    <p>Россия</p>
+                <div class="info-card">
+                    <div class="info-label">Местоположение</div>
+                    <div class="info-value">Россия</div>
                 </div>
             </div>
         </div>
@@ -99,7 +113,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Навыки и работа</h3>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div class="info-item">
@@ -107,12 +121,12 @@
                     <p>Студент / Разработчик</p>
                 </div>
                 <div class="info-item">
-                    <h4><i class="crutch-icon">P1</i> Навыки программирования</h4>
+                    <h4><i class="crutch-icon"></i> Навыки программирования</h4>
                     <div class="skills-container">
-                        <span class="skill"><i class="python-icon">P1</i> Python</span> 
-                        <span class="skill"><i class="html-icon">P1</i> HTML/CSS</span>
-                        <span class="skill"><i class="javascript-icon">P1</i> JavaScript</span>
-                        <span class="skill"><i class="java-icon">P1</i> Java</span>
+                        <span class="skill"><i class="python-icon"></i> Python</span> 
+                        <span class="skill"><i class="html-icon"></i> HTML/CSS</span>
+                        <span class="skill"><i class="javascript-icon"></i> JavaScript</span>
+                        <span class="skill"><i class="java-icon"></i> Java</span>
                     </div>
                 </div>
                 <div class="info-item">
@@ -131,35 +145,34 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Мои проекты</h3>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div class="projects-container">
                     <a href="https://t.me/dont_65bot" class="project-card" target="_blank">
-                        <div class="project-title"><i class="fas fa-external-link-alt"></i> Телеграм бот</div>
+                        <div class="project-title"><i class="fas fa-robot"></i> Телеграм бот</div>
                         <div class="project-description">
                             Бот для обратной связи со мной
                         </div>
                     </a>
                     <a href="https://github.com/Dont65/game_case" class="project-card" target="_blank">
-                        <div class="project-title"><i class="fas fa-external-link-alt"></i> Игра на python (Case)</div>
+                        <div class="project-title"><i class="fas fa-gamepad"></i> Игра на python (Case)</div>
                         <div class="project-description">
-                            Небольшая игра, которая представляет собой, простейший симулятор кейсов
+                            Симулятор кейсов на Python
                         </div>
                     </a>
                     <a href="/terminal" class="project-card" target="_blank">
-                        <div class="project-title"><i class="fas fa-external-link-alt"></i> Терминал в браузере</div>
+                        <div class="project-title"><i class="fas fa-terminal"></i> Терминал</div>
                         <div class="project-description">
-                            Мой терминал, работающий в браузере (Так же есть в меню)
+                            Веб-терминал в браузере
                         </div>
                     </a>    
                     <a href="/old" class="project-card" target="_blank">
-                        <div class="project-title"><i class="fas fa-external-link-alt"></i> Старая версия сайта</div>
+                        <div class="project-title"><i class="fas fa-history"></i> Старая версия</div>
                         <div class="project-description">
-                            Этот сайт, но самая первая версия
+                            Архивная версия сайта
                         </div>
                     </a>                        
-                    </div>
                 </div>
             </div>
         </div>
@@ -168,12 +181,13 @@
     <div class="modal" id="achievementsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-trophy"></i> Ваши достижения</h3>
-                <button class="modal-close">&times;</button>
+                <h3>Ваши достижения</h3>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div class="achievements-container" id="achievementsContainer">
-                    </div>
+                    <!-- Заполняется JS -->
+                </div>
             </div>
         </div>
     </div>
@@ -181,15 +195,15 @@
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-cog"></i> Настройки</h3>
-                <button class="modal-close">&times;</button>
+                <h3>Настройки</h3>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div class="settings-container">
                     <div class="settings-category">
                         <div class="settings-category-title">
                             <i class="fas fa-palette"></i>
-                            <span>Цветовая схема</span>
+                            <span>Внешний вид</span>
                         </div>
                         <div class="setting-item">
                             <div class="setting-label">
@@ -204,7 +218,7 @@
                         <div class="setting-item">
                             <div class="setting-label">
                                 <i class="fas fa-fill-drip"></i>
-                                <span>Основной цвет</span>
+                                <span>Цветовой акцент</span>
                             </div>
                             <div class="color-options" id="colorOptions">
                                 <div class="color-option" style="background-color: rgb(42, 171, 238);" data-color="42, 171, 238"></div>
@@ -215,7 +229,7 @@
                                 <div class="color-option" style="background-color: rgb(237, 66, 69);" data-color="237, 66, 69"></div>
                                 <div class="color-option" style="background-color: rgb(155, 89, 182);" data-color="155, 89, 182"></div>
                                 <div class="color-option" style="background-color: rgb(230, 126, 34);" data-color="230, 126, 34"></div>
-                                <div class="color-option"  data-color="255, 255, 255"></div>
+                                <div class="color-option" style="background-color: rgb(255, 255, 255);"data-color="255, 255, 255"></div>
                             </div>
                         </div>
                     </div>
@@ -223,7 +237,7 @@
                     <div class="settings-category">
                         <div class="settings-category-title">
                             <i class="fas fa-mouse-pointer"></i>
-                            <span>Взаимодействие</span>
+                            <span>Интерактив</span>
                         </div>
                         <div class="setting-item">
                             <div class="setting-label">
@@ -237,24 +251,24 @@
                         </div>
                         <div class="setting-note">
                             <i class="fas fa-info-circle"></i>
-                            <span>Курсор будет светиться и топить снег на фоне.</span>
+                            <span>Курсор плавит снег на фоне.</span>
                         </div>
                     </div>
 
                     <div class="settings-category">
                         <div class="settings-category-title">
                             <i class="fas fa-image"></i>
-                            <span>Фоновые изображения</span>
+                            <span>Обои</span>
                         </div>
                         <div class="wallpapers-grid" id="wallpapersGrid">
-                            
+                            <!-- JS заполнит -->
                         </div>
                     </div>
 
                     <div class="settings-category" id="developerSettingsCategory" style="display: none;">
                         <div class="settings-category-title">
                             <i class="fas fa-tools"></i>
-                            <span>Параметры разработчика</span>
+                            <span>Разработчик</span>
                         </div>
                         
                         <div class="setting-item">
@@ -267,22 +281,21 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
-                        <div class="setting-note">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span>Снег будет постепенно заметать экран (1 час до полного покрытия).</span>
-                        </div>
 
                       <div class="setting-item">
                             <div class="setting-label">
                                 <i class="fas fa-paint-brush"></i>
                                 <span>Тема иконок</span>
                             </div>
-                            <select id="iconPackSelect">
-                                <option value="auto">Зависит от даты</option>
-                                <option value="default">Стандартные</option>
-                                <option value="halloween">Хэллоуин</option>
-                                <option value="newyear">Новый год</option>
-                            </select>
+                            <div class="select-wrapper">
+                                <select id="iconPackSelect">
+                                    <option value="auto">Автоматически</option>
+                                    <option value="default">Стандартные</option>
+                                    <option value="halloween">Хэллоуин</option>
+                                    <option value="newyear">Новый год</option>
+                                    <option value="birthday">День рождения</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="setting-item">
@@ -295,34 +308,27 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
-                        <div class="setting-note">
+                        <div class="setting-note" style="color: #ff6666;">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <span>ВНИМАНИЕ: Может вызвать эпилепсию! Использовать с осторожностью.</span>
+                            <span>Интенсивные визуальные эффекты! Может вызвать эпилепсию.</span>
                         </div>
 
                         <div class="setting-item">
                             <div class="setting-label">
                                 <i class="fas fa-braille"></i>
-                                <span>Шрифт Брайля</span>
+                                <span>Версия для слабовидящих</span>
                             </div>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="brailleToggle">
                                 <span class="slider"></span>
                             </label>
                         </div>
-                        <div class="setting-note">
-                            <i class="fas fa-info-circle"></i>
-                            <span>Переводит весь текст на странице в рельефно-точечный шрифт.</span>
-                        </div>
 
                         <div class="developer-info">
                             <div class="info-item">
-                                <h4>Текущее время</h4>
-                                <p id="currentTime"></p>
-                            </div>
-                            <div class="info-item">
-                                <h4>Текущая дата</h4>
-                                <p id="currentDate"></p>
+                                <h4>System Info</h4>
+                                <p id="currentTime">--:--</p>
+                                <p id="currentDate">--.--.----</p>
                             </div>
                         </div>
                     </div>
@@ -331,17 +337,18 @@
         </div>
     </div>
 
+    <!-- Основной контейнер -->
     <div class="container">
         <div class="avatar-container" id="profileLink">
             <div class="avatar">
-                <img src="https://t.me/i/userpic/160/dont65.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="Аватар">
+                <a href="https://t.me/dont65" target="_blank"><img src="https://t.me/i/userpic/160/dont65.jpg" alt="Dont65 Avatar"></a>
             </div>
             <div class="username">Dont65<span id="usernameEmoji"></span></div>
             <div class="age" id="age"></div>
         </div>
 
         <div class="quote-container">
-            <p class="quote" id="randomQuote">Загрузка цитаты...</p>
+            <p class="quote" id="randomQuote">Загрузка...</p>
             <div class="quote-author" id="quoteAuthor"></div>
         </div>    
         <div class="quote-refresh-container">
@@ -351,18 +358,10 @@
         </div>
         
         <div class="social-icons">
-            <a href="https://discord.gg/s4DzndW9jR" target="_blank" class="social-icon discord-icon">
-                <i class="fab fa-discord"></i>
-            </a>
-            <a href="https://t.me/dont65_channel" target="_blank" class="social-icon telegram-icon">
-                <i class="fab fa-telegram"></i>
-            </a>
-            <a href="https://steamcommunity.com/id/3TO_Dont65" target="_blank" class="social-icon steam-icon">
-                <i class="fab fa-steam"></i>
-            </a>
-            <a href="https://github.com/Dont65" target="_blank" class="social-icon github-icon">
-                <i class="fab fa-github"></i>
-            </a>
+            <a href="https://discord.gg/s4DzndW9jR" target="_blank" class="social-icon discord-icon"><i class="fab fa-discord"></i></a>
+            <a href="https://t.me/dont65_channel" target="_blank" class="social-icon telegram-icon"><i class="fab fa-telegram"></i></a>
+            <a href="https://steamcommunity.com/id/3TO_Dont65" target="_blank" class="social-icon steam-icon"><i class="fab fa-steam"></i></a>
+            <a href="https://github.com/Dont65" target="_blank" class="social-icon github-icon"><i class="fab fa-github"></i></a>
             <a href="https://ru.namemc.com/profile/Dont65.1" target="_blank" class="social-icon namemc-link">
                 <div class="namemc-icon"></div>
             </a>
@@ -371,19 +370,8 @@
 
     <script src="main.js"></script>
 
-<footer style="
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #dadada;
-    font-size: 14px;
-    z-index: 1;
-">
-    © Dont65 - 2025 (Все права защищены)
-</footer>    
+    <footer>
+        © Dont65 | 2025 - 2026
+    </footer>    
 </body>
 </html>
