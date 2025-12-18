@@ -1,1 +1,17 @@
-
+{
+  "lastUpdate": "05.12.2025",
+  "blocks": [
+    {
+      "id": "general",
+      "title": "1. Общие правила",
+      "icon": "fas fa-exclamation-circle",
+      "items": [
+        {
+          "id": "1.1",
+          "text": "Текст пункта...",
+          "subitems": ["Подпункт 1", "Подпункт 2"]
+        }
+      ]
+    }
+  ]
+}
