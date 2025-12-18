@@ -170,12 +170,65 @@
             position: relative;
         }
         
-        /* Десктопный макет - центрированный */
+        /* Десктопный макет - трехколоночный */
         .desktop-layout {
             display: grid;
-            grid-template-columns: 1fr minmax(500px, 600px) 1fr; /* Центральная колонка фиксированной ширины */
+            grid-template-columns: 280px 1fr; /* Левая панель и основная область */
             width: 100%;
             height: 100%;
+            gap: 20px; /* Отступ между колонками */
+            padding: 20px;
+            background: var(--md-surface);
+            min-height: 0; /* Важно для скролла */
+        }
+        
+        /* Левая панель - информация о репозитории */
+        .repo-sidebar {
+            background: var(--md-surface-container);
+            border-radius: var(--md-radius-large);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow: hidden;
+            height: 100%;
+            min-height: 0; /* Важно для скролла */
+        }
+        
+        .repo-sidebar.hidden {
+            display: none;
+        }
+        
+        /* Контейнер для скролла в левой панели */
+        .sidebar-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 0; /* Важно для скролла */
+            padding-right: 4px; /* Место для скроллбара */
+        }
+        
+        /* Кастомный скроллбар для левой панели */
+        .sidebar-scroll-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .sidebar-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 2px;
+        }
+        
+        .sidebar-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--md-outline-variant);
+            border-radius: 2px;
+        }
+        
+        .sidebar-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: var(--md-outline);
         }
         
         /* Контейнер для центрирования контента на ПК */
@@ -184,7 +237,10 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            padding: 20px;
+            overflow: hidden;
+            background: var(--md-surface-container);
+            border-radius: var(--md-radius-large);
+            min-height: 0; /* Важно для скролла */
         }
         
         /* Мобильный макет - через переключатель экранов */
@@ -212,17 +268,20 @@
             transform: translateX(100%);
         }
         
-        /* Панель авторизации для ПК - центрированная */
+        /* Панель авторизации для ПК - занимает обе колонки */
         .auth-card {
+            grid-column: 1 / span 2;
             background: var(--md-surface-container);
             border-radius: var(--md-radius-large);
-            padding: 40px; /* Увеличиваем отступы */
+            padding: 40px;
             height: 100%;
             display: flex;
             flex-direction: column;
+            align-items: center; /* Центрируем содержимое */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            max-width: 100%;
+            max-width: 800px; /* Ограничиваем ширину */
+            margin: 0 auto; /* Центрируем по горизонтали */
         }
         
         .auth-card.hidden {
@@ -231,15 +290,12 @@
         
         /* Панель редактора для ПК */
         .editor-panel {
-            background: var(--md-surface-container);
-            border-radius: var(--md-radius-large);
-            padding: 40px; /* Увеличиваем отступы */
             height: 100%;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
             max-width: 100%;
+            overflow: hidden;
+            min-height: 0; /* Важно для скролла */
         }
         
         .editor-panel.hidden {
@@ -252,21 +308,195 @@
         
         .editor-header {
             flex-shrink: 0;
-            margin-bottom: 20px;
+            padding: 24px 24px 16px 24px;
+            border-bottom: 1px solid var(--md-outline-variant);
+            background: var(--md-surface-container);
+            border-radius: var(--md-radius-large) var(--md-radius-large) 0 0;
         }
         
         .editor-content {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: auto; /* Разрешаем скролл ТОЛЬКО в контенте редактора */
             -webkit-overflow-scrolling: touch;
+            padding: 24px;
+            padding-right: 10px; /* Место для скроллбара */
+            min-height: 0; /* Важно для скролла */
         }
         
-        /* Информация о репозитории */
-        .repo-info {
+        /* Кастомный скроллбар */
+        .editor-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .editor-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .editor-content::-webkit-scrollbar-thumb {
+            background: var(--md-outline-variant);
+            border-radius: 3px;
+        }
+        
+        .editor-content::-webkit-scrollbar-thumb:hover {
+            background: var(--md-outline);
+        }
+        
+        /* Стили для левой панели репозитория */
+        .sidebar-section {
             background: var(--md-surface-container-high);
             border-radius: var(--md-radius-medium);
             padding: 16px;
-            margin-bottom: 20px;
+            flex-shrink: 0; /* Предотвращает сжатие секций */
+        }
+        
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--md-on-surface-variant);
+        }
+        
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .repo-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .repo-path {
+            font-family: monospace;
+            font-size: 13px;
+            background: var(--md-surface);
+            padding: 8px 10px;
+            border-radius: var(--md-radius-small);
+            border: 1px solid var(--md-outline-variant);
+            word-break: break-all;
+            line-height: 1.4;
+        }
+        
+        .repo-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--md-on-surface-variant);
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            background: var(--md-success);
+            color: white;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .status-badge.inactive {
+            background: var(--md-outline-variant);
+        }
+        
+        .status-badge i {
+            font-size: 9px;
+        }
+        
+        /* Кнопки управления в боковой панели - уменьшенные */
+        .sidebar-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .sidebar-actions .button {
+            justify-content: flex-start;
+            padding: 10px 14px;
+            font-size: 13px;
+            min-height: 40px;
+            border-radius: var(--md-radius-small);
+        }
+        
+        .sidebar-actions .button i {
+            font-size: 14px;
+            width: 18px;
+        }
+        
+        /* Контейнер для пути к файлу в боковой панели */
+        .file-path-section {
+            margin-top: 12px;
+        }
+        
+        .file-path-section .text-field {
+            margin-top: 8px;
+        }
+        
+        .file-path-section .text-field input {
+            padding: 10px 12px;
+            font-size: 13px;
+            border-radius: var(--md-radius-small);
+        }
+        
+        /* Статистика репозитория */
+        .repo-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: var(--md-surface);
+            border-radius: var(--md-radius-small);
+        }
+        
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--md-primary);
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: var(--md-on-surface-variant);
+            margin-top: 3px;
+        }
+        
+        /* Дополнительные улучшения для боковой панели */
+        .sidebar-header {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--md-outline-variant);
+            margin-bottom: 16px;
+            flex-shrink: 0; /* Предотвращает сжатие заголовка */
+        }
+        
+        .sidebar-header h3 {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .sidebar-header p {
+            font-size: 11px;
+            color: var(--md-on-surface-variant);
+        }
+        
+        /* Нижняя секция (последнее обновление) - прижимаем к низу */
+        .sidebar-bottom-section {
+            margin-top: auto;
+            flex-shrink: 0; /* Предотвращает сжатие */
         }
         
         /* Формы - улучшены для мобильных */
@@ -316,10 +546,10 @@
         
         /* Кнопки - увеличены для мобильных */
         .button {
-            padding: 16px 24px;
+            padding: 14px 20px;
             border: none;
             border-radius: var(--md-radius-medium);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: var(--md-transition);
@@ -329,7 +559,7 @@
             gap: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            min-height: 48px;
+            min-height: 44px;
         }
         
         .button--filled {
@@ -368,18 +598,26 @@
         }
         
         .button--icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             padding: 0;
-            border-radius: 24px;
+            border-radius: 20px;
             min-height: auto;
         }
         
         .button-group {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
+        }
+        
+        /* Кнопка добавления блока - в центре */
+        .add-block-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
         }
         
         /* Редактор блоков */
@@ -517,12 +755,12 @@
         
         /* Иконки кнопок */
         .icon-button {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border: none;
             background: transparent;
             color: var(--md-on-surface-variant);
-            border-radius: 20px;
+            border-radius: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -635,9 +873,10 @@
         }
         
         .text-caption {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--md-on-surface-variant);
             margin-top: 4px;
+            line-height: 1.4;
         }
         
         .empty-state {
@@ -834,6 +1073,18 @@
                 color: var(--md-primary);
                 font-weight: bold;
             }
+            
+            /* Предпросмотр пути */
+            .path-preview {
+                font-family: monospace;
+                background: var(--md-surface);
+                padding: 8px 12px;
+                border-radius: var(--md-radius-small);
+                border: 1px solid var(--md-outline-variant);
+                margin-top: 8px;
+                font-size: 14px;
+                color: var(--md-on-surface-variant);
+            }
         }
         
         /* Анимации */
@@ -850,6 +1101,41 @@
         
         .animate-in {
             animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Стили для адаптивности левой панели */
+        @media (max-width: 1200px) {
+            .desktop-layout {
+                grid-template-columns: 260px 1fr;
+                padding: 16px;
+                gap: 16px;
+            }
+            
+            .repo-sidebar {
+                padding: 16px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .desktop-layout {
+                grid-template-columns: 240px 1fr;
+                gap: 12px;
+            }
+            
+            .repo-sidebar {
+                padding: 14px;
+            }
+            
+            .sidebar-section {
+                padding: 14px;
+            }
+        }
+        
+        /* Для очень высоких экранов - ограничиваем максимальную высоту левой панели */
+        @media (min-height: 900px) {
+            .sidebar-scroll-container {
+                max-height: calc(100vh - 200px); /* Ограничиваем высоту на очень высоких экранах */
+            }
         }
     </style>
 </head>
@@ -894,6 +1180,88 @@
         <div class="main-content">
             <!-- Десктопный макет -->
             <div class="desktop-layout">
+                <!-- Левая панель - информация о репозитории (только для ПК в режиме редактора) -->
+                <div class="repo-sidebar hidden" id="repoSidebar">
+                    <div class="sidebar-header">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+                            <i class="fas fa-database" style="color: var(--md-primary); font-size: 14px;"></i>
+                            <h3>Репозиторий</h3>
+                        </div>
+                        <p>Текущее подключение</p>
+                    </div>
+                    
+                    <div class="sidebar-scroll-container">
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">
+                                <i class="fas fa-info-circle" style="font-size: 13px;"></i>
+                                <span>Информация</span>
+                            </div>
+                            <div class="sidebar-content">
+                                <div class="repo-details">
+                                    <div class="repo-path" id="currentRepoInfo">Не подключен</div>
+                                    <div class="repo-meta">
+                                        <span class="status-badge inactive" id="connectionStatusBadge">
+                                            <i class="fas fa-circle"></i>
+                                            <span>Неактивно</span>
+                                        </span>
+                                        <span id="lastUpdateInfo">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-section file-path-section">
+                            <div class="sidebar-title">
+                                <i class="fas fa-file-code" style="font-size: 13px;"></i>
+                                <span>Файл правил</span>
+                            </div>
+                            <div class="sidebar-content">
+                                <div class="text-field">
+                                    <input type="text" id="currentFilePath" placeholder="chat-rules/rules.json" autocomplete="off">
+                                </div>
+                                <p class="text-caption" style="margin-top: 8px;">Измените путь и нажмите Сохранить</p>
+                                
+                                <div class="repo-stats">
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="blocksCount">0</div>
+                                        <div class="stat-label">Блоков</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="itemsCount">0</div>
+                                        <div class="stat-label">Пунктов</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">
+                                <i class="fas fa-tools" style="font-size: 13px;"></i>
+                                <span>Управление</span>
+                            </div>
+                            <div class="sidebar-actions">
+                                <button class="button button--tonal" id="sidebarSaveBtn">
+                                    <i class="fas fa-save"></i>
+                                    Сохранить
+                                </button>
+                                <button class="button button--outlined" id="sidebarReloadBtn">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Обновить
+                                </button>
+                                <button class="button button--filled" id="sidebarAddBlockBtn">
+                                    <i class="fas fa-plus"></i>
+                                    Добавить блок
+                                </button>
+                                <button class="button button--danger" id="sidebarLogoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Выйти
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Центральная область -->
                 <div class="pc-centered-content">
                     <!-- Панель авторизации -->
                     <div class="auth-card" id="authPanel">
@@ -920,6 +1288,9 @@
                             <label class="form-label">Путь к файлу JSON</label>
                             <div class="text-field">
                                 <input type="text" id="filePath" placeholder="chat-rules/rules.json" value="chat-rules/rules.json" autocomplete="off" class="file-path-input">
+                            </div>
+                            <div class="path-preview" id="pathPreview">
+                                Полный путь: <strong>/chat-rules/rules.json</strong>
                             </div>
                             <p class="text-caption">Укажите путь к файлу в репозитории</p>
                         </div>
@@ -953,52 +1324,26 @@
                     <!-- Панель редактора -->
                     <div class="editor-panel hidden" id="editorPanel">
                         <div class="editor-header">
-                            <!-- Информация о подключении -->
-                            <div class="repo-info" style="text-align: center;">
-                                <div style="display: flex; flex-direction: column; gap: 12px;">
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 16px; font-weight: 500;">
-                                        <i class="fas fa-database"></i>
-                                        <span>Текущий репозиторий</span>
-                                    </div>
-                                    <p id="currentRepoInfo" style="font-family: monospace; font-size: 14px;">Не подключен</p>
-                                    <div class="file-path-container">
-                                        <label class="form-label">Путь к файлу</label>
-                                        <div class="text-field">
-                                            <input type="text" id="currentFilePath" placeholder="chat-rules/rules.json" autocomplete="off" class="file-path-input">
-                                        </div>
-                                        <p class="text-caption" style="margin-top: 8px;">Измените путь и нажмите Сохранить</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Заголовок редактора -->
+                            <h2 class="section-title" style="text-align: center; margin-bottom: 8px; font-size: 10px;">
+                                <i class="fas fa-edit"></i>
+                                Редактор правил чата
+                            </h2>
                             
-                            <!-- Управление -->
-                            <div class="button-group" style="justify-content: center;">
-                                <button class="button button--tonal" id="saveBtn">
-                                    <i class="fas fa-save"></i>
-                                    Сохранить
-                                </button>
-                                <button class="button button--outlined" id="reloadBtn">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Обновить
-                                </button>
-                                <button class="button button--danger" id="logoutBtn">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    Выйти
-                                </button>
-                            </div>
+                            <p class="text-caption" style="text-align: center; max-width: 600px; margin: 0 auto;">
+                                Редактируйте структуру правил. Все изменения сохраняются в вашем GitHub репозитории.
+                            </p>
                         </div>
                         
                         <div class="editor-content">
                             <!-- Редактор блоков -->
                             <div class="blocks-container">
-                                <h2 class="section-title">Блоки правил</h2>
-                                <p class="text-caption" style="text-align: center;">Редактируйте структуру правил чата</p>
-                                
                                 <div class="blocks-list" id="blocksList">
                                     <!-- Блоки будут добавляться сюда -->
                                 </div>
                                 
-                                <div style="display: flex; justify-content: center; margin-top: 20px;">
+                                <!-- Кнопка добавления блока (только для мобильных, на ПК она в левой панели) -->
+                                <div class="add-block-container" style="display: none;">
                                     <button class="button button--filled" id="addBlockBtn" style="min-width: 200px;">
                                         <i class="fas fa-plus"></i>
                                         Добавить блок
@@ -1147,11 +1492,13 @@
                 document.querySelector('.mobile-layout').style.display = 'block';
                 document.querySelector('.mobile-header').style.display = 'flex';
                 document.querySelector('.mobile-nav').style.display = 'flex';
+                document.querySelector('.add-block-container').style.display = 'none';
             } else {
                 document.querySelector('.desktop-layout').style.display = 'grid';
                 document.querySelector('.mobile-layout').style.display = 'none';
                 document.querySelector('.mobile-header').style.display = 'none';
                 document.querySelector('.mobile-nav').style.display = 'none';
+                document.querySelector('.add-block-container').style.display = 'none';
             }
         }
         
@@ -1160,6 +1507,7 @@
             checkDeviceType();
             checkSession();
             setupEventListeners();
+            updatePathPreview();
         });
         
         // Ресайз окна
@@ -1169,10 +1517,6 @@
         function setupEventListeners() {
             // Десктопные элементы
             const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const reloadBtn = document.getElementById('reloadBtn');
-            const addBlockBtn = document.getElementById('addBlockBtn');
             const filePathInput = document.getElementById('filePath');
             const currentFilePathInput = document.getElementById('currentFilePath');
             
@@ -1187,14 +1531,17 @@
             const navAuth = document.getElementById('navAuth');
             const navEditor = document.getElementById('navEditor');
             
+            // Кнопки боковой панели
+            const sidebarSaveBtn = document.getElementById('sidebarSaveBtn');
+            const sidebarReloadBtn = document.getElementById('sidebarReloadBtn');
+            const sidebarAddBlockBtn = document.getElementById('sidebarAddBlockBtn');
+            const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
+            
             // Десктопные события
             if (loginBtn) loginBtn.addEventListener('click', handleLogin);
-            if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-            if (saveBtn) saveBtn.addEventListener('click', handleSave);
-            if (reloadBtn) reloadBtn.addEventListener('click', handleReload);
-            if (addBlockBtn) addBlockBtn.addEventListener('click', handleAddBlock);
-            if (filePathInput) filePathInput.addEventListener('change', handleFilePathChange);
-            if (currentFilePathInput) currentFilePathInput.addEventListener('change', handleCurrentFilePathChange);
+            if (filePathInput) filePathInput.addEventListener('input', handleFilePathChange);
+            if (filePathInput) filePathInput.addEventListener('input', updatePathPreview);
+            if (currentFilePathInput) currentFilePathInput.addEventListener('input', handleCurrentFilePathChange);
             
             // Мобильные события
             if (mobileLoginBtn) mobileLoginBtn.addEventListener('click', handleLogin);
@@ -1207,12 +1554,38 @@
             if (navAuth) navAuth.addEventListener('click', () => switchMobileScreen('auth'));
             if (navEditor) navEditor.addEventListener('click', () => switchMobileScreen('editor'));
             
+            // Кнопки боковой панели
+            if (sidebarSaveBtn) sidebarSaveBtn.addEventListener('click', handleSave);
+            if (sidebarReloadBtn) sidebarReloadBtn.addEventListener('click', handleReload);
+            if (sidebarAddBlockBtn) sidebarAddBlockBtn.addEventListener('click', handleAddBlock);
+            if (sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
+            
             // Прямая отправка формы по Enter
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && (e.target.id === 'githubToken' || e.target.id === 'mobileGithubToken')) {
                     handleLogin();
                 }
             });
+        }
+        
+        // Обновление предпросмотра пути
+        function updatePathPreview() {
+            const filePathInput = document.getElementById('filePath');
+            const pathPreview = document.getElementById('pathPreview');
+            
+            if (filePathInput && pathPreview) {
+                let path = filePathInput.value.trim();
+                if (!path) {
+                    path = DEFAULT_FILE_PATH;
+                }
+                
+                // Убедимся, что путь начинается с /
+                if (!path.startsWith('/')) {
+                    path = '/' + path;
+                }
+                
+                pathPreview.innerHTML = `Полный путь: <strong>${escapeHtml(path)}</strong>`;
+            }
         }
         
         // Переключение мобильных экранов
@@ -1267,16 +1640,12 @@
             });
             
             // Обновляем информацию о репозитории
-            const repoInfoElements = document.querySelectorAll('#currentRepoInfo, #mobileCurrentRepoInfo');
-            repoInfoElements.forEach(element => {
-                element.textContent = `${currentRepoInfo.repoOwner}/${currentRepoInfo.repoName}`;
-            });
+            updateRepoInfoInUI();
             
-            // Обновляем путь к файлу
-            const filePathInput = document.getElementById('filePath');
-            const currentFilePathInput = document.getElementById('currentFilePath');
-            if (filePathInput) filePathInput.value = currentRepoInfo.filePath;
-            if (currentFilePathInput) currentFilePathInput.value = currentRepoInfo.filePath;
+            // Показываем левую панель на ПК
+            if (!isMobile) {
+                document.getElementById('repoSidebar').classList.remove('hidden');
+            }
             
             // Переключаем экраны
             if (isMobile) {
@@ -1295,6 +1664,56 @@
                 navEditor.classList.add('active');
                 navEditor.disabled = false;
             }
+        }
+        
+        // Обновление информации о репозитории в UI
+        function updateRepoInfoInUI() {
+            if (!currentRepoInfo) return;
+            
+            // Обновляем информацию о репозитории
+            const repoInfoElements = document.querySelectorAll('#currentRepoInfo, #mobileCurrentRepoInfo');
+            repoInfoElements.forEach(element => {
+                element.textContent = `${currentRepoInfo.repoOwner}/${currentRepoInfo.repoName}`;
+            });
+            
+            // Обновляем путь к файлу
+            const filePathInput = document.getElementById('filePath');
+            const currentFilePathInput = document.getElementById('currentFilePath');
+            if (filePathInput) {
+                filePathInput.value = currentRepoInfo.filePath;
+                updatePathPreview();
+            }
+            if (currentFilePathInput) currentFilePathInput.value = currentRepoInfo.filePath;
+            
+            // Обновляем боковую панель
+            updateSidebarInfo();
+        }
+        
+        // Обновление информации в боковой панели
+        function updateSidebarInfo() {
+            if (!currentRepoInfo) return;
+            
+            // Информация о репозитории
+            const repoInfoElement = document.getElementById('currentRepoInfo');
+            if (repoInfoElement) {
+                repoInfoElement.textContent = `${currentRepoInfo.repoOwner}/${currentRepoInfo.repoName}`;
+            }
+            
+            // Статус подключения
+            const statusBadge = document.getElementById('connectionStatusBadge');
+            if (statusBadge) {
+                statusBadge.classList.remove('inactive');
+                statusBadge.innerHTML = '<i class="fas fa-circle"></i><span>Активно</span>';
+            }
+            
+            // Путь к файлу
+            const filePathInput = document.getElementById('currentFilePath');
+            if (filePathInput) {
+                filePathInput.value = currentRepoInfo.filePath;
+            }
+            
+            // Статистика
+            updateStats();
         }
         
         // Обновление UI при выходе
@@ -1321,8 +1740,14 @@
             // Сбрасываем путь к файлу
             const filePathInput = document.getElementById('filePath');
             const currentFilePathInput = document.getElementById('currentFilePath');
-            if (filePathInput) filePathInput.value = DEFAULT_FILE_PATH;
+            if (filePathInput) {
+                filePathInput.value = DEFAULT_FILE_PATH;
+                updatePathPreview();
+            }
             if (currentFilePathInput) currentFilePathInput.value = DEFAULT_FILE_PATH;
+            
+            // Скрываем левую панель на ПК
+            document.getElementById('repoSidebar').classList.add('hidden');
             
             // Переключаем экраны
             if (isMobile) {
@@ -1349,6 +1774,26 @@
             // Очищаем правила
             currentRules = null;
             renderBlocks();
+        }
+        
+        // Функция для обновления статистики
+        function updateStats() {
+            if (!currentRules) return;
+            
+            const blocksCount = document.getElementById('blocksCount');
+            const itemsCount = document.getElementById('itemsCount');
+            
+            if (blocksCount) {
+                blocksCount.textContent = currentRules.blocks ? currentRules.blocks.length : 0;
+            }
+            
+            if (itemsCount && currentRules.blocks) {
+                let totalItems = 0;
+                currentRules.blocks.forEach(block => {
+                    if (block.items) totalItems += block.items.length;
+                });
+                itemsCount.textContent = totalItems;
+            }
         }
         
         // Обработка изменения пути файла
@@ -1393,6 +1838,11 @@
             if (!filePath.endsWith('.json')) {
                 showSnackbar('Путь должен вести к JSON файлу', 'error');
                 return;
+            }
+            
+            // Автоматически добавляем / в начало пути, если его нет
+            if (!filePath.startsWith('/') && !filePath.startsWith('./')) {
+                filePath = '/' + filePath;
             }
             
             showSnackbar('Проверка подключения...', 'info');
@@ -1518,6 +1968,7 @@
                 };
                 
                 renderBlocks();
+                updateStats();
                 showSnackbar('Правила загружены', 'success');
             } catch (error) {
                 showSnackbar('Ошибка загрузки', 'error');
@@ -1568,6 +2019,8 @@
                 
                 if (response.ok) {
                     showSnackbar('Сохранено успешно', 'success');
+                    updateStats();
+                    updateSidebarInfo();
                 } else {
                     throw new Error('Ошибка сохранения');
                 }
@@ -1586,7 +2039,7 @@
                     <div class="empty-state">
                         <i class="fas fa-inbox"></i>
                         <p>Пока нет блоков правил</p>
-                        <p class="text-caption">Добавьте первый блок, нажав кнопку ниже</p>
+                        <p class="text-caption">Добавьте первый блок, нажав кнопку в левой панели</p>
                     </div>
                 `;
                 return;
