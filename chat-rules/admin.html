@@ -2,1914 +2,676 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Админ-панель • Управление правилами</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Управление правилами</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --md-primary: #D32F2F; /* Красный акцентный цвет */
-            --md-primary-container: #FFCDD2;
-            --md-secondary: #625B71;
-            --md-secondary-container: #E8DEF8;
-            --md-surface: #141218;
-            --md-surface-container: #1D1B20;
-            --md-surface-container-high: #2D2A32;
-            --md-on-primary: #FFFFFF;
-            --md-on-surface: #E6E0E9;
-            --md-on-surface-variant: #CAC4D0;
-            --md-outline: #938F99;
-            --md-outline-variant: #49454F;
-            --md-error: #F2B8B5;
-            --md-error-container: #8C1D18;
-            --md-success: #4CAF50;
-            --md-warning: #FF9800;
-            --md-elevation-1: 0 1px 2px rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15);
-            --md-elevation-2: 0 1px 2px rgba(0,0,0,0.3), 0 2px 6px 2px rgba(0,0,0,0.15);
-            --md-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3);
-            --md-radius-small: 8px;
-            --md-radius-medium: 12px;
-            --md-radius-large: 16px;
-            --md-transition: 200ms cubic-bezier(0.2, 0, 0, 1);
-            
-            /* Для мобильной навигации */
-            --safe-area-top: env(safe-area-inset-top, 0px);
-            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+            --primary-color: 255, 78, 132;
+            --danger-color: 231, 76, 60;
+            --success-color: 46, 204, 113;
+            --warning-color: 241, 196, 15;
         }
         
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
         }
         
         body {
-            font-family: 'Roboto', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--md-surface);
-            color: var(--md-on-surface);
-            line-height: 1.5;
-            padding-top: var(--safe-area-top);
-            padding-bottom: var(--safe-area-bottom);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
         }
         
-        /* Полноэкранный контейнер */
-        .fullscreen-container {
-            height: 100vh;
-            height: -webkit-fill-available;
-            height: calc(100vh - var(--safe-area-top) - var(--safe-area-bottom));
-            display: flex;
-            flex-direction: column;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(25, 25, 35, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            border: 1px solid rgba(var(--primary-color), 0.3);
         }
         
-        /* Шапка - фиксированная */
+        /* Шапка */
         .admin-header {
-            flex-shrink: 0;
-            padding: 16px 20px;
-            background: var(--md-surface-container);
-            border-bottom: 1px solid var(--md-outline-variant);
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Центрируем заголовок на ПК */
+            background: linear-gradient(90deg, 
+                rgba(var(--primary-color), 0.2) 0%, 
+                rgba(var(--primary-color), 0.1) 100%);
+            padding: 25px;
+            border-bottom: 1px solid rgba(var(--primary-color), 0.3);
             position: relative;
-            z-index: 10;
         }
         
-        /* Компактная шапка для мобильных */
-        .mobile-header {
-            display: none;
-            padding: 12px 16px;
-            background: var(--md-surface-container);
-            border-bottom: 1px solid var(--md-outline-variant);
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .header-content {
+        .admin-header h1 {
+            color: rgb(var(--primary-color));
+            font-size: 2.5em;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            flex: 1;
-            min-width: 0;
-            justify-content: center; /* Центрируем содержимое */
+            gap: 15px;
         }
         
-        .header-icon {
-            width: 36px;
-            height: 36px;
-            background: var(--md-primary);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--md-on-primary);
-            flex-shrink: 0;
-        }
-        
-        .header-title {
-            min-width: 0;
-            text-align: center; /* Центрируем текст */
-        }
-        
-        .header-title h1 {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .header-title p {
-            color: var(--md-on-surface-variant);
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .admin-header h1 i {
+            font-size: 1.2em;
         }
         
         .session-status {
             position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 25px;
+            right: 25px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            background: var(--md-surface-container-high);
-            border-radius: var(--md-radius-medium);
-            flex-shrink: 0;
+            gap: 10px;
         }
         
         .status-indicator {
-            width: 6px;
-            height: 6px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: var(--md-outline);
+            background-color: #e74c3c;
         }
         
         .status-indicator.active {
-            background: var(--md-success);
-            box-shadow: 0 0 6px var(--md-success);
+            background-color: #2ecc71;
+            box-shadow: 0 0 10px #2ecc71;
         }
         
-        /* Основное содержимое - занимает все оставшееся пространство */
-        .main-content {
-            flex: 1;
+        /* Основные секции */
+        .admin-sections {
             display: flex;
-            overflow: hidden;
-            position: relative;
+            min-height: 600px;
         }
         
-        /* Десктопный макет - трехколоночный */
-        .desktop-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr; /* Левая панель и основная область */
-            width: 100%;
-            height: 100%;
-            gap: 20px; /* Отступ между колонками */
+        /* Левая панель - авторизация */
+        .auth-panel {
+            width: 350px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .auth-panel.hidden {
+            display: none;
+        }
+        
+        .auth-section {
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
-            background: var(--md-surface);
-            min-height: 0; /* Важно для скролла */
+            border-radius: 10px;
+            border: 1px solid rgba(var(--primary-color), 0.2);
         }
         
-        /* Левая панель - информация о репозитории */
-        .repo-sidebar {
-            background: var(--md-surface-container);
-            border-radius: var(--md-radius-large);
-            padding: 20px;
+        .auth-section h3 {
+            color: rgb(var(--primary-color));
+            margin-bottom: 20px;
+            font-size: 1.3em;
             display: flex;
-            flex-direction: column;
-            gap: 16px;
-            overflow: hidden;
-            height: 100%;
-            min-height: 0; /* Важно для скролла */
+            align-items: center;
+            gap: 10px;
         }
         
-        .repo-sidebar.hidden {
-            display: none;
-        }
-        
-        /* Контейнер для скролла в левой панели */
-        .sidebar-scroll-container {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            min-height: 0; /* Важно для скролла */
-            padding-right: 4px; /* Место для скроллбара */
-        }
-        
-        /* Кастомный скроллбар для левой панели */
-        .sidebar-scroll-container::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        .sidebar-scroll-container::-webkit-scrollbar-track {
-            background: transparent;
-            border-radius: 2px;
-        }
-        
-        .sidebar-scroll-container::-webkit-scrollbar-thumb {
-            background: var(--md-outline-variant);
-            border-radius: 2px;
-        }
-        
-        .sidebar-scroll-container::-webkit-scrollbar-thumb:hover {
-            background: var(--md-outline);
-        }
-        
-        /* Контейнер для центрирования контента на ПК */
-        .pc-centered-content {
-            grid-column: 2;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-            background: var(--md-surface-container);
-            border-radius: var(--md-radius-large);
-            min-height: 0; /* Важно для скролла */
-        }
-        
-        /* Мобильный макет - через переключатель экранов */
-        .mobile-layout {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        .mobile-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--md-surface-container);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            transition: transform 0.3s ease;
-            padding: 16px;
-        }
-        
-        .mobile-screen.hidden {
-            transform: translateX(100%);
-        }
-        
-        /* Панель авторизации для ПК - занимает обе колонки */
-        .auth-card {
-            grid-column: 1 / span 2;
-            background: var(--md-surface-container);
-            border-radius: var(--md-radius-large);
-            padding: 40px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Центрируем содержимое */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            max-width: 800px; /* Ограничиваем ширину */
-            margin: 0 auto; /* Центрируем по горизонтали */
-        }
-        
-        .auth-card.hidden {
-            display: none;
-        }
-        
-        /* Панель редактора для ПК */
+        /* Правая панель - редактор */
         .editor-panel {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            max-width: 100%;
-            overflow: hidden;
-            min-height: 0; /* Важно для скролла */
-        }
-        
-        .editor-panel.hidden {
+            flex: 1;
+            padding: 30px;
             display: none;
         }
         
         .editor-panel.active {
-            display: flex;
+            display: block;
         }
         
-        .editor-header {
-            flex-shrink: 0;
-            padding: 24px 24px 16px 24px;
-            border-bottom: 1px solid var(--md-outline-variant);
-            background: var(--md-surface-container);
-            border-radius: var(--md-radius-large) var(--md-radius-large) 0 0;
+        .repo-info {
+            background: rgba(var(--primary-color), 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(var(--primary-color), 0.3);
         }
         
-        .editor-content {
-            flex: 1;
-            overflow-y: auto; /* Разрешаем скролл ТОЛЬКО в контенте редактора */
-            -webkit-overflow-scrolling: touch;
-            padding: 24px;
-            padding-right: 10px; /* Место для скроллбара */
-            min-height: 0; /* Важно для скролла */
+        .repo-info h3 {
+            color: rgb(var(--primary-color));
+            margin-bottom: 10px;
         }
         
-        /* Кастомный скроллбар */
-        .editor-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .editor-content::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .editor-content::-webkit-scrollbar-thumb {
-            background: var(--md-outline-variant);
-            border-radius: 3px;
-        }
-        
-        .editor-content::-webkit-scrollbar-thumb:hover {
-            background: var(--md-outline);
-        }
-        
-        /* Стили для левой панели репозитория */
-        .sidebar-section {
-            background: var(--md-surface-container-high);
-            border-radius: var(--md-radius-medium);
-            padding: 16px;
-            flex-shrink: 0; /* Предотвращает сжатие секций */
-        }
-        
-        .sidebar-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            color: var(--md-on-surface-variant);
-        }
-        
-        .sidebar-content {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .repo-details {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .repo-path {
-            font-family: monospace;
-            font-size: 13px;
-            background: var(--md-surface);
-            padding: 8px 10px;
-            border-radius: var(--md-radius-small);
-            border: 1px solid var(--md-outline-variant);
-            word-break: break-all;
-            line-height: 1.4;
-        }
-        
-        .repo-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--md-on-surface-variant);
-        }
-        
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 8px;
-            background: var(--md-success);
-            color: white;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 500;
-        }
-        
-        .status-badge.inactive {
-            background: var(--md-outline-variant);
-        }
-        
-        .status-badge i {
-            font-size: 9px;
-        }
-        
-        /* Кнопки управления в боковой панели - уменьшенные */
-        .sidebar-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 8px;
-        }
-        
-        .sidebar-actions .button {
-            justify-content: flex-start;
-            padding: 10px 14px;
-            font-size: 13px;
-            min-height: 40px;
-            border-radius: var(--md-radius-small);
-        }
-        
-        .sidebar-actions .button i {
-            font-size: 14px;
-            width: 18px;
-        }
-        
-        /* Контейнер для пути к файлу в боковой панели */
-        .file-path-section {
-            margin-top: 12px;
-        }
-        
-        .file-path-section .text-field {
-            margin-top: 8px;
-        }
-        
-        .file-path-section .text-field input {
-            padding: 10px 12px;
-            font-size: 13px;
-            border-radius: var(--md-radius-small);
-        }
-        
-        /* Статистика репозитория */
-        .repo-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 10px;
-            background: var(--md-surface);
-            border-radius: var(--md-radius-small);
-        }
-        
-        .stat-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--md-primary);
-        }
-        
-        .stat-label {
-            font-size: 10px;
-            color: var(--md-on-surface-variant);
-            margin-top: 3px;
-        }
-        
-        /* Дополнительные улучшения для боковой панели */
-        .sidebar-header {
-            text-align: center;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--md-outline-variant);
-            margin-bottom: 16px;
-            flex-shrink: 0; /* Предотвращает сжатие заголовка */
-        }
-        
-        .sidebar-header h3 {
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-        
-        .sidebar-header p {
-            font-size: 11px;
-            color: var(--md-on-surface-variant);
-        }
-        
-        /* Нижняя секция (последнее обновление) - прижимаем к низу */
-        .sidebar-bottom-section {
-            margin-top: auto;
-            flex-shrink: 0; /* Предотвращает сжатие */
-        }
-        
-        /* Формы - улучшены для мобильных */
+        /* Формы */
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         
-        .form-label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: var(--md-on-surface-variant);
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #aaa;
+            font-size: 0.9em;
         }
         
-        .text-field {
-            position: relative;
-        }
-        
-        .text-field input,
-        .text-field textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
-            padding: 14px 16px;
-            background: transparent;
-            border: 1px solid var(--md-outline-variant);
-            border-radius: var(--md-radius-small);
-            color: var(--md-on-surface);
-            font-size: 16px;
-            font-family: inherit;
-            transition: var(--md-transition);
-            -webkit-appearance: none;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s;
         }
         
-        .text-field input:focus,
-        .text-field textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
-            border-color: var(--md-primary);
-            box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.3); /* Красная тень */
+            border-color: rgb(var(--primary-color));
+            box-shadow: 0 0 10px rgba(var(--primary-color), 0.3);
         }
         
-        .text-field textarea {
-            min-height: 100px;
+        textarea {
             resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
         }
         
-        /* Кнопки - увеличены для мобильных */
-        .button {
-            padding: 14px 20px;
+        /* Кнопки */
+        .btn {
+            padding: 12px 25px;
             border: none;
-            border-radius: var(--md-radius-medium);
-            font-size: 13px;
-            font-weight: 500;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
             cursor: pointer;
-            transition: var(--md-transition);
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            min-height: 44px;
-        }
-        
-        .button--filled {
-            background: var(--md-primary);
-            color: var(--md-on-primary);
-        }
-        
-        .button--filled:hover {
-            background: #B71C1C; /* Темнее красный */
-            box-shadow: var(--md-elevation-1);
-        }
-        
-        .button--tonal {
-            background: var(--md-primary-container);
-            color: var(--md-primary);
-        }
-        
-        .button--outlined {
-            background: transparent;
-            color: var(--md-primary);
-            border: 1px solid var(--md-outline);
-        }
-        
-        .button--danger {
-            background: var(--md-error-container);
-            color: white;
-        }
-        
-        .button--success {
-            background: var(--md-success);
-            color: white;
-        }
-        
-        .button--full-width {
-            width: 100%;
-        }
-        
-        .button--icon {
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            border-radius: 20px;
-            min-height: auto;
-        }
-        
-        .button-group {
-            display: flex;
             gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
         }
         
-        /* Кнопка добавления блока - в центре */
-        .add-block-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            margin-bottom: 10px;
+        .btn-primary {
+            background: linear-gradient(135deg, 
+                rgb(var(--primary-color)) 0%, 
+                rgba(var(--primary-color), 0.8) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(var(--primary-color), 0.4);
+        }
+        
+        .btn-danger {
+            background: rgba(var(--danger-color), 0.9);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: rgba(var(--danger-color), 1);
+        }
+        
+        .btn-success {
+            background: rgba(var(--success-color), 0.9);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: rgba(var(--warning-color), 0.9);
+            color: white;
+        }
+        
+        .btn-block {
+            width: 100%;
+            margin-top: 10px;
         }
         
         /* Редактор блоков */
         .blocks-container {
-            margin-top: 20px;
+            margin-top: 30px;
         }
         
-        .section-title {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            text-align: center; /* Центрируем заголовки на ПК */
-        }
-        
-        .blocks-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        
-        .block-card {
-            background: var(--md-surface-container-high);
-            border-radius: var(--md-radius-medium);
-            padding: 16px;
-            border-left: 4px solid var(--md-primary);
+        .block-editor {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
         }
         
         .block-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(var(--primary-color), 0.3);
         }
         
-        .block-title-input {
+        .block-title {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--md-on-surface);
-            font-size: 16px;
-            font-weight: 500;
-            padding: 8px 0;
-            border-bottom: 1px solid transparent;
-            min-width: 0;
+            color: rgb(var(--primary-color));
+            font-size: 1.4em;
+            font-weight: bold;
+            padding: 5px;
         }
         
-        .block-title-input:focus {
+        .block-title:focus {
             outline: none;
-            border-bottom-color: var(--md-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
         }
         
         .block-actions {
             display: flex;
-            gap: 4px;
-            flex-shrink: 0;
+            gap: 10px;
+        }
+        
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .icon-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .delete-btn:hover {
+            color: rgb(var(--danger-color));
         }
         
         /* Пункты правил */
-        .items-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 12px;
+        .items-container {
+            margin-top: 15px;
         }
         
-        .item-card {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: var(--md-radius-small);
-            padding: 12px;
-            border: 1px solid var(--md-outline-variant);
+        .item-editor {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         
         .item-id {
-            color: var(--md-primary);
-            font-size: 11px;
-            font-weight: 500;
-            padding: 4px 8px;
-            background: rgba(211, 47, 47, 0.1); /* Красный с прозрачностью */
-            border-radius: 4px;
+            background: rgba(var(--primary-color), 0.2);
+            color: rgb(var(--primary-color));
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
         }
         
         .item-text {
             width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--md-on-surface);
-            font-size: 14px;
-            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            color: white;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1em;
             resize: vertical;
             min-height: 60px;
-            font-family: inherit;
-            padding: 8px;
         }
         
         .item-text:focus {
             outline: none;
+            border-color: rgba(var(--primary-color), 0.5);
         }
         
         /* Подпункты */
         .subitems-container {
-            margin-top: 8px;
-            padding-left: 12px;
-            border-left: 2px solid var(--md-outline-variant);
+            margin-top: 10px;
+            margin-left: 20px;
+            border-left: 2px solid rgba(var(--primary-color), 0.3);
+            padding-left: 15px;
         }
         
-        .subitem-item {
+        .subitem-editor {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 10px;
+            margin-bottom: 5px;
         }
         
         .subitem-input {
             flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--md-on-surface-variant);
-            padding: 6px 0;
-            font-size: 13px;
-            min-width: 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            color: white;
+            padding: 8px;
+            font-size: 0.95em;
         }
         
         .subitem-input:focus {
             outline: none;
-            color: var(--md-on-surface);
+            border-color: rgba(var(--warning-color), 0.5);
         }
         
-        /* Иконки кнопок */
-        .icon-button {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: transparent;
-            color: var(--md-on-surface-variant);
-            border-radius: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--md-transition);
-            flex-shrink: 0;
-        }
-        
-        .icon-button:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--md-on-surface);
-        }
-        
-        .icon-button--danger:hover {
-            color: var(--md-primary); /* Красный вместо стандартного error */
-        }
-        
-        /* Мобильная навигация */
-        .mobile-nav {
+        /* Информационные сообщения */
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
             display: none;
-            position: fixed;
-            bottom: max(16px, var(--safe-area-bottom));
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--md-surface-container-high);
-            border-radius: 24px;
-            padding: 8px;
-            box-shadow: var(--md-elevation-3);
-            z-index: 100;
-            gap: 4px;
         }
         
-        .nav-button {
-            width: 56px;
-            height: 56px;
-            border: none;
-            background: transparent;
-            color: var(--md-on-surface-variant);
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            transition: var(--md-transition);
-            font-size: 11px;
+        .message.show {
+            display: block;
+            animation: fadeIn 0.5s;
         }
         
-        .nav-button.active {
-            background: var(--md-primary); /* Красный акцент */
-            color: var(--md-on-primary);
+        .message.success {
+            background: rgba(var(--success-color), 0.1);
+            border: 1px solid rgba(var(--success-color), 0.3);
+            color: rgb(var(--success-color));
         }
         
-        /* Snackbar для уведомлений */
-        .snackbar {
-            position: fixed;
-            bottom: max(80px, calc(80px + var(--safe-area-bottom)));
-            left: 16px;
-            right: 16px;
-            background: var(--md-surface-container-high);
-            color: var(--md-on-surface);
-            padding: 12px 16px;
-            border-radius: var(--md-radius-medium);
-            box-shadow: var(--md-elevation-3);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 300ms cubic-bezier(0.2, 0, 0, 1);
-            z-index: 1000;
-            pointer-events: none;
+        .message.error {
+            background: rgba(var(--danger-color), 0.1);
+            border: 1px solid rgba(var(--danger-color), 0.3);
+            color: rgb(var(--danger-color));
         }
         
-        .snackbar.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
+        .message.info {
+            background: rgba(var(--primary-color), 0.1);
+            border: 1px solid rgba(var(--primary-color), 0.3);
+            color: rgb(var(--primary-color));
         }
         
-        .snackbar--success {
-            border-left: 4px solid var(--md-success);
-        }
-        
-        .snackbar--error {
-            border-left: 4px solid var(--md-primary); /* Красный акцент */
-        }
-        
-        .snackbar--info {
-            border-left: 4px solid var(--md-primary); /* Красный акцент */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         /* Утилиты */
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 12px;
-            background: var(--md-surface-container-high);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        
-        .divider {
-            height: 1px;
-            background: var(--md-outline-variant);
-            margin: 16px 0;
-        }
-        
-        .text-caption {
-            font-size: 11px;
-            color: var(--md-on-surface-variant);
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--md-on-surface-variant);
-        }
-        
-        .empty-state i {
-            font-size: 40px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .hidden { display: none; }
         
         /* Адаптивность */
-        @media (max-width: 768px) {
-            /* Скрываем десктопный макет, показываем мобильный */
-            .desktop-layout {
-                display: none;
-            }
-            
-            .mobile-layout {
-                display: block;
-            }
-            
-            .mobile-header {
-                display: flex;
-            }
-            
-            .admin-header {
-                display: none;
-            }
-            
-            .mobile-nav {
-                display: flex;
-            }
-            
-            /* Адаптивные кнопки */
-            .button-group {
+        @media (max-width: 900px) {
+            .admin-sections {
                 flex-direction: column;
             }
             
-            .button {
-                padding: 18px 24px;
-                font-size: 16px;
+            .auth-panel {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             }
             
-            /* Адаптивные текстовые поля */
-            .text-field input,
-            .text-field textarea {
-                padding: 18px 16px;
-                font-size: 16px;
-            }
-            
-            /* Улучшаем скролл на iOS */
-            .mobile-screen {
-                -webkit-overflow-scrolling: touch;
-                overscroll-behavior: contain;
-            }
-            
-            /* Убираем лишние отступы на маленьких экранах */
-            .auth-card,
-            .editor-panel {
-                padding: 16px;
-                border-radius: 0;
-            }
-            
-            /* Компактные блоки на маленьких экранах */
-            .block-card {
-                padding: 12px;
-            }
-            
-            .block-title-input {
-                font-size: 15px;
-            }
-            
-            .item-card {
-                padding: 10px;
-            }
-        }
-        
-        /* Для очень маленьких экранов */
-        @media (max-width: 360px) {
-            .mobile-screen {
-                padding: 12px;
-            }
-            
-            .button {
-                padding: 16px 20px;
-                font-size: 14px;
-            }
-            
-            .text-field input,
-            .text-field textarea {
-                padding: 16px 12px;
-                font-size: 15px;
-            }
-            
-            .nav-button {
-                width: 52px;
-                height: 52px;
-                font-size: 10px;
-            }
-            
-            .snackbar {
-                left: 12px;
-                right: 12px;
-            }
-        }
-        
-        /* Ландшафтная ориентация на мобильных */
-        @media (max-width: 900px) and (orientation: landscape) {
-            .fullscreen-container {
-                height: auto;
-                min-height: 100vh;
-            }
-            
-            .mobile-header {
-                padding: 8px 12px;
-            }
-            
-            .header-icon {
-                width: 32px;
-                height: 32px;
-            }
-            
-            .mobile-screen {
-                padding: 12px;
-            }
-            
-            .auth-card,
-            .editor-panel {
-                padding: 12px;
-            }
-            
-            .button {
-                padding: 12px 16px;
-                min-height: 40px;
-            }
-            
-            .text-field input,
-            .text-field textarea {
-                padding: 12px;
-            }
-        }
-        
-        /* Десктопные улучшения */
-        @media (min-width: 769px) {
-            .auth-card {
-                box-shadow: none;
-            }
-            
-            .editor-panel {
-                margin-left: 0;
-            }
-            
-            .main-content {
-                padding: 0;
-            }
-            
-            /* Центрируем заголовок формы на ПК */
-            .card-title {
-                text-align: center;
-                margin-bottom: 32px;
-                font-size: 20px;
-            }
-            
-            /* Центрируем кнопки на ПК */
-            .button--full-width {
-                margin: 0 auto;
-                max-width: 400px;
-            }
-            
-            /* Центрируем текстовые инструкции на ПК */
-            .text-caption {
-                text-align: center;
-                margin: 16px auto;
-                max-width: 500px;
-            }
-            
-            /* Путь файла - делаем более заметным */
-            .file-path-container {
-                background: var(--md-surface-container-high);
-                border-radius: var(--md-radius-medium);
-                padding: 16px;
-                margin: 20px 0;
-                text-align: center;
-            }
-            
-            .file-path-input {
-                font-family: monospace;
-                background: var(--md-surface);
-                border: 1px solid var(--md-outline);
-                color: var(--md-primary);
-                font-weight: bold;
-            }
-            
-            /* Предпросмотр пути */
-            .path-preview {
-                font-family: monospace;
-                background: var(--md-surface);
-                padding: 8px 12px;
-                border-radius: var(--md-radius-small);
-                border: 1px solid var(--md-outline-variant);
-                margin-top: 8px;
-                font-size: 14px;
-                color: var(--md-on-surface-variant);
-            }
-        }
-        
-        /* Анимации */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .animate-in {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        /* Стили для адаптивности левой панели */
-        @media (max-width: 1200px) {
-            .desktop-layout {
-                grid-template-columns: 260px 1fr;
-                padding: 16px;
-                gap: 16px;
-            }
-            
-            .repo-sidebar {
-                padding: 16px;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .desktop-layout {
-                grid-template-columns: 240px 1fr;
-                gap: 12px;
-            }
-            
-            .repo-sidebar {
-                padding: 14px;
-            }
-            
-            .sidebar-section {
-                padding: 14px;
-            }
-        }
-        
-        /* Для очень высоких экранов - ограничиваем максимальную высоту левой панели */
-        @media (min-height: 900px) {
-            .sidebar-scroll-container {
-                max-height: calc(100vh - 200px); /* Ограничиваем высоту на очень высоких экранах */
+            .session-status {
+                position: static;
+                margin-top: 15px;
+                justify-content: flex-end;
             }
         }
     </style>
 </head>
 <body>
-    <div class="fullscreen-container">
-        <!-- Десктопная шапка -->
+    <div class="container">
+        <!-- Шапка админки -->
         <div class="admin-header">
-            <div class="header-content">
-                <div class="header-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="header-title">
-                    <h1>Управление правилами</h1>
-                    <p>Редактирование JSON репозитория</p>
-                </div>
-            </div>
+            <h1><i class="fas fa-shield-alt"></i> Админ-панель</h1>
+            <p>Управление репозиторием (json only)</p>
             
             <div class="session-status">
                 <div class="status-indicator" id="statusIndicator"></div>
-                <span id="sessionStatusText">Не подключено</span>
+                <span id="sessionStatusText">Не авторизован</span>
             </div>
         </div>
         
-        <!-- Мобильная шапка -->
-        <div class="mobile-header">
-            <div class="header-content">
-                <div class="header-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="header-title">
-                    <h1>Правила чата</h1>
-                    <p id="mobileRepoInfo">Гость</p>
-                </div>
-            </div>
-            
-            <div class="session-status">
-                <div class="status-indicator" id="mobileStatusIndicator"></div>
-            </div>
-        </div>
-        
-        <!-- Основное содержимое -->
-        <div class="main-content">
-            <!-- Десктопный макет -->
-            <div class="desktop-layout">
-                <!-- Левая панель - информация о репозитории (только для ПК в режиме редактора) -->
-                <div class="repo-sidebar hidden" id="repoSidebar">
-                    <div class="sidebar-header">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
-                            <i class="fas fa-database" style="color: var(--md-primary); font-size: 14px;"></i>
-                            <h3>Репозиторий</h3>
-                        </div>
-                        <p>Текущее подключение</p>
+        <div class="admin-sections">
+            <!-- Левая панель - авторизация -->
+            <div class="auth-panel" id="authPanel">
+                <div class="auth-section">
+                    <h3><i class="fas fa-key"></i> Авторизация</h3>
+                    
+                    <div class="form-group">
+                        <label for="repoOwner">Владелец репозитория</label>
+                        <input type="text" id="repoOwner" 
+                               placeholder="User"
+                               autocomplete="off">
                     </div>
                     
-                    <div class="sidebar-scroll-container">
-                        <div class="sidebar-section">
-                            <div class="sidebar-title">
-                                <i class="fas fa-info-circle" style="font-size: 13px;"></i>
-                                <span>Информация</span>
-                            </div>
-                            <div class="sidebar-content">
-                                <div class="repo-details">
-                                    <div class="repo-path" id="currentRepoInfo">Не подключен</div>
-                                    <div class="repo-meta">
-                                        <span class="status-badge inactive" id="connectionStatusBadge">
-                                            <i class="fas fa-circle"></i>
-                                            <span>Неактивно</span>
-                                        </span>
-                                        <span id="lastUpdateInfo">—</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="sidebar-section file-path-section">
-                            <div class="sidebar-title">
-                                <i class="fas fa-file-code" style="font-size: 13px;"></i>
-                                <span>Файл правил</span>
-                            </div>
-                            <div class="sidebar-content">
-                                <div class="text-field">
-                                    <input type="text" id="currentFilePath" placeholder="chat-rules/rules.json" autocomplete="off">
-                                </div>
-                                <p class="text-caption" style="margin-top: 8px;">Измените путь и нажмите Сохранить</p>
-                                
-                                <div class="repo-stats">
-                                    <div class="stat-item">
-                                        <div class="stat-value" id="blocksCount">0</div>
-                                        <div class="stat-label">Блоков</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value" id="itemsCount">0</div>
-                                        <div class="stat-label">Пунктов</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="sidebar-section">
-                            <div class="sidebar-title">
-                                <i class="fas fa-tools" style="font-size: 13px;"></i>
-                                <span>Управление</span>
-                            </div>
-                            <div class="sidebar-actions">
-                                <button class="button button--tonal" id="sidebarSaveBtn">
-                                    <i class="fas fa-save"></i>
-                                    Сохранить
-                                </button>
-                                <button class="button button--outlined" id="sidebarReloadBtn">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Обновить
-                                </button>
-                                <button class="button button--filled" id="sidebarAddBlockBtn">
-                                    <i class="fas fa-plus"></i>
-                                    Добавить блок
-                                </button>
-                                <button class="button button--danger" id="sidebarLogoutBtn">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    Выйти
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Центральная область -->
-                <div class="pc-centered-content">
-                    <!-- Панель авторизации -->
-                    <div class="auth-card" id="authPanel">
-                        <div class="card-title" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 32px; font-size: 20px; font-weight: 500;">
-                            <i class="fas fa-key"></i>
-                            <span>Подключение к GitHub</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Владелец репозитория</label>
-                            <div class="text-field">
-                                <input type="text" id="repoOwner" placeholder="username" autocomplete="off">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Название репозитория</label>
-                            <div class="text-field">
-                                <input type="text" id="repoName" placeholder="repository-name" autocomplete="off">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Путь к файлу JSON</label>
-                            <div class="text-field">
-                                <input type="text" id="filePath" placeholder="chat-rules/rules.json" value="chat-rules/rules.json" autocomplete="off" class="file-path-input">
-                            </div>
-                            <div class="path-preview" id="pathPreview">
-                                Полный путь: <strong>/chat-rules/rules.json</strong>
-                            </div>
-                            <p class="text-caption">Укажите путь к файлу в репозитории</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">GitHub Token</label>
-                            <div class="text-field">
-                                <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
-                            </div>
-                            <p class="text-caption">Требуются права: <strong>repo</strong></p>
-                        </div>
-                        
-                        <div class="divider"></div>
-                        
-                        <button class="button button--filled button--full-width" id="loginBtn">
-                            <i class="fas fa-link"></i>
-                            <span>Подключиться</span>
-                        </button>
-                        
-                        <div style="margin-top: 32px; text-align: center;">
-                            <p class="text-caption" style="max-width: 500px; margin: 0 auto;">
-                                <strong>Как это работает:</strong><br>
-                                1. Создайте Personal Access Token на GitHub<br>
-                                2. Укажите данные вашего репозитория<br>
-                                3. Укажите путь к файлу JSON<br>
-                                4. Редактируйте и сохраняйте изменения
-                            </p>
-                        </div>
+                    <div class="form-group">
+                        <label for="repoName">Название репозитория</label>
+                        <input type="text" id="repoName" 
+                               placeholder="repository"
+                               autocomplete="off">
                     </div>
                     
-                    <!-- Панель редактора -->
-                    <div class="editor-panel hidden" id="editorPanel">
-                        <div class="editor-header">
-                            <!-- Заголовок редактора -->
-                            <h2 class="section-title" style="text-align: center; margin-bottom: 8px; font-size: 10px;">
-                                <i class="fas fa-edit"></i>
-                                Редактор правил чата
-                            </h2>
-                            
-                            <p class="text-caption" style="text-align: center; max-width: 600px; margin: 0 auto;">
-                                Редактируйте структуру правил. Все изменения сохраняются в вашем GitHub репозитории.
-                            </p>
-                        </div>
-                        
-                        <div class="editor-content">
-                            <!-- Редактор блоков -->
-                            <div class="blocks-container">
-                                <div class="blocks-list" id="blocksList">
-                                    <!-- Блоки будут добавляться сюда -->
-                                </div>
-                                
-                                <!-- Кнопка добавления блока (только для мобильных, на ПК она в левой панели) -->
-                                <div class="add-block-container" style="display: none;">
-                                    <button class="button button--filled" id="addBlockBtn" style="min-width: 200px;">
-                                        <i class="fas fa-plus"></i>
-                                        Добавить блок
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="githubToken">GitHub Personal Access Token</label>
+                        <input type="password" id="githubToken" 
+                               placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                               autocomplete="off">
+                        <small style="color: #777; display: block; margin-top: 5px;">
+                            Токен должен иметь права: <strong>repo</strong>
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="repoPath">Путь к файлу json</label>
+                        <input type="text" id="repoPath" 
+                               value="/chat-rules/rules.json"
+                               style="background: rgba(255, 255, 255, 0.07);"
+                               placeholder="/your_repo/file.json"
+                               autocomplete="on">
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Подключиться к репозиторию
+                    </button>
+                    
+                    <div class="message info mt-20">
+                        <p><strong>Инструкция:</strong></p>
+                        <p>1. Создайте Personal Access Token на GitHub с правами <code>repo</code></p>
+                        <p>2. Укажите данные своего репозитория</p>
+                        <p>3. Файл правил должен находиться по пути: <code>chat-rules/rules.json</code></p>
+                        <p>4. После закрытия вкладки данные очистятся</p>
                     </div>
                 </div>
             </div>
             
-            <!-- Мобильный макет -->
-            <div class="mobile-layout">
-                <!-- Экран авторизации -->
-                <div class="mobile-screen" id="mobileAuthScreen">
-                    <div style="margin-bottom: 24px;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; font-size: 18px; font-weight: 500;">
-                            <i class="fas fa-key"></i>
-                            <span>Подключение к GitHub</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Владелец репозитория</label>
-                            <div class="text-field">
-                                <input type="text" id="mobileRepoOwner" placeholder="username" autocomplete="off">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Название репозитория</label>
-                            <div class="text-field">
-                                <input type="text" id="mobileRepoName" placeholder="repository-name" autocomplete="off">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">GitHub Token</label>
-                            <div class="text-field">
-                                <input type="password" id="mobileGithubToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
-                            </div>
-                            <p class="text-caption">Требуются права: <strong>repo</strong></p>
-                        </div>
-                        
-                        <button class="button button--filled button--full-width" id="mobileLoginBtn" style="margin-top: 24px;">
-                            <i class="fas fa-link"></i>
-                            <span>Подключиться</span>
-                        </button>
-                        
-                        <div style="margin-top: 32px; padding: 16px; background: var(--md-surface-container-high); border-radius: var(--md-radius-medium);">
-                            <p class="text-caption" style="text-align: left;">
-                                <strong>Инструкция:</strong><br>
-                                1. Создайте Personal Access Token на GitHub<br>
-                                2. Укажите данные вашего репозитория<br>
-                                3. Файл будет сохранён по пути: <code>chat-rules/rules.json</code>
-                            </p>
-                        </div>
-                    </div>
+            <!-- Правая панель - редактор -->
+            <div class="editor-panel" id="editorPanel">
+                <!-- Информация о репозитории -->
+                <div class="repo-info">
+                    <h3><i class="fas fa-database"></i> Текущий репозиторий</h3>
+                    <p id="currentRepoInfo">Не подключен</p>
+                    <p><small>Путь к файлу: <strong>chat-rules/rules.json</strong></small></p>
                 </div>
                 
-                <!-- Экран редактора -->
-                <div class="mobile-screen hidden" id="mobileEditorScreen">
-                    <div class="editor-content">
-                        <!-- Информация о подключении -->
-                        <div class="repo-info" style="margin-bottom: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 14px; font-weight: 500;">
-                                        <i class="fas fa-database"></i>
-                                        <span>Репозиторий</span>
-                                    </div>
-                                    <p id="mobileCurrentRepoInfo" style="font-family: monospace; font-size: 13px;">Не подключен</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Управление -->
-                        <div class="button-group">
-                            <button class="button button--tonal" id="mobileSaveBtn" style="flex: 1;">
-                                <i class="fas fa-save"></i>
-                                Сохранить
-                            </button>
-                            <button class="button button--outlined" id="mobileReloadBtn" style="flex: 1;">
-                                <i class="fas fa-sync-alt"></i>
-                                Обновить
-                            </button>
-                        </div>
-                        
-                        <!-- Редактор блоков -->
-                        <div class="blocks-container">
-                            <h2 class="section-title">Блоки правил</h2>
-                            
-                            <div class="blocks-list" id="mobileBlocksList">
-                                <!-- Блоки будут добавляться сюда -->
-                            </div>
-                            
-                            <div style="display: flex; gap: 12px; margin-top: 20px;">
-                                <button class="button button--filled" id="mobileAddBlockBtn" style="flex: 1;">
-                                    <i class="fas fa-plus"></i>
-                                    Добавить блок
-                                </button>
-                                <button class="button button--danger button--icon" id="mobileLogoutBtn">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Кнопки управления -->
+                <div class="text-center mb-20">
+                    <button class="btn btn-success" id="saveBtn">
+                        <i class="fas fa-save"></i> Сохранить изменения
+                    </button>
+                    <button class="btn btn-warning" id="reloadBtn">
+                        <i class="fas fa-sync-alt"></i> Обновить из репозитория
+                    </button>
+                    <button class="btn btn-danger" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Выйти
+                    </button>
+                </div>
+                
+                <!-- Сообщения -->
+                <div class="message success" id="successMessage">
+                    <i class="fas fa-check-circle"></i> Изменения успешно сохранены!
+                </div>
+                
+                <div class="message error" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i> Произошла ошибка
+                </div>
+                
+                <!-- Редактор блоков -->
+                <div class="blocks-container" id="blocksContainer">
+                    <h3><i class="fas fa-edit"></i> Редактирование правил</h3>
+                    <p class="mb-20">Добавляйте, редактируйте и удаляйте блоки правил</p>
+                    
+                    <button class="btn btn-primary" id="addBlockBtn">
+                        <i class="fas fa-plus"></i> Добавить новый блок
+                    </button>
+                    
+                    <!-- Здесь будут динамически добавляться блоки -->
+                    <div id="blocksList"></div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Мобильная навигация -->
-        <div class="mobile-nav">
-            <button class="nav-button" id="navAuth" data-screen="auth">
-                <i class="fas fa-key"></i>
-                <span>Подключение</span>
-            </button>
-            <button class="nav-button" id="navEditor" data-screen="editor">
-                <i class="fas fa-edit"></i>
-                <span>Редактор</span>
-            </button>
         </div>
     </div>
 
-    <!-- Snackbar для уведомлений -->
-    <div class="snackbar" id="snackbar"></div>
-
     <script>
-        // Конфигурация
-        const DEFAULT_FILE_PATH = 'chat-rules/rules.json';
+        // Жестко заданный путь к файлу правил
+        const RULES_FILE_PATH = 'chat-rules/rules.json';
         
-        // Состояние приложения
+        // Основные переменные
         let currentRules = null;
         let currentRepoInfo = null;
-        let isMobile = window.innerWidth <= 768;
         
-        // Определяем тип устройства
-        function checkDeviceType() {
-            isMobile = window.innerWidth <= 768;
-            updateLayout();
-        }
+        // Элементы DOM
+        const authPanel = document.getElementById('authPanel');
+        const editorPanel = document.getElementById('editorPanel');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const sessionStatusText = document.getElementById('sessionStatusText');
+        const currentRepoInfoElement = document.getElementById('currentRepoInfo');
+        const blocksList = document.getElementById('blocksList');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
         
-        // Обновляем layout в зависимости от устройства
-        function updateLayout() {
-            if (isMobile) {
-                document.querySelector('.desktop-layout').style.display = 'none';
-                document.querySelector('.mobile-layout').style.display = 'block';
-                document.querySelector('.mobile-header').style.display = 'flex';
-                document.querySelector('.mobile-nav').style.display = 'flex';
-                document.querySelector('.add-block-container').style.display = 'none';
-            } else {
-                document.querySelector('.desktop-layout').style.display = 'grid';
-                document.querySelector('.mobile-layout').style.display = 'none';
-                document.querySelector('.mobile-header').style.display = 'none';
-                document.querySelector('.mobile-nav').style.display = 'none';
-                document.querySelector('.add-block-container').style.display = 'none';
-            }
-        }
+        // Кнопки
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const reloadBtn = document.getElementById('reloadBtn');
+        const addBlockBtn = document.getElementById('addBlockBtn');
         
-        // Инициализация
+        // Проверяем, есть ли активная сессия при загрузке
         document.addEventListener('DOMContentLoaded', () => {
-            checkDeviceType();
             checkSession();
-            setupEventListeners();
-            updatePathPreview();
         });
         
-        // Ресайз окна
-        window.addEventListener('resize', checkDeviceType);
-        
-        // Настройка обработчиков событий
-        function setupEventListeners() {
-            // Десктопные элементы
-            const loginBtn = document.getElementById('loginBtn');
-            const filePathInput = document.getElementById('filePath');
-            const currentFilePathInput = document.getElementById('currentFilePath');
-            
-            // Мобильные элементы
-            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-            const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
-            const mobileSaveBtn = document.getElementById('mobileSaveBtn');
-            const mobileReloadBtn = document.getElementById('mobileReloadBtn');
-            const mobileAddBlockBtn = document.getElementById('mobileAddBlockBtn');
-            
-            // Кнопки навигации
-            const navAuth = document.getElementById('navAuth');
-            const navEditor = document.getElementById('navEditor');
-            
-            // Кнопки боковой панели
-            const sidebarSaveBtn = document.getElementById('sidebarSaveBtn');
-            const sidebarReloadBtn = document.getElementById('sidebarReloadBtn');
-            const sidebarAddBlockBtn = document.getElementById('sidebarAddBlockBtn');
-            const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
-            
-            // Десктопные события
-            if (loginBtn) loginBtn.addEventListener('click', handleLogin);
-            if (filePathInput) filePathInput.addEventListener('input', handleFilePathChange);
-            if (filePathInput) filePathInput.addEventListener('input', updatePathPreview);
-            if (currentFilePathInput) currentFilePathInput.addEventListener('input', handleCurrentFilePathChange);
-            
-            // Мобильные события
-            if (mobileLoginBtn) mobileLoginBtn.addEventListener('click', handleLogin);
-            if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
-            if (mobileSaveBtn) mobileSaveBtn.addEventListener('click', handleSave);
-            if (mobileReloadBtn) mobileReloadBtn.addEventListener('click', handleReload);
-            if (mobileAddBlockBtn) mobileAddBlockBtn.addEventListener('click', handleAddBlock);
-            
-            // Навигация
-            if (navAuth) navAuth.addEventListener('click', () => switchMobileScreen('auth'));
-            if (navEditor) navEditor.addEventListener('click', () => switchMobileScreen('editor'));
-            
-            // Кнопки боковой панели
-            if (sidebarSaveBtn) sidebarSaveBtn.addEventListener('click', handleSave);
-            if (sidebarReloadBtn) sidebarReloadBtn.addEventListener('click', handleReload);
-            if (sidebarAddBlockBtn) sidebarAddBlockBtn.addEventListener('click', handleAddBlock);
-            if (sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
-            
-            // Прямая отправка формы по Enter
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && (e.target.id === 'githubToken' || e.target.id === 'mobileGithubToken')) {
-                    handleLogin();
-                }
-            });
-        }
-        
-        // Обновление предпросмотра пути
-        function updatePathPreview() {
-            const filePathInput = document.getElementById('filePath');
-            const pathPreview = document.getElementById('pathPreview');
-            
-            if (filePathInput && pathPreview) {
-                let path = filePathInput.value.trim();
-                if (!path) {
-                    path = DEFAULT_FILE_PATH;
-                }
-                
-                // Убедимся, что путь начинается с /
-                if (!path.startsWith('/')) {
-                    path = '/' + path;
-                }
-                
-                pathPreview.innerHTML = `Полный путь: <strong>${escapeHtml(path)}</strong>`;
-            }
-        }
-        
-        // Переключение мобильных экранов
-        function switchMobileScreen(screen) {
-            const authScreen = document.getElementById('mobileAuthScreen');
-            const editorScreen = document.getElementById('mobileEditorScreen');
-            const navAuth = document.getElementById('navAuth');
-            const navEditor = document.getElementById('navEditor');
-            
-            if (screen === 'auth') {
-                authScreen.classList.remove('hidden');
-                editorScreen.classList.add('hidden');
-                navAuth.classList.add('active');
-                navEditor.classList.remove('active');
-            } else {
-                authScreen.classList.add('hidden');
-                editorScreen.classList.remove('hidden');
-                navAuth.classList.remove('active');
-                navEditor.classList.add('active');
-            }
-        }
-        
-        // Проверка сессии
+        // Проверка активной сессии
         function checkSession() {
             const token = sessionStorage.getItem('github_token');
             const repoOwner = sessionStorage.getItem('repo_owner');
             const repoName = sessionStorage.getItem('repo_name');
-            const filePath = sessionStorage.getItem('file_path') || DEFAULT_FILE_PATH;
             
             if (token && repoOwner && repoName) {
-                currentRepoInfo = { token, repoOwner, repoName, filePath };
+                // Есть активная сессия
+                currentRepoInfo = { 
+                    token, 
+                    repoOwner, 
+                    repoName, 
+                    filePath: RULES_FILE_PATH 
+                };
                 updateUIForAuthenticated();
                 loadRulesFromRepo();
             } else {
+                // Нет активной сессии
                 updateUIForUnauthenticated();
             }
         }
         
-        // Обновление UI при авторизации
+        // Обновление UI для авторизованного пользователя
         function updateUIForAuthenticated() {
-            // Обновляем статус
-            const statusIndicators = document.querySelectorAll('.status-indicator');
-            statusIndicators.forEach(indicator => indicator.classList.add('active'));
+            statusIndicator.classList.add('active');
+            sessionStatusText.textContent = 'Авторизован';
+            authPanel.classList.add('hidden');
+            editorPanel.classList.add('active');
             
-            const statusTexts = document.querySelectorAll('#sessionStatusText, #mobileRepoInfo');
-            statusTexts.forEach(element => {
-                if (element.id === 'mobileRepoInfo') {
-                    element.textContent = currentRepoInfo.repoOwner;
-                } else {
-                    element.textContent = 'Подключено';
-                }
-            });
-            
-            // Обновляем информацию о репозитории
-            updateRepoInfoInUI();
-            
-            // Показываем левую панель на ПК
-            if (!isMobile) {
-                document.getElementById('repoSidebar').classList.remove('hidden');
-            }
-            
-            // Переключаем экраны
-            if (isMobile) {
-                document.getElementById('authPanel').classList.add('hidden');
-                document.getElementById('editorPanel').classList.add('active');
-                switchMobileScreen('editor');
-            } else {
-                document.getElementById('authPanel').classList.add('hidden');
-                document.getElementById('editorPanel').classList.remove('hidden');
-                document.getElementById('editorPanel').classList.add('active');
-            }
-            
-            // Активируем кнопку редактора в навигации
-            const navEditor = document.getElementById('navEditor');
-            if (navEditor) {
-                navEditor.classList.add('active');
-                navEditor.disabled = false;
-            }
+            currentRepoInfoElement.textContent = 
+                `${currentRepoInfo.repoOwner} / ${currentRepoInfo.repoName}`;
         }
         
-        // Обновление информации о репозитории в UI
-        function updateRepoInfoInUI() {
-            if (!currentRepoInfo) return;
-            
-            // Обновляем информацию о репозитории
-            const repoInfoElements = document.querySelectorAll('#currentRepoInfo, #mobileCurrentRepoInfo');
-            repoInfoElements.forEach(element => {
-                element.textContent = `${currentRepoInfo.repoOwner}/${currentRepoInfo.repoName}`;
-            });
-            
-            // Обновляем путь к файлу
-            const filePathInput = document.getElementById('filePath');
-            const currentFilePathInput = document.getElementById('currentFilePath');
-            if (filePathInput) {
-                filePathInput.value = currentRepoInfo.filePath;
-                updatePathPreview();
-            }
-            if (currentFilePathInput) currentFilePathInput.value = currentRepoInfo.filePath;
-            
-            // Обновляем боковую панель
-            updateSidebarInfo();
-        }
-        
-        // Обновление информации в боковой панели
-        function updateSidebarInfo() {
-            if (!currentRepoInfo) return;
-            
-            // Информация о репозитории
-            const repoInfoElement = document.getElementById('currentRepoInfo');
-            if (repoInfoElement) {
-                repoInfoElement.textContent = `${currentRepoInfo.repoOwner}/${currentRepoInfo.repoName}`;
-            }
-            
-            // Статус подключения
-            const statusBadge = document.getElementById('connectionStatusBadge');
-            if (statusBadge) {
-                statusBadge.classList.remove('inactive');
-                statusBadge.innerHTML = '<i class="fas fa-circle"></i><span>Активно</span>';
-            }
-            
-            // Путь к файлу
-            const filePathInput = document.getElementById('currentFilePath');
-            if (filePathInput) {
-                filePathInput.value = currentRepoInfo.filePath;
-            }
-            
-            // Статистика
-            updateStats();
-        }
-        
-        // Обновление UI при выходе
+        // Обновление UI для неавторизованного пользователя
         function updateUIForUnauthenticated() {
-            // Обновляем статус
-            const statusIndicators = document.querySelectorAll('.status-indicator');
-            statusIndicators.forEach(indicator => indicator.classList.remove('active'));
-            
-            const statusTexts = document.querySelectorAll('#sessionStatusText, #mobileRepoInfo');
-            statusTexts.forEach(element => {
-                if (element.id === 'mobileRepoInfo') {
-                    element.textContent = 'Гость';
-                } else {
-                    element.textContent = 'Не подключено';
-                }
-            });
-            
-            // Очищаем информацию о репозитории
-            const repoInfoElements = document.querySelectorAll('#currentRepoInfo, #mobileCurrentRepoInfo');
-            repoInfoElements.forEach(element => {
-                element.textContent = 'Не подключен';
-            });
-            
-            // Сбрасываем путь к файлу
-            const filePathInput = document.getElementById('filePath');
-            const currentFilePathInput = document.getElementById('currentFilePath');
-            if (filePathInput) {
-                filePathInput.value = DEFAULT_FILE_PATH;
-                updatePathPreview();
-            }
-            if (currentFilePathInput) currentFilePathInput.value = DEFAULT_FILE_PATH;
-            
-            // Скрываем левую панель на ПК
-            document.getElementById('repoSidebar').classList.add('hidden');
-            
-            // Переключаем экраны
-            if (isMobile) {
-                switchMobileScreen('auth');
-            } else {
-                document.getElementById('authPanel').classList.remove('hidden');
-                document.getElementById('editorPanel').classList.add('hidden');
-                document.getElementById('editorPanel').classList.remove('active');
-            }
-            
-            // Деактивируем кнопку редактора в навигации
-            const navEditor = document.getElementById('navEditor');
-            if (navEditor) {
-                navEditor.classList.remove('active');
-                navEditor.disabled = true;
-            }
+            statusIndicator.classList.remove('active');
+            sessionStatusText.textContent = 'Не авторизован';
+            authPanel.classList.remove('hidden');
+            editorPanel.classList.remove('active');
             
             // Очищаем поля авторизации
-            ['repoOwner', 'repoName', 'githubToken', 'mobileRepoOwner', 'mobileRepoName', 'mobileGithubToken'].forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.value = '';
-            });
-            
-            // Очищаем правила
-            currentRules = null;
-            renderBlocks();
+            document.getElementById('repoOwner').value = '';
+            document.getElementById('repoName').value = '';
+            document.getElementById('githubToken').value = '';
         }
         
-        // Функция для обновления статистики
-        function updateStats() {
-            if (!currentRules) return;
-            
-            const blocksCount = document.getElementById('blocksCount');
-            const itemsCount = document.getElementById('itemsCount');
-            
-            if (blocksCount) {
-                blocksCount.textContent = currentRules.blocks ? currentRules.blocks.length : 0;
-            }
-            
-            if (itemsCount && currentRules.blocks) {
-                let totalItems = 0;
-                currentRules.blocks.forEach(block => {
-                    if (block.items) totalItems += block.items.length;
-                });
-                itemsCount.textContent = totalItems;
-            }
-        }
-        
-        // Обработка изменения пути файла
-        function handleFilePathChange(e) {
-            const newPath = e.target.value.trim();
-            if (newPath && currentRepoInfo) {
-                currentRepoInfo.filePath = newPath;
-                sessionStorage.setItem('file_path', newPath);
-            }
-        }
-        
-        function handleCurrentFilePathChange(e) {
-            const newPath = e.target.value.trim();
-            if (newPath && currentRepoInfo) {
-                currentRepoInfo.filePath = newPath;
-                sessionStorage.setItem('file_path', newPath);
-                showSnackbar('Путь к файлу изменен', 'info');
-            }
-        }
-        
-        // Обработка авторизации
-        async function handleLogin() {
-            let repoOwner, repoName, token, filePath;
-            
-            if (isMobile) {
-                repoOwner = document.getElementById('mobileRepoOwner').value.trim();
-                repoName = document.getElementById('mobileRepoName').value.trim();
-                token = document.getElementById('mobileGithubToken').value.trim();
-                filePath = DEFAULT_FILE_PATH;
-            } else {
-                repoOwner = document.getElementById('repoOwner').value.trim();
-                repoName = document.getElementById('repoName').value.trim();
-                token = document.getElementById('githubToken').value.trim();
-                filePath = document.getElementById('filePath').value.trim() || DEFAULT_FILE_PATH;
-            }
+        // Авторизация
+        loginBtn.addEventListener('click', async () => {
+            const repoOwner = document.getElementById('repoOwner').value.trim();
+            const repoName = document.getElementById('repoName').value.trim();
+            const token = document.getElementById('githubToken').value.trim();
             
             if (!repoOwner || !repoName || !token) {
-                showSnackbar('Заполните все поля', 'error');
+                showMessage('error', 'Заполните все поля');
                 return;
             }
             
-            if (!filePath.endsWith('.json')) {
-                showSnackbar('Путь должен вести к JSON файлу', 'error');
-                return;
-            }
-            
-            // Автоматически добавляем / в начало пути, если его нет
-            if (!filePath.startsWith('/') && !filePath.startsWith('./')) {
-                filePath = '/' + filePath;
-            }
-            
-            showSnackbar('Проверка подключения...', 'info');
+            showMessage('info', 'Проверяем подключение...');
             
             try {
+                // Проверяем, что токен и репозиторий действительны
                 const isValid = await verifyGitHubAccess(token, repoOwner, repoName);
                 
                 if (isValid) {
+                    // Сохраняем в sessionStorage (очистится при закрытии вкладки)
                     sessionStorage.setItem('github_token', token);
                     sessionStorage.setItem('repo_owner', repoOwner);
                     sessionStorage.setItem('repo_name', repoName);
-                    sessionStorage.setItem('file_path', filePath);
                     
-                    currentRepoInfo = { token, repoOwner, repoName, filePath };
+                    currentRepoInfo = { 
+                        token, 
+                        repoOwner, 
+                        repoName, 
+                        filePath: RULES_FILE_PATH 
+                    };
                     updateUIForAuthenticated();
                     loadRulesFromRepo();
-                    showSnackbar('Подключение успешно', 'success');
+                    showMessage('success', 'Успешное подключение!');
                 } else {
-                    showSnackbar('Неверные данные', 'error');
+                    showMessage('error', 'Не удалось подключиться к репозиторию. Проверьте данные.');
                 }
             } catch (error) {
-                showSnackbar('Ошибка подключения', 'error');
-                console.error(error);
+                console.error('Ошибка подключения:', error);
+                showMessage('error', 'Ошибка подключения: ' + error.message);
             }
-        }
+        });
         
-        // Обработка выхода
-        function handleLogout() {
-            if (confirm('Выйти из системы?')) {
-                sessionStorage.clear();
-                currentRepoInfo = null;
-                currentRules = null;
-                updateUIForUnauthenticated();
-                showSnackbar('Сессия завершена', 'info');
-            }
-        }
-        
-        // Обработка сохранения
-        async function handleSave() {
-            await saveRulesToRepo();
-        }
-        
-        // Обработка обновления
-        async function handleReload() {
-            await loadRulesFromRepo();
-        }
-        
-        // Обработка добавления блока
-        function handleAddBlock() {
-            if (!currentRules) {
-                currentRules = { lastUpdate: new Date().toISOString().split('T')[0], blocks: [] };
-            }
+        // Выход из системы
+        logoutBtn.addEventListener('click', () => {
+            // Очищаем sessionStorage
+            sessionStorage.clear();
+            currentRepoInfo = null;
+            currentRules = null;
             
-            if (!currentRules.blocks) {
-                currentRules.blocks = [];
-            }
-            
-            currentRules.blocks.push({
-                id: `block-${Date.now()}`,
-                title: 'Новый блок правил',
-                icon: 'fas fa-edit',
-                items: []
-            });
-            
-            renderBlocks();
-            showSnackbar('Блок добавлен', 'success');
-        }
+            updateUIForUnauthenticated();
+            showMessage('info', 'Вы вышли из системы');
+        });
         
         // Проверка доступа к GitHub
         async function verifyGitHubAccess(token, owner, repo) {
@@ -1920,21 +682,25 @@
                         'Accept': 'application/vnd.github.v3+json'
                     }
                 });
+                
                 return response.ok;
-            } catch {
+            } catch (error) {
                 return false;
             }
         }
         
-        // Загрузка правил
+        // Загрузка правил из репозитория
         async function loadRulesFromRepo() {
             if (!currentRepoInfo) return;
             
-            showSnackbar('Загрузка...', 'info');
+            showMessage('info', 'Загружаем правила...');
             
             try {
-                const { token, repoOwner, repoName, filePath } = currentRepoInfo;
-                const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+                const { token, repoOwner, repoName } = currentRepoInfo;
+                // Используем жестко заданный путь
+                const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${RULES_FILE_PATH}`;
+                
+                console.log('Загружаем из:', url);
                 
                 const response = await fetch(url, {
                     headers: {
@@ -1944,16 +710,22 @@
                 });
                 
                 if (!response.ok) {
+                    // Если файла нет, создаем пустую структуру
                     if (response.status === 404) {
-                        currentRules = { lastUpdate: new Date().toISOString().split('T')[0], blocks: [] };
+                        currentRules = {
+                            lastUpdate: new Date().toLocaleDateString('ru-RU'),
+                            blocks: []
+                        };
                         renderBlocks();
-                        showSnackbar('Создан новый файл', 'info');
+                        showMessage('info', 'Файл правил не найден. Создан новый.');
                         return;
                     }
-                    throw new Error(`HTTP ${response.status}`);
+                    throw new Error('Ошибка загрузки файла: ' + response.status);
                 }
                 
                 const data = await response.json();
+                
+                // ПРАВИЛЬНОЕ ДЕКОДИРОВАНИЕ ИЗ BASE64 (для UTF-8)
                 const binaryString = atob(data.content);
                 const bytes = new Uint8Array(binaryString.length);
                 for (let i = 0; i < binaryString.length; i++) {
@@ -1961,41 +733,54 @@
                 }
                 const decoder = new TextDecoder('utf-8');
                 const jsonString = decoder.decode(bytes);
+                console.log('Полученный JSON:', jsonString); // для отладки
+
+                if (!jsonString.trim()) {
+                    // Если файл пустой, создаем новую структуру
+                    currentRules = {
+                        lastUpdate: new Date().toLocaleDateString('ru-RU'),
+                        blocks: []
+                    };
+                } else {
+                    currentRules = JSON.parse(jsonString);
+                }
                 
-                currentRules = jsonString.trim() ? JSON.parse(jsonString) : {
-                    lastUpdate: new Date().toISOString().split('T')[0],
-                    blocks: []
-                };
-                
+                currentRules = JSON.parse(jsonString);
                 renderBlocks();
-                updateStats();
-                showSnackbar('Правила загружены', 'success');
+                showMessage('success', 'Правила успешно загружены');
             } catch (error) {
-                showSnackbar('Ошибка загрузки', 'error');
-                console.error(error);
+                console.error('Ошибка загрузки:', error);
+                showMessage('error', 'Ошибка загрузки: ' + error.message);
             }
         }
         
-        // Сохранение правил
+        // Сохранение правил в репозиторий
         async function saveRulesToRepo() {
             if (!currentRepoInfo || !currentRules) return;
             
-            showSnackbar('Сохранение...', 'info');
+            showMessage('info', 'Сохраняем изменения...');
             
             try {
-                const { token, repoOwner, repoName, filePath } = currentRepoInfo;
-                currentRules.lastUpdate = new Date().toISOString().split('T')[0];
+                const { token, repoOwner, repoName } = currentRepoInfo;
                 
-                // Получаем SHA текущего файла
-                const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
-                const getResponse = await fetch(getUrl, { headers: { 'Authorization': `token ${token}` } });
+                // Получаем текущий SHA файла (используем жесткий путь)
+                const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${RULES_FILE_PATH}`;
+                const getResponse = await fetch(getUrl, {
+                    headers: {
+                        'Authorization': `token ${token}`
+                    }
+                });
+                
                 let sha = null;
                 if (getResponse.ok) {
                     const fileData = await getResponse.json();
                     sha = fileData.sha;
                 }
                 
-                // Кодирование
+                // Обновляем дату последнего изменения
+                currentRules.lastUpdate = new Date().toLocaleDateString('ru-RU');
+                
+                // ПРАВИЛЬНОЕ КОДИРОВАНИЕ В BASE64 (для UTF-8)
                 const jsonString = JSON.stringify(currentRules, null, 2);
                 const encoder = new TextEncoder();
                 const data = encoder.encode(jsonString);
@@ -2003,11 +788,13 @@
                 data.forEach(byte => binary += String.fromCharCode(byte));
                 const content = btoa(binary);
                 
-                // Отправка
-                const response = await fetch(getUrl, {
+                // Отправляем на GitHub (используем жесткий путь)
+                const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${RULES_FILE_PATH}`;
+                const response = await fetch(url, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -2018,106 +805,98 @@
                 });
                 
                 if (response.ok) {
-                    showSnackbar('Сохранено успешно', 'success');
-                    updateStats();
-                    updateSidebarInfo();
+                    showMessage('success', 'Правила успешно сохранены в репозиторий!');
                 } else {
-                    throw new Error('Ошибка сохранения');
+                    const error = await response.json();
+                    throw new Error(error.message || 'Ошибка сохранения');
                 }
             } catch (error) {
-                showSnackbar('Ошибка сохранения', 'error');
-                console.error(error);
+                console.error('Ошибка сохранения:', error);
+                showMessage('error', 'Ошибка сохранения: ' + error.message);
             }
         }
         
-        // Отображение блоков
+        // Отображение блоков правил
         function renderBlocks() {
-            const blocksList = isMobile ? document.getElementById('mobileBlocksList') : document.getElementById('blocksList');
-            
-            if (!currentRules || !currentRules.blocks || currentRules.blocks.length === 0) {
-                blocksList.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>Пока нет блоков правил</p>
-                        <p class="text-caption">Добавьте первый блок, нажав кнопку в левой панели</p>
-                    </div>
-                `;
+            if (!currentRules || !currentRules.blocks) {
+                blocksList.innerHTML = '<div class="message info">Нет правил для отображения</div>';
                 return;
             }
             
-            blocksList.innerHTML = currentRules.blocks.map((block, blockIndex) => `
-                <div class="block-card animate-in">
+            blocksList.innerHTML = '';
+            
+            currentRules.blocks.forEach((block, blockIndex) => {
+                const blockElement = document.createElement('div');
+                blockElement.className = 'block-editor';
+                blockElement.innerHTML = `
                     <div class="block-header">
-                        <input type="text" class="block-title-input" 
+                        <input type="text" class="block-title" 
                                value="${escapeHtml(block.title)}" 
-                               data-index="${blockIndex}"
+                               data-block-index="${blockIndex}"
                                placeholder="Название блока">
                         <div class="block-actions">
-                            ${blockIndex > 0 ? `
-                                <button class="icon-button move-up" data-index="${blockIndex}" title="Вверх">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                            ` : ''}
-                            ${blockIndex < currentRules.blocks.length - 1 ? `
-                                <button class="icon-button move-down" data-index="${blockIndex}" title="Вниз">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                            ` : ''}
-                            <button class="icon-button icon-button--danger delete-block" 
-                                    data-index="${blockIndex}" 
-                                    title="Удалить блок">
+                            <button class="icon-btn move-up-btn" title="Переместить вверх" data-block-index="${blockIndex}">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button class="icon-btn move-down-btn" title="Переместить вниз" data-block-index="${blockIndex}">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                            <button class="icon-btn delete-btn" title="Удалить блок" data-block-index="${blockIndex}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
                     
-                    <div class="items-list">
+                    <div class="items-container" id="items-${blockIndex}">
                         ${renderItems(block.items, blockIndex)}
                     </div>
                     
-                    <button class="button button--tonal add-item" data-index="${blockIndex}" style="margin-top: 12px; width: 100%;">
-                        <i class="fas fa-plus"></i>
-                        Добавить пункт
+                    <button class="btn btn-primary add-item-btn" data-block-index="${blockIndex}">
+                        <i class="fas fa-plus"></i> Добавить пункт
                     </button>
-                </div>
-            `).join('');
+                `;
+                
+                blocksList.appendChild(blockElement);
+            });
             
-            attachEventListeners();
+            // Назначаем обработчики событий
+            attachBlockEventListeners();
         }
         
-        // Отображение пунктов
+        // Отображение пунктов правил
         function renderItems(items, blockIndex) {
             if (!items || items.length === 0) {
-                return '<div class="empty-state" style="padding: 12px; font-size: 13px;">Нет пунктов правил</div>';
+                return '<div class="message info">Пока нет пунктов правил</div>';
             }
             
             return items.map((item, itemIndex) => `
-                <div class="item-card animate-in" style="animation-delay: ${itemIndex * 0.05}s">
+                <div class="item-editor" data-item-index="${itemIndex}">
                     <div class="item-header">
-                        <span class="item-id">${item.id || `${blockIndex + 1}.${itemIndex + 1}`}</span>
-                        <button class="icon-button icon-button--danger delete-item" 
-                                data-block="${blockIndex}" 
-                                data-index="${itemIndex}"
-                                title="Удалить пункт">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <span class="item-id">${item.id || `Пункт ${itemIndex + 1}`}</span>
+                        <div class="block-actions">
+                            <button class="icon-btn delete-item-btn" 
+                                    data-block-index="${blockIndex}" 
+                                    data-item-index="${itemIndex}"
+                                    title="Удалить пункт">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <textarea class="item-text" 
-                              data-block="${blockIndex}" 
-                              data-index="${itemIndex}"
-                              placeholder="Текст пункта">${escapeHtml(item.text)}</textarea>
+                              data-block-index="${blockIndex}" 
+                              data-item-index="${itemIndex}"
+                              placeholder="Текст пункта правил">${escapeHtml(item.text)}</textarea>
                     
-                    <div class="subitems-container">
+                    <div class="subitems-container" id="subitems-${blockIndex}-${itemIndex}">
+                        <h4>Подпункты:</h4>
                         ${renderSubitems(item.subitems, blockIndex, itemIndex)}
                     </div>
                     
-                    <button class="button button--outlined add-subitem" 
-                            data-block="${blockIndex}" 
-                            data-index="${itemIndex}"
-                            style="margin-top: 8px; font-size: 12px; width: 100%;">
-                        <i class="fas fa-plus"></i>
-                        Добавить подпункт
+                    <button class="btn btn-primary add-subitem-btn" 
+                            data-block-index="${blockIndex}" 
+                            data-item-index="${itemIndex}">
+                        <i class="fas fa-plus"></i> Добавить подпункт
                     </button>
                 </div>
             `).join('');
@@ -2125,168 +904,205 @@
         
         // Отображение подпунктов
         function renderSubitems(subitems, blockIndex, itemIndex) {
-            if (!subitems || subitems.length === 0) return '';
+            if (!subitems || subitems.length === 0) {
+                return '<div class="message info">Пока нет подпунктов</div>';
+            }
             
-            return subitems.map((subitem, subIndex) => `
-                <div class="subitem-item animate-in" style="animation-delay: ${subIndex * 0.03}s">
-                    <i class="fas fa-minus" style="color: var(--md-outline); font-size: 11px; flex-shrink: 0;"></i>
+            return subitems.map((subitem, subitemIndex) => `
+                <div class="subitem-editor">
                     <input type="text" class="subitem-input" 
                            value="${escapeHtml(subitem)}"
-                           data-block="${blockIndex}"
-                           data-item="${itemIndex}"
-                           data-index="${subIndex}"
+                           data-block-index="${blockIndex}"
+                           data-item-index="${itemIndex}"
+                           data-subitem-index="${subitemIndex}"
                            placeholder="Текст подпункта">
-                    <button class="icon-button delete-subitem" 
-                            data-block="${blockIndex}"
-                            data-item="${itemIndex}"
-                            data-index="${subIndex}"
-                            style="width: 32px; height: 32px; flex-shrink: 0;">
-                        <i class="fas fa-times" style="font-size: 11px;"></i>
+                    <button class="icon-btn delete-subitem-btn"
+                            data-block-index="${blockIndex}"
+                            data-item-index="${itemIndex}"
+                            data-subitem-index="${subitemIndex}"
+                            title="Удалить подпункт">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             `).join('');
         }
         
-        // Прикрепление обработчиков событий
-        function attachEventListeners() {
-            const container = isMobile ? document.getElementById('mobileBlocksList') : document.getElementById('blocksList');
-            
-            // Заголовки блоков
-            container.querySelectorAll('.block-title-input').forEach(input => {
+        // Прикрепление обработчиков событий к элементам блоков
+        function attachBlockEventListeners() {
+            // Обновление заголовка блока
+            document.querySelectorAll('.block-title').forEach(input => {
                 input.addEventListener('input', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    currentRules.blocks[index].title = e.target.value;
+                    const blockIndex = parseInt(e.target.dataset.blockIndex);
+                    currentRules.blocks[blockIndex].title = e.target.value;
                 });
             });
             
-            // Перемещение блоков
-            container.querySelectorAll('.move-up').forEach(btn => {
+            // Удаление блока
+            document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').dataset.index);
-                    [currentRules.blocks[index], currentRules.blocks[index - 1]] = 
-                    [currentRules.blocks[index - 1], currentRules.blocks[index]];
-                    renderBlocks();
-                    showSnackbar('Блок перемещен', 'info');
-                });
-            });
-            
-            container.querySelectorAll('.move-down').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').dataset.index);
-                    [currentRules.blocks[index], currentRules.blocks[index + 1]] = 
-                    [currentRules.blocks[index + 1], currentRules.blocks[index]];
-                    renderBlocks();
-                    showSnackbar('Блок перемещен', 'info');
-                });
-            });
-            
-            // Удаление блоков
-            container.querySelectorAll('.delete-block').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').dataset.index);
-                    if (confirm('Удалить блок?')) {
-                        currentRules.blocks.splice(index, 1);
+                    const blockIndex = parseInt(e.target.closest('button').dataset.blockIndex);
+                    if (confirm('Удалить этот блок правил?')) {
+                        currentRules.blocks.splice(blockIndex, 1);
                         renderBlocks();
-                        showSnackbar('Блок удален', 'info');
                     }
                 });
             });
             
-            // Добавление пунктов
-            container.querySelectorAll('.add-item').forEach(btn => {
+            // Добавление нового пункта
+            document.querySelectorAll('.add-item-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const blockIndex = parseInt(e.target.closest('button').dataset.index);
+                    const blockIndex = parseInt(e.target.closest('button').dataset.blockIndex);
                     if (!currentRules.blocks[blockIndex].items) {
                         currentRules.blocks[blockIndex].items = [];
                     }
                     
-                    currentRules.blocks[blockIndex].items.push({
-                        id: `${blockIndex + 1}.${currentRules.blocks[blockIndex].items.length + 1}`,
-                        text: 'Новый пункт правил',
+                    const newItem = {
+                        id: generateItemId(blockIndex),
+                        text: 'Новый пункт правил...',
                         subitems: []
-                    });
+                    };
                     
+                    currentRules.blocks[blockIndex].items.push(newItem);
                     renderBlocks();
-                    showSnackbar('Пункт добавлен', 'success');
                 });
             });
             
-            // Текст пунктов
-            container.querySelectorAll('.item-text').forEach(textarea => {
-                textarea.addEventListener('input', (e) => {
-                    const blockIndex = parseInt(e.target.dataset.block);
-                    const itemIndex = parseInt(e.target.dataset.index);
-                    currentRules.blocks[blockIndex].items[itemIndex].text = e.target.value;
-                });
-            });
-            
-            // Удаление пунктов
-            container.querySelectorAll('.delete-item').forEach(btn => {
+            // Удаление пункта
+            document.querySelectorAll('.delete-item-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const blockIndex = parseInt(e.target.closest('button').dataset.block);
-                    const itemIndex = parseInt(e.target.closest('button').dataset.index);
-                    if (confirm('Удалить пункт?')) {
+                    const blockIndex = parseInt(e.target.closest('button').dataset.blockIndex);
+                    const itemIndex = parseInt(e.target.closest('button').dataset.itemIndex);
+                    
+                    if (confirm('Удалить этот пункт правил?')) {
                         currentRules.blocks[blockIndex].items.splice(itemIndex, 1);
                         renderBlocks();
-                        showSnackbar('Пункт удален', 'info');
                     }
                 });
             });
             
-            // Добавление подпунктов
-            container.querySelectorAll('.add-subitem').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const blockIndex = parseInt(e.target.closest('button').dataset.block);
-                    const itemIndex = parseInt(e.target.closest('button').dataset.index);
-                    const item = currentRules.blocks[blockIndex].items[itemIndex];
-                    
-                    if (!item.subitems) item.subitems = [];
-                    item.subitems.push('Новый подпункт');
-                    
-                    renderBlocks();
-                    showSnackbar('Подпункт добавлен', 'success');
+            // Обновление текста пункта
+            document.querySelectorAll('.item-text').forEach(textarea => {
+                textarea.addEventListener('input', (e) => {
+                    const blockIndex = parseInt(e.target.dataset.blockIndex);
+                    const itemIndex = parseInt(e.target.dataset.itemIndex);
+                    currentRules.blocks[blockIndex].items[itemIndex].text = e.target.value;
                 });
             });
             
-            // Редактирование подпунктов
-            container.querySelectorAll('.subitem-input').forEach(input => {
+            // Добавление подпункта
+            document.querySelectorAll('.add-subitem-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const blockIndex = parseInt(e.target.closest('button').dataset.blockIndex);
+                    const itemIndex = parseInt(e.target.closest('button').dataset.itemIndex);
+                    
+                    if (!currentRules.blocks[blockIndex].items[itemIndex].subitems) {
+                        currentRules.blocks[blockIndex].items[itemIndex].subitems = [];
+                    }
+                    
+                    currentRules.blocks[blockIndex].items[itemIndex].subitems.push('Новый подпункт...');
+                    renderBlocks();
+                });
+            });
+            
+            // Обновление подпункта
+            document.querySelectorAll('.subitem-input').forEach(input => {
                 input.addEventListener('input', (e) => {
-                    const blockIndex = parseInt(e.target.dataset.block);
-                    const itemIndex = parseInt(e.target.dataset.item);
-                    const subIndex = parseInt(e.target.dataset.index);
-                    currentRules.blocks[blockIndex].items[itemIndex].subitems[subIndex] = e.target.value;
+                    const blockIndex = parseInt(e.target.dataset.blockIndex);
+                    const itemIndex = parseInt(e.target.dataset.itemIndex);
+                    const subitemIndex = parseInt(e.target.dataset.subitemIndex);
+                    currentRules.blocks[blockIndex].items[itemIndex].subitems[subitemIndex] = e.target.value;
                 });
             });
             
-            // Удаление подпунктов
-            container.querySelectorAll('.delete-subitem').forEach(btn => {
+            // Удаление подпункта
+            document.querySelectorAll('.delete-subitem-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const blockIndex = parseInt(e.target.closest('button').dataset.block);
-                    const itemIndex = parseInt(e.target.closest('button').dataset.item);
-                    const subIndex = parseInt(e.target.closest('button').dataset.index);
-                    currentRules.blocks[blockIndex].items[itemIndex].subitems.splice(subIndex, 1);
+                    const blockIndex = parseInt(e.target.closest('button').dataset.blockIndex);
+                    const itemIndex = parseInt(e.target.closest('button').dataset.itemIndex);
+                    const subitemIndex = parseInt(e.target.closest('button').dataset.subitemIndex);
+                    
+                    currentRules.blocks[blockIndex].items[itemIndex].subitems.splice(subitemIndex, 1);
                     renderBlocks();
-                    showSnackbar('Подпункт удален', 'info');
+                });
+            });
+            
+            // Перемещение блоков вверх/вниз
+            document.querySelectorAll('.move-up-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const blockIndex = parseInt(e.target.closest('button').dataset.blockIndex);
+                    if (blockIndex > 0) {
+                        [currentRules.blocks[blockIndex], currentRules.blocks[blockIndex - 1]] = 
+                        [currentRules.blocks[blockIndex - 1], currentRules.blocks[blockIndex]];
+                        renderBlocks();
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.move-down-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const blockIndex = parseInt(e.target.closest('button').dataset.blockIndex);
+                    if (blockIndex < currentRules.blocks.length - 1) {
+                        [currentRules.blocks[blockIndex], currentRules.blocks[blockIndex + 1]] = 
+                        [currentRules.blocks[blockIndex + 1], currentRules.blocks[blockIndex]];
+                        renderBlocks();
+                    }
                 });
             });
         }
         
-        // Вспомогательные функции
-        function showSnackbar(message, type = 'info') {
-            const snackbar = document.getElementById('snackbar');
-            snackbar.textContent = message;
-            snackbar.className = `snackbar snackbar--${type}`;
-            snackbar.classList.add('show');
+        // Добавление нового блока
+        addBlockBtn.addEventListener('click', () => {
+            if (!currentRules.blocks) {
+                currentRules.blocks = [];
+            }
             
-            setTimeout(() => {
-                snackbar.classList.remove('show');
-            }, 3000);
+            const newBlock = {
+                id: `block-${Date.now()}`,
+                title: 'Новый блок правил',
+                icon: 'fas fa-edit',
+                items: []
+            };
+            
+            currentRules.blocks.push(newBlock);
+            renderBlocks();
+        });
+        
+        // Сохранение правил
+        saveBtn.addEventListener('click', () => {
+            saveRulesToRepo();
+        });
+        
+        // Обновление правил из репозитория
+        reloadBtn.addEventListener('click', () => {
+            loadRulesFromRepo();
+        });
+        
+        // Вспомогательные функции
+        function showMessage(type, text) {
+            const message = type === 'success' ? successMessage : 
+                           type === 'error' ? errorMessage : null;
+            
+            if (message) {
+                message.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${text}`;
+                message.className = `message ${type} show`;
+                
+                setTimeout(() => {
+                    message.classList.remove('show');
+                }, 5000);
+            }
         }
         
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+        
+        function generateItemId(blockIndex) {
+            const blockNumber = blockIndex + 1;
+            const itemCount = currentRules.blocks[blockIndex].items ? 
+                             currentRules.blocks[blockIndex].items.length + 1 : 1;
+            return `${blockNumber}.${itemCount}`;
         }
     </script>
 </body>
