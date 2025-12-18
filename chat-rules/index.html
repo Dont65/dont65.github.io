@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dont65 | Основные положения правил чатов</title>
+    <title>Dont65 | Правила чатов</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -368,7 +368,7 @@
         // Функция для загрузки правил из JSON файла
         async function loadRules() {
             try {
-                const response = await fetch('rules.json');
+                const response = await fetch('./rules.json');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -428,7 +428,7 @@
                     block.items.forEach(item => {
                         const ruleItem = document.createElement('div');
                         ruleItem.className = 'rule-item';
-                        ruleItem.textContent = item.text || '';
+                        ruleItem.textContent = (item.id ? item.id + ' ' : '') + (item.text || '');
 
                         rulesContent.appendChild(ruleItem);
 
