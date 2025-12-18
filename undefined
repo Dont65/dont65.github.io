@@ -3,12 +3,12 @@
   "blocks": [
     {
       "id": "block-1766070795147",
-      "title": "Новый блок правил",
+      "title": "123",
       "icon": "fas fa-edit",
       "items": [
         {
           "id": "1.1",
-          "text": "Новый пункт правил...",
+          "text": "123",
           "subitems": []
         }
       ]
