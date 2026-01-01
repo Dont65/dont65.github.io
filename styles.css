@@ -239,8 +239,8 @@ body.light-theme .info-card { background-color: rgba(0,0,0,0.05); }
 .skills-container { 
     display: flex; 
     flex-wrap: wrap; 
-    gap: 8px; 
-    margin-top: 8px; 
+    gap: 8px;  
+    margin: 8px; 
     justify-content: center; /* Языки программирования по центру */
 }
 .skill {

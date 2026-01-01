@@ -425,8 +425,9 @@ function applyIcons(packName) {
         const m = now.getMonth();
         const d = now.getDate();
         target = 'default';
+
         if ((m===9 && d>=24) || (m===10 && d<=7)) target = 'halloween';
-        if ((m===11 && d>=25) || (m===0 && d<=8)) target = 'newyear';
+        if ((m===11 && d>=25) || (m===0 && d!=2 && d<=8)) target = 'newyear';
         if (m === 0 && d === 2) target = 'birthday';
     }
     const pack = iconPacks[target] || iconPacks.default;
@@ -439,7 +440,7 @@ function applyIcons(packName) {
     localStorage.setItem('iconPack', packName);
 }
 
-// УСИЛЕННЫЙ И УСКОРЕННЫЙ GLITCH MODE
+
 let glitchIntervals = [];
 let glitchAudio = null;
 let isGlitchActive = false;
@@ -460,7 +461,6 @@ function initGlitchMode() {
             enableGlitchMode();
         } else {
             localStorage.setItem('glitchEnabled', 'false');
-            // Перезагружаем страницу при выключении
             setTimeout(() => {
                 location.reload();
             }, 300);
@@ -472,7 +472,7 @@ function enableGlitchMode() {
     if (isGlitchActive) return;
     isGlitchActive = true;
     
-    console.log('🔥 ВКЛЮЧЕН ЖЕСТКИЙ И УСКОРЕННЫЙ GLITCH MODE 🔥');
+    console.log('🔥 ВКЛЮЧЕН GLITCH MODE 🔥');
     
     saveOriginalColors();
     document.body.classList.add('hard-glitched');
@@ -949,7 +949,50 @@ function showNotification(ach) {
         setTimeout(() => notif.remove(), 500);
     }, 3000);
 }
+// Счетчик до дня рождения
+function updateBirthdayCountdown() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    
+    // Следующий день рождения
+    let nextBirthday = new Date(currentYear, 0, 2); // 2 января текущего года
+    if (now > nextBirthday) {
+        // Если день рождения уже прошел в этом году, берем следующий год
+        nextBirthday.setFullYear(currentYear + 1);
+    }
+    
+    const diff = nextBirthday - now;
+    
+    if (diff <= 0) {
+        // Если день рождения сегодня
+        document.getElementById('birthdayCountdown').textContent = "🎉 С Днем Рождения! 🎉";
+        return;
+    }
+    
+    // Рассчитываем дни, часы, минуты, секунды
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    // Форматируем строку
+    let countdownStr = '';
+    if (days > 0) countdownStr += `${days}д `;
+    if (hours > 0 || days > 0) countdownStr += `${hours}ч `;
+    if (minutes > 0 || hours > 0 || days > 0) countdownStr += `${minutes}м `;
+    countdownStr += `${seconds}с`;
+    
+    document.getElementById('birthdayCountdown').textContent = countdownStr;
+}
 
+// Инициализация счетчика
+function initBirthdayCountdown() {
+    // Обновляем сразу
+    updateBirthdayCountdown();
+    
+    // Запускаем обновление каждую секунду
+    setInterval(updateBirthdayCountdown, 1000);
+}
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
@@ -966,6 +1009,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initWallpaperSettings();
     checkAchievements();
     initSnowLogic();
+    initBirthdayCountdown();
     
     const savedPack = localStorage.getItem('iconPack') || 'auto';
     const packSelect = document.getElementById('iconPackSelect');
