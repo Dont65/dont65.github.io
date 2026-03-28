@@ -3,7 +3,7 @@
   
 ## Контакты
 
-*   **Discord:** [dont65](https://discordapp.com/users/dont65)
+*   **Discord:** [dont65](https://discordapp.com/users/.dont65)
     *   *Используется для госового общения. Если вы по какой-то причине не можете говорить, **ПРОШУ** не пишите в лс, я не отвечу*
 *   **Telegram:** [dont65](https://t.me/dont65)
     *  *Используется для текстового общения.*
