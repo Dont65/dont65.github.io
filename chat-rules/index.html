@@ -1,579 +1,548 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dont65 | Правила чатов</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            /* Базовый цвет */
-            --primary-color: 42, 171, 238;
-            /* Цвет текста в темной теме */
-            --text-color-dark: #e6e6e6;
-            /* Цвет фона для темной темы */
-            --bg-color-dark: rgba(0, 0, 0, 0.9);
-            /* Цвет текста в светлой теме */
-            --text-color-light: #202020;
-            /* Цвет фона для светлой темы */
-            --bg-color-light: rgba(255, 255, 255, 0.9);
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dont65 | Правила чатов</title>
         
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            text-align: center;
-            background-image: url('/assets/background/background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #ffffff;
-            position: relative;
-            transition: background-image 0.5s ease, rgb(var(--primary-color)) 0.3s ease;
-        }
+        <!-- Шрифт Roboto для MD3 -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Иконки FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
         
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: -1;
-            transition: rgb(var(--primary-color)) 0.3s ease;
-        }
+        <!-- Стили главной страницы (путь от корня) -->
+        <link rel="stylesheet" href="/styles.css" />
         
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 30px;
-            background-color: var(--bg-color-dark);
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .header {
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(var(--primary-color), 0.3);
-        }
-
-        .header h1 {
-            margin: 0;
-            color: rgb(var(--primary-color));
-            font-size: 2em;
-        }
-
-        .header p {
-            margin: 10px 0 0;
-            color: #aaa;
-            font-size: 1em;
-        }
-
-        /* --- Стили для Аккордеона (скрываемых секций) --- */
-
-        .rules-accordion {
-            display: flex;
-            flex-direction: column;
-            gap: 15px; /* Промежуток между блоками правил */
-        }
-        
-        .rules-block {
-            background-color: rgba(0, 0, 0, 0.6); /* Фон блока */
-            border-radius: 8px;
-            overflow: hidden; /* Важно для анимации содержимого */
-            border: 1px solid rgba(var(--primary-color), 0.3);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .rules-block.active {
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: 0 0 15px rgba(var(--primary-color), 0.4);
-        }
-
-        .rules-header {
-            padding: 15px 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgba(var(--primary-color), 0.1);
-            border-bottom: 1px solid transparent;
-            transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
-        }
-
-        .rules-block.active .rules-header {
-            background-color: rgba(var(--primary-color), 0.2);
-            border-bottom-color: rgba(var(--primary-color), 0.5);
-        }
-
-        .rules-header h2 {
-            margin: 0;
-            color: rgb(var(--primary-color));
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-        }
-
-        .rules-header h2 i {
-            margin-right: 10px;
-        }
-
-        .rules-indicator {
-            font-size: 1.5em;
-            color: rgb(var(--primary-color));
-            transition: transform 0.3s ease;
-        }
-
-        .rules-block.active .rules-indicator {
-            transform: rotate(90deg); /* Поворот стрелки при открытии */
-        }
-
-        .rules-content {
-            padding: 0 20px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
-            text-align: left;
-        }
-        
-        .rules-block.active .rules-content {
-            /* Это будет установлено в JS для плавной анимации */
-            max-height: 1000px; 
-            padding: 20px;
-        }
-
-        /* Стили для отдельных пунктов правил внутри контента */
-        .rule-item {
-            margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
-            line-height: 1.5;
-            color: var(--text-color-dark);
-        }
-
-        .rule-item:before {
-            content: "•";
-            color: rgb(var(--primary-color));
-            font-size: 1.5em;
-            position: absolute;
-            left: 0;
-            top: -6px;
-        }
-
-        .rule-subitem {
-            color: rgba(var(--primary-color), 0.8);
-            margin-left: 20px;
-            margin-bottom: 5px;
-            padding-left: 15px;
-            position: relative;
-        }
-
-        .rule-subitem:before {
-            content: "* "; /* Заменил * на — для подпунктов */
-            color: #fcb738;
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .rule-last {
-            color: #707070;
-            text-decoration: underline;
-            text-align: left; /* Важно, так как контейнер text-align: center */
-            display: block;
-            margin-top: 15px;
-        }
-        
-        /* --- Оставшиеся стили (меню и модальные окна) --- */
-        
-        /* ... (Оставьте остальные стили без изменений, кроме тех, что затрагивают правила) ... */
-        
-        .back-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: rgba(var(--primary-color), 0.2);
-            color: rgb(var(--primary-color));
-            border: 1px solid rgb(var(--primary-color));
-            border-radius: 5px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .back-btn:hover {
-            background-color: rgba(var(--primary-color), 0.4);
-        }
-
-        /* --- Светлая тема (Корректировка для аккордеона) --- */
-
-        body.light-theme .rules-block {
-            background-color: rgba(240, 240, 240, 0.8);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        body.light-theme .rules-block.active {
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        body.light-theme .rule-item {
-            color: var(--text-color-light);
-        }
-        
-        /* Светлая тема: остальные стили... */
-
-        body.light-theme {
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
-        body.light-theme::before {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        body.light-theme .container {
-            background-color: var(--bg-color-light);
-            color: #333;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        body.light-theme .rules-section h2 {
-            color: rgb(var(--primary-color));
-        }
-
-        body.light-theme .rule-item.warning {
-            color: #f39c12;
-        }
-
-        body.light-theme .rule-subitem {
-            color: rgb(var(--primary-color));
-        }
-
-        body.light-theme .rule-item.good {
-            color: #2ecc71;
-        }
-
-        body.light-theme .menu-sidebar {
-            background-color: rgba(240, 240, 240, 0.95);
-            color: #333;
-        }
-
-        body.light-theme .menu-item {
-            color: #333;
-        }
-
-        body.light-theme .modal-content {
-            background-color: rgba(255, 255, 255, 0.95);
-            color: #333;
-        }
-
-        body.light-theme .modal-header h3 {
-            color: rgb(var(--primary-color));
-        }
-
-        body.light-theme .settings-category {
-            background-color: rgba(240, 240, 240, 0.9);
-        }
-
-        body.light-theme .setting-item {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Медиа-запросы */
-
-        @media (max-width: 768px) {
+        <style>
+            /* Адаптация ширины контейнера под чтение правил */
             .container {
-                margin: 20px;
+                max-width: 900px !important;
+                width: 90%;
+            }
+
+            /* Стили аккордеона правил, адаптированные под общую стилистику */
+            .header {
+                margin-bottom: 30px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid rgba(var(--primary-color), 0.3);
+            }
+            .header h1 {
+                margin: 0;
+                color: rgb(var(--primary-color));
+                font-size: 2em;
+            }
+            .header p {
+                margin: 10px 0 0;
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 1em;
+            }
+            body.light-theme .header p {
+                color: rgba(0, 0, 0, 0.6);
+            }
+
+            .rules-accordion {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .rules-block {
+                background-color: rgba(0, 0, 0, 0.3);
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid rgba(var(--primary-color), 0.3);
+                transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            }
+            body.light-theme .rules-block {
+                background-color: rgba(255, 255, 255, 0.5);
+                border-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .rules-block.active {
+                background-color: rgba(0, 0, 0, 0.5);
+                box-shadow: 0 0 15px rgba(var(--primary-color), 0.4);
+            }
+            body.light-theme .rules-block.active {
+                background-color: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .rules-header {
+                padding: 15px 20px;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: rgba(var(--primary-color), 0.1);
+                border-bottom: 1px solid transparent;
+                transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
+            }
+            .rules-block.active .rules-header {
+                background-color: rgba(var(--primary-color), 0.2);
+                border-bottom-color: rgba(var(--primary-color), 0.5);
+            }
+
+            .rules-header h2 {
+                margin: 0;
+                color: rgb(var(--primary-color));
+                font-size: 1.5em;
+                display: flex;
+                align-items: center;
+                text-align: left;
+            }
+            .rules-header h2 i {
+                margin-right: 10px;
+            }
+
+            .rules-indicator {
+                font-size: 1.5em;
+                color: rgb(var(--primary-color));
+                transition: transform 0.3s ease;
+            }
+            .rules-block.active .rules-indicator {
+                transform: rotate(90deg);
+            }
+
+            .rules-content {
+                padding: 0 20px;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+                text-align: left;
+            }
+            .rules-block.active .rules-content {
                 padding: 20px;
             }
-            
-            .header h1 {
+
+            .rule-item {
+                margin-bottom: 10px;
+                padding-left: 20px;
+                position: relative;
+                line-height: 1.5;
+                color: rgba(255, 255, 255, 0.9);
+            }
+            body.light-theme .rule-item {
+                color: rgba(0, 0, 0, 0.9);
+            }
+
+            .rule-item:before {
+                content: "•";
+                color: rgb(var(--primary-color));
                 font-size: 1.5em;
+                position: absolute;
+                left: 0;
+                top: -6px;
             }
-            
-            .menu-sidebar {
-                width: 280px;
+
+            .rule-subitem {
+                color: rgba(var(--primary-color), 0.9);
+                margin-left: 20px;
+                margin-bottom: 5px;
+                padding-left: 15px;
+                position: relative;
             }
-            
-            .modal-content {
-                width: 90%;
-                padding: 15px;
+            .rule-subitem:before {
+                content: "—";
+                color: #fcb738;
+                position: absolute;
+                left: 0;
+                top: 0;
             }
-            
-            .wallpapers-grid {
-                grid-template-columns: 1fr;
+
+            .rule-last {
+                color: #707070;
+                text-decoration: underline;
+                text-align: left;
+                display: block;
+                margin-top: 15px;
             }
-        }
 
-        .loading {
-            color: rgb(var(--primary-color));
-            font-size: 1.2em;
-            padding: 20px;
-        }
+            .back-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 30px;
+                padding: 12px 24px;
+                background-color: rgba(var(--primary-color), 0.1);
+                color: rgb(var(--primary-color));
+                border: 1px solid rgb(var(--primary-color));
+                border-radius: 12px;
+                text-decoration: none;
+                font-weight: bold;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            .back-btn:hover {
+                background-color: rgb(var(--primary-color));
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(var(--primary-color), 0.3);
+            }
 
-        .error {
-            color: #ff6b6b;
-            font-size: 1.2em;
-            padding: 20px;
-            border: 1px solid #ff6b6b;
-            border-radius: 8px;
-            background-color: rgba(255, 107, 107, 0.1);
-        }
-    </style>
-</head>
-<body>
+            .loading {
+                color: rgb(var(--primary-color));
+                font-size: 1.2em;
+                padding: 20px;
+            }
+            .error {
+                color: #ff6b6b;
+                font-size: 1.2em;
+                padding: 20px;
+                border: 1px solid #ff6b6b;
+                border-radius: 8px;
+                background-color: rgba(255, 107, 107, 0.1);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Элементы для эффектов -->
+        <div id="glitchPixelsContainer"></div>
+        <div id="glitchSectorsContainer"></div>
+        <canvas id="snowCanvas"></canvas>
+        <div id="cursorHeater"></div>
 
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-book"></i> Основные положения правил</h1>
-            <p>Обязательны к соблюдению всеми участниками сообщества</p>
-        </div>
-
-        <!-- Контейнер для динамически загружаемых правил -->
-        <div class="rules-accordion" id="rulesAccordion">
-            <div class="loading" id="loadingRules">
-                <i class="fas fa-spinner fa-spin"></i> Загрузка правил...
+        <!-- Основной контейнер с Правилами -->
+        <div class="container">
+            <div class="header">
+                <h1><i class="fas fa-book"></i> Основные положения правил</h1>
+                <p>Обязательны к соблюдению всеми участниками сообщества</p>
             </div>
-        </div>
-        
-        <div class="rules-section">
-            <div class="rule-last" id="lastUpdate">Загрузка даты...</div>
-        </div>
-        <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Вернуться на главную</a>
-    </div>
 
-    <footer style="
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        text-align: center;
-        padding: 10px;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: #dadada;
-        font-size: 14px;
-        z-index: 1;
-    ">
-        © Dont65 - 2025 (Все права защищены) 
-    </footer>
-    
-    <script>
-        // Функция для загрузки правил из JSON файла
-        async function loadRules() {
-            try {
-                const response = await fetch('./rules.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const rulesData = await response.json();
-                renderRules(rulesData);
-            } catch (error) {
-                console.error('Ошибка при загрузке правил:', error);
-                showError('Не удалось загрузить правила. Пожалуйста, попробуйте позже.');
-            }
-        }
-
-        // Функция для отображения правил
-        function renderRules(rulesData) {
-            const accordionContainer = document.getElementById('rulesAccordion');
-            const loadingElement = document.getElementById('loadingRules');
-            const lastUpdateElement = document.getElementById('lastUpdate');
-
-            // Удаляем индикатор загрузки
-            if (loadingElement) {
-                loadingElement.remove();
-            }
-
-            // Устанавливаем дату последнего обновления
-            if (lastUpdateElement && rulesData.lastUpdate) {
-                lastUpdateElement.textContent = `Последнее изменение: ${rulesData.lastUpdate}`;
-            }
-
-            // Очищаем контейнер
-            accordionContainer.innerHTML = '';
-
-            // Проверяем наличие блоков правил
-            if (!rulesData.blocks || rulesData.blocks.length === 0) {
-                showError('Правила не найдены.');
-                return;
-            }
-
-            // Создаем блоки правил
-            rulesData.blocks.forEach(block => {
-                const rulesBlock = document.createElement('div');
-                rulesBlock.className = 'rules-block';
-                rulesBlock.dataset.id = block.id;
-
-                // Создаем заголовок
-                const rulesHeader = document.createElement('div');
-                rulesHeader.className = 'rules-header';
-                rulesHeader.innerHTML = `
-                    <h2><i class="${block.icon || 'fas fa-circle'}"></i> ${block.title}</h2>
-                    <span class="rules-indicator"><i class="fas fa-chevron-right"></i></span>
-                `;
-
-                // Создаем контент
-                const rulesContent = document.createElement('div');
-                rulesContent.className = 'rules-content';
-
-                // Добавляем пункты правил
-                if (block.items && block.items.length > 0) {
-                    block.items.forEach(item => {
-                        const ruleItem = document.createElement('div');
-                        ruleItem.className = 'rule-item';
-                        ruleItem.textContent = (item.id ? item.id + ' ' : '') + (item.text || '');
-
-                        rulesContent.appendChild(ruleItem);
-
-                        // Добавляем подпункты, если они есть
-                        if (item.subitems && item.subitems.length > 0) {
-                            item.subitems.forEach(subitem => {
-                                const ruleSubitem = document.createElement('div');
-                                ruleSubitem.className = 'rule-subitem';
-                                ruleSubitem.textContent = subitem;
-                                rulesContent.appendChild(ruleSubitem);
-                            });
-                        }
-                    });
-                } else {
-                    const emptyMessage = document.createElement('div');
-                    emptyMessage.className = 'rule-item';
-                    emptyMessage.textContent = 'Пункты правил отсутствуют.';
-                    rulesContent.appendChild(emptyMessage);
-                }
-
-                // Собираем блок
-                rulesBlock.appendChild(rulesHeader);
-                rulesBlock.appendChild(rulesContent);
-                accordionContainer.appendChild(rulesBlock);
-            });
-
-            // Инициализируем аккордеон после загрузки
-            initAccordion();
-        }
-
-        // Функция для отображения ошибки
-        function showError(message) {
-            const accordionContainer = document.getElementById('rulesAccordion');
-            accordionContainer.innerHTML = `
-                <div class="error">
-                    <i class="fas fa-exclamation-triangle"></i> ${message}
+            <!-- Контейнер для динамически загружаемых правил -->
+            <div class="rules-accordion" id="rulesAccordion">
+                <div class="loading" id="loadingRules">
+                    <i class="fas fa-spinner fa-spin"></i> Загрузка правил...
                 </div>
-            `;
-        }
+            </div>
+            
+            <div class="rules-section">
+                <div class="rule-last" id="lastUpdate">Загрузка даты...</div>
+            </div>
 
-        // Инициализация аккордеона
-        function initAccordion() {
-            const accordionBlocks = document.querySelectorAll('.rules-block');
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Вернуться на главную
+            </a>
+        </div>
 
-            accordionBlocks.forEach(block => {
-                const header = block.querySelector('.rules-header');
-                const content = block.querySelector('.rules-content');
+        <footer>© Dont65 | 2025 - 2026</footer>
+
+        <script>
+            // --- 1. ЛОГИКА ВИЗУАЛЬНЫХ ЭФФЕКТОВ (Снег, Глитчи, Тема, Обои) --- //
+            
+            function initVisualEffects() {
+                // Тема и цвета
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "light") document.body.classList.add("light-theme");
                 
-                // Добавляем обработчик клика на заголовок
-                header.addEventListener('click', () => {
-                    const isActive = block.classList.contains('active');
+                const savedWallpaper = localStorage.getItem("wallpaper") || "background.jpg";
+                document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
 
-                    // 1. Закрываем все открытые блоки
-                    accordionBlocks.forEach(otherBlock => {
-                        if (otherBlock.classList.contains('active')) {
-                            otherBlock.classList.remove('active');
-                            const otherContent = otherBlock.querySelector('.rules-content');
-                            otherContent.style.maxHeight = '0';
-                            otherContent.style.padding = '0 20px';
+                let savedColor = localStorage.getItem("primaryColor") || "42, 171, 238";
+                if (savedTheme === "light" && savedColor === "255, 255, 255") savedColor = "0, 0, 0";
+                document.documentElement.style.setProperty("--primary-color", savedColor);
+
+                // Шрифт Брайля
+                if (localStorage.getItem("brailleEnabled") === "true") document.body.classList.add("braille-active");
+
+                // Снег и теплый курсор
+                const now = new Date();
+                const m = now.getMonth();
+                const d = now.getDate();
+                const isWinter = m === 11 || m === 0 || m === 1 || (m === 2 && d === 1);
+                
+                const manualSnow = localStorage.getItem("snowEnabled");
+                const shouldSnow = manualSnow !== null ? manualSnow === "true" : isWinter;
+                const useCursorHeater = localStorage.getItem("cursorHeaterEnabled") === "true";
+
+                if (shouldSnow) {
+                    initSnowCanvas(useCursorHeater);
+                }
+
+                // Glitch effect
+                if (localStorage.getItem("glitchEnabled") === "true") {
+                    enableGlitchMode();
+                }
+            }
+
+            // --- Снег --- //
+            let snowCanvas, snowCtx;
+            let snowGrid = [], gridCols = 0, gridRows = 0;
+            const SNOW_BLOCK_SIZE = 4;
+
+            function initSnowCanvas(useHeater) {
+                snowCanvas = document.getElementById("snowCanvas");
+                if (!snowCanvas) return;
+                snowCtx = snowCanvas.getContext("2d");
+                
+                const resize = () => {
+                    snowCanvas.width = window.innerWidth;
+                    snowCanvas.height = window.innerHeight;
+                    gridCols = Math.ceil(snowCanvas.width / SNOW_BLOCK_SIZE);
+                    gridRows = Math.ceil(snowCanvas.height / SNOW_BLOCK_SIZE);
+                    snowGrid = new Array(gridCols * gridRows).fill(0);
+                };
+                window.addEventListener("resize", resize);
+                resize();
+                
+                if (useHeater) initCursorHeater();
+                loopSnow();
+            }
+
+            function loopSnow() {
+                const cellsPerFrame = Math.max(1, Math.ceil((gridCols * gridRows) / 400000));
+                for (let i = 0; i < cellsPerFrame; i++) {
+                    const x = Math.floor(Math.random() * gridCols);
+                    if (x >= 0 && x < gridCols) snowGrid[x] = 1;
+                }
+                for (let y = gridRows - 2; y >= 0; y--) {
+                    for (let x = 0; x < gridCols; x++) {
+                        const i = y * gridCols + x;
+                        if (snowGrid[i] === 1) {
+                            const below = (y + 1) * gridCols + x;
+                            const left = (y + 1) * gridCols + (x - 1);
+                            const right = (y + 1) * gridCols + (x + 1);
+                            if (snowGrid[below] === 0) {
+                                snowGrid[below] = 1;
+                                snowGrid[i] = 0;
+                            } else {
+                                const canLeft = x > 0 && snowGrid[left] === 0;
+                                const canRight = x < gridCols - 1 && snowGrid[right] === 0;
+                                if (canLeft && canRight) {
+                                    Math.random() > 0.5 ? (snowGrid[left] = 1) : (snowGrid[right] = 1);
+                                    snowGrid[i] = 0;
+                                } else if (canLeft) {
+                                    snowGrid[left] = 1;
+                                    snowGrid[i] = 0;
+                                } else if (canRight) {
+                                    snowGrid[right] = 1;
+                                    snowGrid[i] = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                snowCtx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+                snowCtx.fillStyle = "rgba(255, 255, 255, 0.8)";
+                for (let y = 0; y < gridRows; y++) {
+                    for (let x = 0; x < gridCols; x++) {
+                        if (snowGrid[y * gridCols + x] === 1) {
+                            snowCtx.fillRect(x * SNOW_BLOCK_SIZE, y * SNOW_BLOCK_SIZE, SNOW_BLOCK_SIZE, SNOW_BLOCK_SIZE);
+                        }
+                    }
+                }
+                requestAnimationFrame(loopSnow);
+            }
+
+            function initCursorHeater() {
+                const heater = document.getElementById("cursorHeater");
+                heater.style.display = "block";
+                document.addEventListener("mousemove", (e) => {
+                    heater.style.left = e.clientX + "px";
+                    heater.style.top = e.clientY + "px";
+                    if (snowGrid.length) {
+                        const gx = Math.floor(e.clientX / SNOW_BLOCK_SIZE);
+                        const gy = Math.floor(e.clientY / SNOW_BLOCK_SIZE);
+                        const r = Math.floor(40 / SNOW_BLOCK_SIZE);
+                        for (let y = gy - r; y <= gy + r; y++) {
+                            for (let x = gx - r; x <= gx + r; x++) {
+                                if (x >= 0 && x < gridCols && y >= 0 && y < gridRows) {
+                                    if ((x - gx) ** 2 + (y - gy) ** 2 <= r * r)
+                                        snowGrid[y * gridCols + x] = 0;
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- Glitch --- //
+            let isGlitchActive = false;
+            let glitchAudio = null;
+
+            function enableGlitchMode() {
+                if (isGlitchActive) return;
+                isGlitchActive = true;
+                document.body.classList.add("hard-glitched");
+
+                if (!document.querySelector(".glitch-noise-overlay")) {
+                    const noise = document.createElement("div");
+                    noise.className = "glitch-noise-overlay";
+                    noise.style.cssText = `
+                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.3"/></svg>');
+                        pointer-events: none; z-index: 99997; opacity: 0.4; mix-blend-mode: overlay;
+                    `;
+                    document.body.appendChild(noise);
+                }
+
+                // Пиксели
+                setInterval(() => {
+                    const container = document.getElementById("glitchPixelsContainer");
+                    if (!container || !isGlitchActive) return;
+                    for (let i = 0; i < 40; i++) {
+                        const pixel = document.createElement("div");
+                        const size = Math.random() * 15 + 3;
+                        const colors = ["#00ff00", "#ff0000", "#0000ff", "#ffff00"];
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        pixel.style.cssText = `
+                            position: absolute; left: ${Math.random() * 100}%; top: ${Math.random() * 100}%;
+                            width: ${size}px; height: ${size}px; background-color: ${color};
+                            z-index: 99999; pointer-events: none; opacity: ${Math.random() * 0.9 + 0.1};
+                        `;
+                        container.appendChild(pixel);
+                        setTimeout(() => pixel.remove(), Math.random() * 600 + 300);
+                    }
+                }, 50);
+
+                // Искажение текста
+                setInterval(() => {
+                    if (!isGlitchActive || Math.random() > 0.5) return;
+                    const textElements = document.querySelectorAll("h1, h2, h3, p, span, div:not(.container)");
+                    const target = textElements[Math.floor(Math.random() * textElements.length)];
+                    if(!target) return;
+                    const originalText = target.textContent;
+                    if (!originalText || originalText.trim().length < 2) return;
+                    const colors = ["#00ff00", "#ff0000", "#0000ff", "#ffff00"];
+                    target.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    target.style.animation = "text-distortion 0.2s infinite";
+                    setTimeout(() => {
+                        target.style.color = "";
+                        target.style.animation = "";
+                    }, Math.random() * 400 + 150);
+                }, 400);
+
+                // Музыка глитча
+                try {
+                    glitchAudio = new Audio("/assets/music/glitch_noise.mp3");
+                    glitchAudio.volume = 0.4; glitchAudio.playbackRate = 1.2; glitchAudio.loop = true;
+                    glitchAudio.play().catch(() => {
+                        document.addEventListener("click", () => glitchAudio.play(), {once: true});
+                    });
+                } catch(e) {}
+            }
+
+
+            // --- 2. ЛОГИКА ПРАВИЛ И ИНТЕРФЕЙСА --- //
+
+            async function loadRules() {
+                try {
+                    const response = await fetch('./rules.json');
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const rulesData = await response.json();
+                    renderRules(rulesData);
+                } catch (error) {
+                    console.error('Ошибка при загрузке правил:', error);
+                    showError('Не удалось загрузить правила. Пожалуйста, попробуйте позже.');
+                }
+            }
+
+            function renderRules(rulesData) {
+                const accordionContainer = document.getElementById('rulesAccordion');
+                const loadingElement = document.getElementById('loadingRules');
+                const lastUpdateElement = document.getElementById('lastUpdate');
+
+                if (loadingElement) loadingElement.remove();
+                if (lastUpdateElement && rulesData.lastUpdate) {
+                    lastUpdateElement.textContent = `Последнее изменение: ${rulesData.lastUpdate}`;
+                }
+
+                accordionContainer.innerHTML = '';
+                if (!rulesData.blocks || rulesData.blocks.length === 0) {
+                    showError('Правила не найдены.');
+                    return;
+                }
+
+                rulesData.blocks.forEach(block => {
+                    const rulesBlock = document.createElement('div');
+                    rulesBlock.className = 'rules-block';
+                    if (block.id) rulesBlock.dataset.id = block.id;
+
+                    const rulesHeader = document.createElement('div');
+                    rulesHeader.className = 'rules-header';
+                    rulesHeader.innerHTML = `
+                        <h2><i class="${block.icon || 'fas fa-circle'}"></i> ${block.title}</h2>
+                        <span class="rules-indicator"><i class="fas fa-chevron-right"></i></span>
+                    `;
+
+                    const rulesContent = document.createElement('div');
+                    rulesContent.className = 'rules-content';
+
+                    if (block.items && block.items.length > 0) {
+                        block.items.forEach(item => {
+                            const ruleItem = document.createElement('div');
+                            ruleItem.className = 'rule-item';
+                            ruleItem.textContent = (item.id ? item.id + ' ' : '') + (item.text || '');
+                            rulesContent.appendChild(ruleItem);
+
+                            if (item.subitems && item.subitems.length > 0) {
+                                item.subitems.forEach(subitem => {
+                                    const ruleSubitem = document.createElement('div');
+                                    ruleSubitem.className = 'rule-subitem';
+                                    ruleSubitem.textContent = subitem;
+                                    rulesContent.appendChild(ruleSubitem);
+                                });
+                            }
+                        });
+                    } else {
+                        const emptyMessage = document.createElement('div');
+                        emptyMessage.className = 'rule-item';
+                        emptyMessage.textContent = 'Пункты правил отсутствуют.';
+                        rulesContent.appendChild(emptyMessage);
+                    }
+
+                    rulesBlock.appendChild(rulesHeader);
+                    rulesBlock.appendChild(rulesContent);
+                    accordionContainer.appendChild(rulesBlock);
+                });
+
+                initAccordion();
+            }
+
+            function showError(message) {
+                const accordionContainer = document.getElementById('rulesAccordion');
+                accordionContainer.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
+            }
+
+            function initAccordion() {
+                const accordionBlocks = document.querySelectorAll('.rules-block');
+
+                accordionBlocks.forEach(block => {
+                    const header = block.querySelector('.rules-header');
+                    const content = block.querySelector('.rules-content');
+                    
+                    header.addEventListener('click', () => {
+                        const isActive = block.classList.contains('active');
+                        accordionBlocks.forEach(otherBlock => {
+                            if (otherBlock.classList.contains('active')) {
+                                otherBlock.classList.remove('active');
+                                const otherContent = otherBlock.querySelector('.rules-content');
+                                otherContent.style.maxHeight = '0';
+                            }
+                        });
+
+                        if (!isActive) {
+                            block.classList.add('active');
+                            content.style.maxHeight = content.scrollHeight + 50 + 'px'; 
                         }
                     });
-
-                    // 2. Если текущий блок был закрыт, открываем его
-                    if (!isActive) {
-                        block.classList.add('active');
-                        // Устанавливаем maxHeight на значение, гарантированно превышающее контент
-                        content.style.maxHeight = content.scrollHeight + 'px'; 
-                        content.style.padding = '20px';
-                    }
                 });
+            }
+
+            // Запуск всего при загрузке страницы
+            document.addEventListener('DOMContentLoaded', function() {
+                initVisualEffects();
+                loadRules();
             });
-        }
-
-        // Загружаем правила при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            loadRules();
-            
-            // === ЛОГИКА ТЕМЫ И ЦВЕТА (Оставлена без изменений) ===
-            
-            const themeToggle = document.getElementById('themeToggle');
-            const colorOptions = document.getElementById('colorOptions');
-            const root = document.documentElement;
-
-            // Функция для настройки цвета
-            function adjustColorForTheme(color, isLight) {
-                // Если светлая тема и выбран чисто белый цвет, меняем его на черный для контраста
-                if (isLight && color === '255, 255, 255') {
-                    return '0, 0, 0'; 
-                }
-                return color;
-            }
-
-            function updatePrimaryColor(color) {
-                const isLight = document.body.classList.contains('light-theme');
-                const adjustedColor = adjustColorForTheme(color, isLight);
-                root.style.setProperty('--primary-color', adjustedColor);
-            }
-
-            // Инициализация при загрузке
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            const savedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
-
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-theme');
-                if (themeToggle) themeToggle.checked = true;
-            }
-            updatePrimaryColor(savedColor); // Обновляем цвет с учетом темы
-            document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
-
-            // Обработчик переключения темы
-            if (themeToggle) {
-                themeToggle.addEventListener('change', function() {
-                    const isLight = this.checked;
-                    document.body.classList.toggle('light-theme', isLight);
-                    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-                    
-                    // Перезагружаем цвет после смены темы
-                    const currentColor = localStorage.getItem('primaryColor') || '42, 171, 238';
-                    updatePrimaryColor(currentColor); 
-                });
-            }
-
-            // Обработчик выбора цвета
-            if (colorOptions) {
-                const currentSelectedColor = localStorage.getItem('primaryColor') || '42, 171, 238';
-
-                colorOptions.querySelectorAll('.color-option').forEach(option => {
-                    const color = option.getAttribute('data-color');
-                    if (color === currentSelectedColor) {
-                        option.classList.add('selected');
-                    }
-                    
-                    option.addEventListener('click', function() {
-                        const newColor = this.getAttribute('data-color');
-                        localStorage.setItem('primaryColor', newColor);
-                        updatePrimaryColor(newColor);
-                        
-                        // Снимаем выделение со всех и добавляем к выбранному
-                        colorOptions.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
-                        this.classList.add('selected');
-                    });
-                });
-            }
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>
