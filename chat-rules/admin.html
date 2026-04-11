@@ -16,6 +16,7 @@
                 --danger-color: 231, 76, 60;
                 --success-color: 46, 204, 113;
                 --warning-color: 241, 196, 15;
+                --info-color: 155, 89, 182; /* Цвет для кнопки экспорта */
             }
 
             * {
@@ -248,10 +249,27 @@
                 background: rgba(var(--success-color), 0.9);
                 color: white;
             }
+            
+            .btn-success:hover {
+                background: rgba(var(--success-color), 1);
+            }
 
             .btn-warning {
                 background: rgba(var(--warning-color), 0.9);
                 color: white;
+            }
+            
+            .btn-warning:hover {
+                background: rgba(var(--warning-color), 1);
+            }
+
+            .btn-info {
+                background: rgba(var(--info-color), 0.9);
+                color: white;
+            }
+
+            .btn-info:hover {
+                background: rgba(var(--info-color), 1);
             }
 
             .btn-block {
@@ -453,6 +471,14 @@
                 display: none;
             }
 
+            /* Стили для группы кнопок */
+            .control-buttons {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
             /* Адаптивность */
             @media (max-width: 900px) {
                 .admin-sections {
@@ -583,13 +609,16 @@
                     </div>
 
                     <!-- Кнопки управления -->
-                    <div class="text-center mb-20">
+                    <div class="control-buttons mb-20">
                         <button class="btn btn-success" id="saveBtn">
                             <i class="fas fa-save"></i> Сохранить изменения
                         </button>
                         <button class="btn btn-warning" id="reloadBtn">
                             <i class="fas fa-sync-alt"></i> Обновить из
                             репозитория
+                        </button>
+                        <button class="btn btn-info" id="exportTxtBtn">
+                            <i class="fas fa-file-alt"></i> Экспорт в TXT
                         </button>
                         <button class="btn btn-danger" id="logoutBtn">
                             <i class="fas fa-sign-out-alt"></i> Выйти
@@ -639,10 +668,8 @@
             const authPanel = document.getElementById("authPanel");
             const editorPanel = document.getElementById("editorPanel");
             const statusIndicator = document.getElementById("statusIndicator");
-            const sessionStatusText =
-                document.getElementById("sessionStatusText");
-            const currentRepoInfoElement =
-                document.getElementById("currentRepoInfo");
+            const sessionStatusText = document.getElementById("sessionStatusText");
+            const currentRepoInfoElement = document.getElementById("currentRepoInfo");
             const blocksList = document.getElementById("blocksList");
             const successMessage = document.getElementById("successMessage");
             const errorMessage = document.getElementById("errorMessage");
@@ -652,6 +679,7 @@
             const logoutBtn = document.getElementById("logoutBtn");
             const saveBtn = document.getElementById("saveBtn");
             const reloadBtn = document.getElementById("reloadBtn");
+            const exportTxtBtn = document.getElementById("exportTxtBtn");
             const addBlockBtn = document.getElementById("addBlockBtn");
 
             // Проверяем, есть ли активная сессия при загрузке
@@ -881,7 +909,6 @@
                         currentRules = JSON.parse(jsonString);
                     }
 
-                    currentRules = JSON.parse(jsonString);
                     renderBlocks();
                     showMessage("success", "Правила успешно загружены");
                 } catch (error) {
@@ -958,6 +985,69 @@
                     showMessage("error", "Ошибка сохранения: " + error.message);
                 }
             }
+
+            // Функция конвертации JSON в текстовый формат (TXT)
+            function exportRulesToTxt() {
+                if (!currentRules || !currentRules.blocks) {
+                    showMessage("error", "Нет данных для экспорта!");
+                    return;
+                }
+
+                let txtContent = "";
+
+                if (currentRules.lastUpdate) {
+                    txtContent += `Правила (Последнее обновление: ${currentRules.lastUpdate})\n\n`;
+                }
+
+                // Перебор всех блоков
+                currentRules.blocks.forEach(block => {
+                    // Заголовок блока
+                    if (block.title) {
+                        txtContent += `=== ${block.title} ===\n\n`;
+                    }
+
+                    // Перебор пунктов в блоке
+                    if (block.items && block.items.length > 0) {
+                        block.items.forEach(item => {
+                            // Формирование основной строки: "1.1 Правило"
+                            const itemId = item.id ? `${item.id} ` : "";
+                            const itemText = item.text || "";
+                            txtContent += `${itemId}${itemText}\n`;
+
+                            // Добавление подпунктов: "Дополнение"
+                            if (item.subitems && item.subitems.length > 0) {
+                                item.subitems.forEach(subitem => {
+                                    txtContent += `${subitem}\n`;
+                                });
+                            }
+                            // Пустая строка между правилами для читаемости
+                            txtContent += `\n`;
+                        });
+                    }
+                });
+
+                // Создаем Blob объект и скачиваем файл
+                const blob = new Blob([txtContent], { type: "text/plain;charset=utf-8" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                
+                link.href = url;
+                link.download = "rules.txt";
+                document.body.appendChild(link);
+                link.click();
+                
+                // Очистка
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 100);
+
+                showMessage("success", "Файл rules.txt успешно скачан!");
+            }
+
+            // Обработчик кнопки Экспорта в TXT
+            exportTxtBtn.addEventListener("click", exportRulesToTxt);
+
 
             // Отображение блоков правил
             function renderBlocks() {
@@ -1464,7 +1554,12 @@
                           : null;
 
                 if (message) {
-                    message.innerHTML = `<i class="fas fa-${type === "success" ? "check-circle" : "exclamation-circle"}"></i> ${text}`;
+                    // Используем разные иконки в зависимости от типа
+                    let iconClass = "fa-info-circle";
+                    if (type === "success") iconClass = "fa-check-circle";
+                    if (type === "error") iconClass = "fa-exclamation-circle";
+                    
+                    message.innerHTML = `<i class="fas ${iconClass}"></i> ${text}`;
                     message.className = `message ${type} show`;
 
                     setTimeout(() => {
