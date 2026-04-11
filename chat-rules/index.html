@@ -53,6 +53,11 @@
                 display: flex;
                 flex-direction: column;
                 gap: 15px;
+                /* Запрет выделения текста */
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
             }
 
             .rules-block {
@@ -151,7 +156,7 @@
                 position: relative;
             }
             .rule-subitem:before {
-                content: "*";
+                content: "* "; /* Символ заменен на звездочку */
                 color: #fcb738;
                 position: absolute;
                 left: 0;
@@ -542,6 +547,13 @@
             document.addEventListener('DOMContentLoaded', function() {
                 initVisualEffects();
                 loadRules();
+
+                // Запрет копирования и контекстного меню на всем блоке с правилами
+                const rulesContainer = document.getElementById('rulesAccordion');
+                if (rulesContainer) {
+                    rulesContainer.addEventListener('contextmenu', e => e.preventDefault());
+                    rulesContainer.addEventListener('copy', e => e.preventDefault());
+                }
             });
         </script>
     </body>
