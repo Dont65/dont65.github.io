@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Dont65 | Правила чатов</title>
-        
+
         <!-- Шрифт Roboto для MD3 -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,10 +18,10 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-        
+
         <!-- Стили главной страницы (путь от корня) -->
         <link rel="stylesheet" href="/styles.css" />
-        
+
         <style>
             /* Адаптация ширины контейнера под чтение правил */
             .container {
@@ -65,7 +65,9 @@
                 border-radius: 16px;
                 overflow: hidden;
                 border: 1px solid rgba(var(--primary-color), 0.3);
-                transition: background-color 0.3s ease, box-shadow 0.3s ease;
+                transition:
+                    background-color 0.3s ease,
+                    box-shadow 0.3s ease;
             }
             body.light-theme .rules-block {
                 background-color: rgba(255, 255, 255, 0.5);
@@ -89,7 +91,9 @@
                 align-items: center;
                 background-color: rgba(var(--primary-color), 0.1);
                 border-bottom: 1px solid transparent;
-                transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
+                transition:
+                    background-color 0.3s ease,
+                    border-bottom-color 0.3s ease;
             }
             .rules-block.active .rules-header {
                 background-color: rgba(var(--primary-color), 0.2);
@@ -121,7 +125,9 @@
                 padding: 0 20px;
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+                transition:
+                    max-height 0.4s ease-out,
+                    padding 0.4s ease-out;
                 text-align: left;
             }
             .rules-block.active .rules-content {
@@ -214,6 +220,7 @@
         <div id="glitchPixelsContainer"></div>
         <div id="glitchSectorsContainer"></div>
         <canvas id="snowCanvas"></canvas>
+        <canvas id="confettiCanvas"></canvas>
         <div id="cursorHeater"></div>
 
         <!-- Основной контейнер с Правилами -->
@@ -229,7 +236,7 @@
                     <i class="fas fa-spinner fa-spin"></i> Загрузка правил...
                 </div>
             </div>
-            
+
             <div class="rules-section">
                 <div class="rule-last" id="lastUpdate">Загрузка даты...</div>
             </div>
@@ -242,36 +249,69 @@
         <footer>© Dont65 | 2025 - 2026</footer>
 
         <script>
-            // --- 1. ЛОГИКА ВИЗУАЛЬНЫХ ЭФФЕКТОВ (Снег, Глитчи, Тема, Обои) --- //
-            
-            function initVisualEffects() {
-                // Тема и цвета
-                const savedTheme = localStorage.getItem("theme");
-                if (savedTheme === "light") document.body.classList.add("light-theme");
-                
-                const savedWallpaper = localStorage.getItem("wallpaper") || "background.jpg";
-                document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
-
-                let savedColor = localStorage.getItem("primaryColor") || "42, 171, 238";
-                if (savedTheme === "light" && savedColor === "255, 255, 255") savedColor = "0, 0, 0";
-                document.documentElement.style.setProperty("--primary-color", savedColor);
-
-                // Шрифт Брайля
-                if (localStorage.getItem("brailleEnabled") === "true") document.body.classList.add("braille-active");
-
-                // Снег и теплый курсор
+            // --- Праздники --- //
+            function getCurrentHoliday() {
                 const now = new Date();
                 const m = now.getMonth();
                 const d = now.getDate();
-                const isWinter = m === 11 || m === 0 || m === 1 || (m === 2 && d === 1);
-                
-                const manualSnow = localStorage.getItem("snowEnabled");
-                const shouldSnow = manualSnow !== null ? manualSnow === "true" : isWinter;
-                const useCursorHeater = localStorage.getItem("cursorHeaterEnabled") === "true";
 
-                if (shouldSnow) {
-                    initSnowCanvas(useCursorHeater);
-                }
+                if ((m === 9 && d >= 24) || (m === 10 && d <= 7))
+                    return "halloween";
+                if ((m === 11 && d >= 25) || (m === 0 && d !== 2 && d <= 8))
+                    return "newyear";
+
+                if (m === 0 && d === 2) return "birthday";
+                if (m === 1 && d === 14) return "valentines";
+                if (m === 1 && d === 23) return "defenders";
+                if (m === 2 && d === 8) return "womens";
+                if (m === 3 && d === 12) return "space";
+                if (m === 4 && d === 9) return "victory";
+
+                return "default";
+            }
+
+            // --- 1. ЛОГИКА ВИЗУАЛЬНЫХ ЭФФЕКТОВ (Снег, Конфетти, Глитчи, Тема, Обои) --- //
+            function initVisualEffects() {
+                // Тема и цвета
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "light")
+                    document.body.classList.add("light-theme");
+
+                const savedWallpaper =
+                    localStorage.getItem("wallpaper") || "background.jpg";
+                document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
+
+                let savedColor =
+                    localStorage.getItem("primaryColor") || "42, 171, 238";
+                if (savedTheme === "light" && savedColor === "255, 255, 255")
+                    savedColor = "0, 0, 0";
+                document.documentElement.style.setProperty(
+                    "--primary-color",
+                    savedColor,
+                );
+
+                // Шрифт Брайля
+                if (localStorage.getItem("brailleEnabled") === "true")
+                    document.body.classList.add("braille-active");
+
+                // Снег
+                const now = new Date();
+                const m = now.getMonth();
+                const d = now.getDate();
+                const isWinter =
+                    m === 11 || m === 0 || m === 1 || (m === 2 && d === 1);
+
+                const manualSnow = localStorage.getItem("snowEnabled");
+                const shouldSnow =
+                    manualSnow !== null ? manualSnow === "true" : isWinter;
+
+                if (shouldSnow) initSnowCanvas();
+
+                // Конфетти
+                initConfettiLogic();
+
+                // Курсор-ластик
+                initCursorHeater();
 
                 // Glitch effect
                 if (localStorage.getItem("glitchEnabled") === "true") {
@@ -279,16 +319,157 @@
                 }
             }
 
+            // --- Конфетти --- //
+            const confettiColors = [
+                "#fce18a",
+                "#ff726d",
+                "#b48def",
+                "#f4306d",
+                "#00ff00",
+                "#00ccff",
+                "#ffaa00",
+            ];
+            let confettiParticles = [];
+            let confettiCanvas, confettiCtx;
+            let isConfettiActive = false;
+
+            function initConfettiLogic() {
+                const holiday = getCurrentHoliday();
+                const isHoliday =
+                    holiday !== "default" && holiday !== "halloween";
+
+                if (isHoliday) {
+                    const now = new Date();
+                    let holidayYear = now.getFullYear();
+                    if (holiday === "newyear" && now.getMonth() <= 1) {
+                        holidayYear -= 1;
+                    }
+
+                    const holidayId = holiday + "_" + holidayYear;
+                    const lastSeenHoliday =
+                        localStorage.getItem("lastSeenHoliday");
+
+                    if (lastSeenHoliday !== holidayId) {
+                        isConfettiActive = true;
+                        localStorage.setItem("lastSeenHoliday", holidayId);
+                        localStorage.setItem("confettiEnabled", "true");
+                    } else {
+                        const manualSetting =
+                            localStorage.getItem("confettiEnabled");
+                        isConfettiActive =
+                            manualSetting !== null
+                                ? manualSetting === "true"
+                                : true;
+                    }
+                } else {
+                    const manualSetting =
+                        localStorage.getItem("confettiEnabled");
+                    isConfettiActive =
+                        manualSetting !== null
+                            ? manualSetting === "true"
+                            : false;
+                }
+
+                if (isConfettiActive) initConfettiCanvas();
+            }
+
+            function initConfettiCanvas() {
+                confettiCanvas = document.getElementById("confettiCanvas");
+                if (!confettiCanvas) return;
+                confettiCtx = confettiCanvas.getContext("2d");
+
+                const resizeConfetti = () => {
+                    confettiCanvas.width = window.innerWidth;
+                    confettiCanvas.height = window.innerHeight;
+                };
+
+                window.addEventListener("resize", resizeConfetti);
+                resizeConfetti();
+                fireConfettiExplosion();
+                requestAnimationFrame(loopConfetti);
+            }
+
+            function createConfettiParticle(x, y, isExplosion) {
+                return {
+                    x: x || Math.random() * confettiCanvas.width,
+                    y: y || (isExplosion ? confettiCanvas.height : -20),
+                    r: Math.random() * 8 + 6,
+                    dx: isExplosion
+                        ? (Math.random() - 0.5) * 25
+                        : (Math.random() - 0.5) * 2,
+                    dy: isExplosion
+                        ? -(Math.random() * 15 + 15)
+                        : Math.random() * 2 + 1,
+                    color: confettiColors[
+                        Math.floor(Math.random() * confettiColors.length)
+                    ],
+                    tilt: Math.floor(Math.random() * 10) - 10,
+                    tiltAngle: 0,
+                    tiltAngleInc: Math.random() * 0.07 + 0.05,
+                };
+            }
+
+            function fireConfettiExplosion() {
+                const centerX = window.innerWidth / 2;
+                const bottomY = window.innerHeight;
+                for (let i = 0; i < 250; i++) {
+                    confettiParticles.push(
+                        createConfettiParticle(centerX, bottomY, true),
+                    );
+                }
+            }
+
+            function loopConfetti() {
+                if (!isConfettiActive) return;
+                confettiCtx.clearRect(
+                    0,
+                    0,
+                    confettiCanvas.width,
+                    confettiCanvas.height,
+                );
+
+                if (Math.random() < 0.25) {
+                    confettiParticles.push(
+                        createConfettiParticle(null, null, false),
+                    );
+                }
+
+                for (let i = 0; i < confettiParticles.length; i++) {
+                    let p = confettiParticles[i];
+                    p.tiltAngle += p.tiltAngleInc;
+
+                    if (p.dy < 5) p.dy += 0.1;
+
+                    p.y += p.dy;
+                    p.x += Math.sin(p.tiltAngle) * 2 + p.dx;
+
+                    confettiCtx.beginPath();
+                    confettiCtx.lineWidth = p.r;
+                    confettiCtx.strokeStyle = p.color;
+                    confettiCtx.moveTo(p.x + p.tilt + p.r, p.y);
+                    confettiCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+                    confettiCtx.stroke();
+
+                    if (p.y > confettiCanvas.height) {
+                        confettiParticles.splice(i, 1);
+                        i--;
+                    }
+                }
+                requestAnimationFrame(loopConfetti);
+            }
+
             // --- Снег --- //
             let snowCanvas, snowCtx;
-            let snowGrid = [], gridCols = 0, gridRows = 0;
+            let snowGrid = [],
+                gridCols = 0,
+                gridRows = 0;
             const SNOW_BLOCK_SIZE = 4;
 
-            function initSnowCanvas(useHeater) {
+            function initSnowCanvas() {
                 snowCanvas = document.getElementById("snowCanvas");
                 if (!snowCanvas) return;
                 snowCtx = snowCanvas.getContext("2d");
-                
+
                 const resize = () => {
                     snowCanvas.width = window.innerWidth;
                     snowCanvas.height = window.innerHeight;
@@ -298,13 +479,14 @@
                 };
                 window.addEventListener("resize", resize);
                 resize();
-                
-                if (useHeater) initCursorHeater();
                 loopSnow();
             }
 
             function loopSnow() {
-                const cellsPerFrame = Math.max(1, Math.ceil((gridCols * gridRows) / 400000));
+                const cellsPerFrame = Math.max(
+                    1,
+                    Math.ceil((gridCols * gridRows) / 400000),
+                );
                 for (let i = 0; i < cellsPerFrame; i++) {
                     const x = Math.floor(Math.random() * gridCols);
                     if (x >= 0 && x < gridCols) snowGrid[x] = 1;
@@ -321,9 +503,12 @@
                                 snowGrid[i] = 0;
                             } else {
                                 const canLeft = x > 0 && snowGrid[left] === 0;
-                                const canRight = x < gridCols - 1 && snowGrid[right] === 0;
+                                const canRight =
+                                    x < gridCols - 1 && snowGrid[right] === 0;
                                 if (canLeft && canRight) {
-                                    Math.random() > 0.5 ? (snowGrid[left] = 1) : (snowGrid[right] = 1);
+                                    Math.random() > 0.5
+                                        ? (snowGrid[left] = 1)
+                                        : (snowGrid[right] = 1);
                                     snowGrid[i] = 0;
                                 } else if (canLeft) {
                                     snowGrid[left] = 1;
@@ -341,29 +526,85 @@
                 for (let y = 0; y < gridRows; y++) {
                     for (let x = 0; x < gridCols; x++) {
                         if (snowGrid[y * gridCols + x] === 1) {
-                            snowCtx.fillRect(x * SNOW_BLOCK_SIZE, y * SNOW_BLOCK_SIZE, SNOW_BLOCK_SIZE, SNOW_BLOCK_SIZE);
+                            snowCtx.fillRect(
+                                x * SNOW_BLOCK_SIZE,
+                                y * SNOW_BLOCK_SIZE,
+                                SNOW_BLOCK_SIZE,
+                                SNOW_BLOCK_SIZE,
+                            );
                         }
                     }
                 }
                 requestAnimationFrame(loopSnow);
             }
 
+            // --- Курсор-ластик --- //
             function initCursorHeater() {
                 const heater = document.getElementById("cursorHeater");
+                if (!heater) return;
+
+                let mode = localStorage.getItem("cursorEraserMode");
+                if (!mode) {
+                    mode =
+                        localStorage.getItem("cursorHeaterEnabled") === "true"
+                            ? "warm"
+                            : "none";
+                }
+
+                if (mode === "none") {
+                    heater.style.display = "none";
+                    return;
+                }
+
                 heater.style.display = "block";
+                if (mode === "warm")
+                    heater.style.background =
+                        "radial-gradient(circle, rgba(255, 100, 0, 0.4) 0%, transparent 70%)";
+                else if (mode === "antiholiday")
+                    heater.style.background =
+                        "radial-gradient(circle, rgba(100, 100, 255, 0.4) 0%, transparent 70%)";
+                else if (mode === "cleanup")
+                    heater.style.background =
+                        "radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%)";
+
                 document.addEventListener("mousemove", (e) => {
                     heater.style.left = e.clientX + "px";
                     heater.style.top = e.clientY + "px";
-                    if (snowGrid.length) {
+
+                    if (
+                        (mode === "warm" || mode === "cleanup") &&
+                        snowGrid.length
+                    ) {
                         const gx = Math.floor(e.clientX / SNOW_BLOCK_SIZE);
                         const gy = Math.floor(e.clientY / SNOW_BLOCK_SIZE);
                         const r = Math.floor(40 / SNOW_BLOCK_SIZE);
                         for (let y = gy - r; y <= gy + r; y++) {
                             for (let x = gx - r; x <= gx + r; x++) {
-                                if (x >= 0 && x < gridCols && y >= 0 && y < gridRows) {
+                                if (
+                                    x >= 0 &&
+                                    x < gridCols &&
+                                    y >= 0 &&
+                                    y < gridRows
+                                ) {
                                     if ((x - gx) ** 2 + (y - gy) ** 2 <= r * r)
                                         snowGrid[y * gridCols + x] = 0;
                                 }
+                            }
+                        }
+                    }
+
+                    if (
+                        (mode === "antiholiday" || mode === "cleanup") &&
+                        confettiParticles.length
+                    ) {
+                        for (let i = 0; i < confettiParticles.length; i++) {
+                            let p = confettiParticles[i];
+                            if (
+                                Math.hypot(p.x - e.clientX, p.y - e.clientY) <
+                                40
+                            ) {
+                                confettiParticles.splice(i, 1);
+                                i--;
                             }
                         }
                     }
@@ -392,116 +633,150 @@
 
                 // Пиксели
                 setInterval(() => {
-                    const container = document.getElementById("glitchPixelsContainer");
+                    const container = document.getElementById(
+                        "glitchPixelsContainer",
+                    );
                     if (!container || !isGlitchActive) return;
                     for (let i = 0; i < 40; i++) {
                         const pixel = document.createElement("div");
                         const size = Math.random() * 15 + 3;
-                        const colors = ["#00ff00", "#ff0000", "#0000ff", "#ffff00"];
-                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        const colors = [
+                            "#00ff00",
+                            "#ff0000",
+                            "#0000ff",
+                            "#ffff00",
+                        ];
+                        const color =
+                            colors[Math.floor(Math.random() * colors.length)];
                         pixel.style.cssText = `
                             position: absolute; left: ${Math.random() * 100}%; top: ${Math.random() * 100}%;
                             width: ${size}px; height: ${size}px; background-color: ${color};
                             z-index: 99999; pointer-events: none; opacity: ${Math.random() * 0.9 + 0.1};
                         `;
                         container.appendChild(pixel);
-                        setTimeout(() => pixel.remove(), Math.random() * 600 + 300);
+                        setTimeout(
+                            () => pixel.remove(),
+                            Math.random() * 600 + 300,
+                        );
                     }
                 }, 50);
 
                 // Искажение текста
                 setInterval(() => {
                     if (!isGlitchActive || Math.random() > 0.5) return;
-                    const textElements = document.querySelectorAll("h1, h2, h3, p, span, div:not(.container)");
-                    const target = textElements[Math.floor(Math.random() * textElements.length)];
-                    if(!target) return;
+                    const textElements = document.querySelectorAll(
+                        "h1, h2, h3, p, span, div:not(.container)",
+                    );
+                    const target =
+                        textElements[
+                            Math.floor(Math.random() * textElements.length)
+                        ];
+                    if (!target) return;
                     const originalText = target.textContent;
                     if (!originalText || originalText.trim().length < 2) return;
                     const colors = ["#00ff00", "#ff0000", "#0000ff", "#ffff00"];
-                    target.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    target.style.color =
+                        colors[Math.floor(Math.random() * colors.length)];
                     target.style.animation = "text-distortion 0.2s infinite";
-                    setTimeout(() => {
-                        target.style.color = "";
-                        target.style.animation = "";
-                    }, Math.random() * 400 + 150);
+                    setTimeout(
+                        () => {
+                            target.style.color = "";
+                            target.style.animation = "";
+                        },
+                        Math.random() * 400 + 150,
+                    );
                 }, 400);
 
                 // Музыка глитча
                 try {
                     glitchAudio = new Audio("/assets/music/glitch_noise.mp3");
-                    glitchAudio.volume = 0.4; glitchAudio.playbackRate = 1.2; glitchAudio.loop = true;
+                    glitchAudio.volume = 0.4;
+                    glitchAudio.playbackRate = 1.2;
+                    glitchAudio.loop = true;
                     glitchAudio.play().catch(() => {
-                        document.addEventListener("click", () => glitchAudio.play(), {once: true});
+                        document.addEventListener(
+                            "click",
+                            () => glitchAudio.play(),
+                            { once: true },
+                        );
                     });
-                } catch(e) {}
+                } catch (e) {}
             }
-
 
             // --- 2. ЛОГИКА ПРАВИЛ И ИНТЕРФЕЙСА --- //
 
             async function loadRules() {
                 try {
-                    const response = await fetch('./rules.json');
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const response = await fetch("./rules.json");
+                    if (!response.ok)
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`,
+                        );
                     const rulesData = await response.json();
                     renderRules(rulesData);
                 } catch (error) {
-                    console.error('Ошибка при загрузке правил:', error);
-                    showError('Не удалось загрузить правила. Пожалуйста, попробуйте позже.');
+                    console.error("Ошибка при загрузке правил:", error);
+                    showError(
+                        "Не удалось загрузить правила. Пожалуйста, попробуйте позже.",
+                    );
                 }
             }
 
             function renderRules(rulesData) {
-                const accordionContainer = document.getElementById('rulesAccordion');
-                const loadingElement = document.getElementById('loadingRules');
-                const lastUpdateElement = document.getElementById('lastUpdate');
+                const accordionContainer =
+                    document.getElementById("rulesAccordion");
+                const loadingElement = document.getElementById("loadingRules");
+                const lastUpdateElement = document.getElementById("lastUpdate");
 
                 if (loadingElement) loadingElement.remove();
                 if (lastUpdateElement && rulesData.lastUpdate) {
                     lastUpdateElement.textContent = `Последнее изменение: ${rulesData.lastUpdate}`;
                 }
 
-                accordionContainer.innerHTML = '';
+                accordionContainer.innerHTML = "";
                 if (!rulesData.blocks || rulesData.blocks.length === 0) {
-                    showError('Правила не найдены.');
+                    showError("Правила не найдены.");
                     return;
                 }
 
-                rulesData.blocks.forEach(block => {
-                    const rulesBlock = document.createElement('div');
-                    rulesBlock.className = 'rules-block';
+                rulesData.blocks.forEach((block) => {
+                    const rulesBlock = document.createElement("div");
+                    rulesBlock.className = "rules-block";
                     if (block.id) rulesBlock.dataset.id = block.id;
 
-                    const rulesHeader = document.createElement('div');
-                    rulesHeader.className = 'rules-header';
+                    const rulesHeader = document.createElement("div");
+                    rulesHeader.className = "rules-header";
                     rulesHeader.innerHTML = `
-                        <h2><i class="${block.icon || 'fas fa-circle'}"></i> ${block.title}</h2>
+                        <h2><i class="${block.icon || "fas fa-circle"}"></i> ${block.title}</h2>
                         <span class="rules-indicator"><i class="fas fa-chevron-right"></i></span>
                     `;
 
-                    const rulesContent = document.createElement('div');
-                    rulesContent.className = 'rules-content';
+                    const rulesContent = document.createElement("div");
+                    rulesContent.className = "rules-content";
 
                     if (block.items && block.items.length > 0) {
-                        block.items.forEach(item => {
-                            const ruleItem = document.createElement('div');
-                            ruleItem.className = 'rule-item';
-                            ruleItem.textContent = (item.id ? item.id + ' ' : '') + (item.text || '');
+                        block.items.forEach((item) => {
+                            const ruleItem = document.createElement("div");
+                            ruleItem.className = "rule-item";
+                            ruleItem.textContent =
+                                (item.id ? item.id + " " : "") +
+                                (item.text || "");
                             rulesContent.appendChild(ruleItem);
 
                             if (item.subitems && item.subitems.length > 0) {
-                                item.subitems.forEach(subitem => {
-                                    const ruleSubitem = document.createElement('div');
-                                    ruleSubitem.className = 'rule-subitem';
+                                item.subitems.forEach((subitem) => {
+                                    const ruleSubitem =
+                                        document.createElement("div");
+                                    ruleSubitem.className = "rule-subitem";
                                     ruleSubitem.textContent = subitem;
                                     rulesContent.appendChild(ruleSubitem);
                                 });
                             }
                         });
                     } else {
-                        const emptyMessage = document.createElement('div');
-                        emptyMessage.className = 'rule-item';
-                        emptyMessage.textContent = 'Пункты правил отсутствуют.';
+                        const emptyMessage = document.createElement("div");
+                        emptyMessage.className = "rule-item";
+                        emptyMessage.textContent = "Пункты правил отсутствуют.";
                         rulesContent.appendChild(emptyMessage);
                     }
 
@@ -514,45 +789,54 @@
             }
 
             function showError(message) {
-                const accordionContainer = document.getElementById('rulesAccordion');
+                const accordionContainer =
+                    document.getElementById("rulesAccordion");
                 accordionContainer.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
             }
 
             function initAccordion() {
-                const accordionBlocks = document.querySelectorAll('.rules-block');
+                const accordionBlocks =
+                    document.querySelectorAll(".rules-block");
 
-                accordionBlocks.forEach(block => {
-                    const header = block.querySelector('.rules-header');
-                    const content = block.querySelector('.rules-content');
-                    
-                    header.addEventListener('click', () => {
-                        const isActive = block.classList.contains('active');
-                        accordionBlocks.forEach(otherBlock => {
-                            if (otherBlock.classList.contains('active')) {
-                                otherBlock.classList.remove('active');
-                                const otherContent = otherBlock.querySelector('.rules-content');
-                                otherContent.style.maxHeight = '0';
+                accordionBlocks.forEach((block) => {
+                    const header = block.querySelector(".rules-header");
+                    const content = block.querySelector(".rules-content");
+
+                    header.addEventListener("click", () => {
+                        const isActive = block.classList.contains("active");
+                        accordionBlocks.forEach((otherBlock) => {
+                            if (otherBlock.classList.contains("active")) {
+                                otherBlock.classList.remove("active");
+                                const otherContent =
+                                    otherBlock.querySelector(".rules-content");
+                                otherContent.style.maxHeight = "0";
                             }
                         });
 
                         if (!isActive) {
-                            block.classList.add('active');
-                            content.style.maxHeight = content.scrollHeight + 50 + 'px'; 
+                            block.classList.add("active");
+                            content.style.maxHeight =
+                                content.scrollHeight + 50 + "px";
                         }
                     });
                 });
             }
 
             // Запуск всего при загрузке страницы
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 initVisualEffects();
                 loadRules();
 
                 // Запрет копирования и контекстного меню на всем блоке с правилами
-                const rulesContainer = document.getElementById('rulesAccordion');
+                const rulesContainer =
+                    document.getElementById("rulesAccordion");
                 if (rulesContainer) {
-                    rulesContainer.addEventListener('contextmenu', e => e.preventDefault());
-                    rulesContainer.addEventListener('copy', e => e.preventDefault());
+                    rulesContainer.addEventListener("contextmenu", (e) =>
+                        e.preventDefault(),
+                    );
+                    rulesContainer.addEventListener("copy", (e) =>
+                        e.preventDefault(),
+                    );
                 }
             });
         </script>
