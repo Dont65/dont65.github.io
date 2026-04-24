@@ -163,7 +163,6 @@ function updateQuote() {
   if (quoteElement && authorElement) {
     const randomQuote = getRandomQuote();
 
-    // 1 символ = 200 мс, минимально 5 секунд
     const charsCount = randomQuote.text.length;
     const calculatedTime = Math.max(charsCount * 200, 5000);
 
@@ -260,16 +259,14 @@ function updatePrimaryColor(color) {
   document.documentElement.style.setProperty("--primary-color", finalColor);
 }
 
-// Developer Mode (5 кликов)
+// Developer Mode
 let themeToggleCounter = 0;
 let lastThemeToggleTime = 0;
 
 function showActivationStar() {
   const star = document.getElementById("activationStar");
   if (!star) return;
-
   star.classList.remove("show");
-
   setTimeout(() => {
     star.classList.add("show");
     setTimeout(() => {
@@ -429,7 +426,26 @@ function initWallpaperSettings() {
   });
 }
 
-// Снег
+// --- ЕДИНАЯ СИСТЕМА ПРАЗДНИКОВ ---
+function getCurrentHoliday() {
+  const now = new Date();
+  const m = now.getMonth();
+  const d = now.getDate();
+
+  if ((m === 9 && d >= 24) || (m === 10 && d <= 7)) return "halloween";
+  if ((m === 11 && d >= 25) || (m === 0 && d !== 2 && d <= 8)) return "newyear";
+
+  if (m === 0 && d === 2) return "birthday"; // 2 Января
+  if (m === 1 && d === 14) return "valentines"; // 14 Февраля
+  if (m === 1 && d === 23) return "defenders"; // 23 Февраля
+  if (m === 2 && d === 8) return "womens"; // 8 Марта
+  if (m === 3 && d === 12) return "space"; // 12 Апреля
+  if (m === 4 && d === 9) return "victory"; // 9 Мая
+
+  return "default";
+}
+
+// --- СИСТЕМА СНЕГА ---
 let snowCanvas, snowCtx;
 let snowGrid = [],
   gridCols = 0,
@@ -441,16 +457,26 @@ function initSnowLogic() {
   const now = new Date();
   const m = now.getMonth();
   const d = now.getDate();
-
   const isWinter = m === 11 || m === 0 || m === 1 || (m === 2 && d === 1);
 
-  const manualSetting = localStorage.getItem("snowEnabled");
   let shouldSnow = false;
 
-  if (manualSetting !== null) {
-    shouldSnow = manualSetting === "true";
+  if (isWinter) {
+    const winterSeasonId =
+      "winter_" + (m === 11 ? now.getFullYear() : now.getFullYear() - 1);
+    const lastSeenWinter = localStorage.getItem("lastSeenWinter");
+
+    if (lastSeenWinter !== winterSeasonId) {
+      shouldSnow = true;
+      localStorage.setItem("lastSeenWinter", winterSeasonId);
+      localStorage.setItem("snowEnabled", "true");
+    } else {
+      const manualSetting = localStorage.getItem("snowEnabled");
+      shouldSnow = manualSetting !== null ? manualSetting === "true" : true;
+    }
   } else {
-    shouldSnow = isWinter;
+    const manualSetting = localStorage.getItem("snowEnabled");
+    shouldSnow = manualSetting !== null ? manualSetting === "true" : false;
   }
 
   if (snowToggle) {
@@ -480,7 +506,6 @@ function initSnowCanvas() {
   };
   window.addEventListener("resize", resize);
   resize();
-  initCursorHeater();
 }
 
 function loopSnow() {
@@ -533,24 +558,179 @@ function loopSnow() {
   requestAnimationFrame(loopSnow);
 }
 
-function initCursorHeater() {
-  const heater = document.getElementById("cursorHeater");
-  const toggle = document.getElementById("cursorHeaterToggle");
-  let active = localStorage.getItem("cursorHeaterEnabled") === "true";
-  if (toggle) {
-    toggle.checked = active;
-    toggle.addEventListener("change", function () {
-      active = this.checked;
-      localStorage.setItem("cursorHeaterEnabled", active);
-      heater.style.display = active ? "block" : "none";
+// --- СИСТЕМА КОНФЕТТИ ---
+const confettiColors = [
+  "#fce18a",
+  "#ff726d",
+  "#b48def",
+  "#f4306d",
+  "#00ff00",
+  "#00ccff",
+  "#ffaa00",
+];
+let confettiParticles = [];
+let confettiCanvas, confettiCtx;
+let isConfettiActive = false;
+
+function initConfettiLogic() {
+  const confettiToggle = document.getElementById("confettiToggle");
+  const holiday = getCurrentHoliday();
+  const isHoliday = holiday !== "default" && holiday !== "halloween";
+
+  if (isHoliday) {
+    const now = new Date();
+    let holidayYear = now.getFullYear();
+    if (holiday === "newyear" && now.getMonth() <= 1) {
+      holidayYear -= 1;
+    }
+
+    const holidayId = holiday + "_" + holidayYear;
+    const lastSeenHoliday = localStorage.getItem("lastSeenHoliday");
+
+    if (lastSeenHoliday !== holidayId) {
+      isConfettiActive = true;
+      localStorage.setItem("lastSeenHoliday", holidayId);
+      localStorage.setItem("confettiEnabled", "true");
+    } else {
+      const manualSetting = localStorage.getItem("confettiEnabled");
+      isConfettiActive =
+        manualSetting !== null ? manualSetting === "true" : true;
+    }
+  } else {
+    const manualSetting = localStorage.getItem("confettiEnabled");
+    isConfettiActive =
+      manualSetting !== null ? manualSetting === "true" : false;
+  }
+
+  if (confettiToggle) {
+    confettiToggle.checked = isConfettiActive;
+    confettiToggle.addEventListener("change", function () {
+      localStorage.setItem("confettiEnabled", this.checked);
+      location.reload();
     });
   }
-  if (active) heater.style.display = "block";
+
+  if (isConfettiActive) initConfettiCanvas();
+}
+
+function initConfettiCanvas() {
+  confettiCanvas = document.getElementById("confettiCanvas");
+  if (!confettiCanvas) return;
+  confettiCtx = confettiCanvas.getContext("2d");
+
+  const resizeConfetti = () => {
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  };
+
+  window.addEventListener("resize", resizeConfetti);
+  resizeConfetti();
+  fireConfettiExplosion();
+  requestAnimationFrame(loopConfetti);
+}
+
+function createConfettiParticle(x, y, isExplosion) {
+  return {
+    x: x || Math.random() * confettiCanvas.width,
+    y: y || (isExplosion ? confettiCanvas.height : -20),
+    r: Math.random() * 8 + 6,
+    dx: isExplosion ? (Math.random() - 0.5) * 25 : (Math.random() - 0.5) * 2,
+    dy: isExplosion ? -(Math.random() * 15 + 15) : Math.random() * 2 + 1,
+    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+    tilt: Math.floor(Math.random() * 10) - 10,
+    tiltAngle: 0,
+    tiltAngleInc: Math.random() * 0.07 + 0.05,
+  };
+}
+
+function fireConfettiExplosion() {
+  const centerX = window.innerWidth / 2;
+  const bottomY = window.innerHeight;
+  for (let i = 0; i < 250; i++) {
+    confettiParticles.push(createConfettiParticle(centerX, bottomY, true));
+  }
+}
+
+function loopConfetti() {
+  if (!isConfettiActive) return;
+  confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+  if (Math.random() < 0.25) {
+    confettiParticles.push(createConfettiParticle(null, null, false));
+  }
+
+  for (let i = 0; i < confettiParticles.length; i++) {
+    let p = confettiParticles[i];
+    p.tiltAngle += p.tiltAngleInc;
+
+    if (p.dy < 5) p.dy += 0.1;
+
+    p.y += p.dy;
+    p.x += Math.sin(p.tiltAngle) * 2 + p.dx;
+
+    confettiCtx.beginPath();
+    confettiCtx.lineWidth = p.r;
+    confettiCtx.strokeStyle = p.color;
+    confettiCtx.moveTo(p.x + p.tilt + p.r, p.y);
+    confettiCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+    confettiCtx.stroke();
+
+    if (p.y > confettiCanvas.height) {
+      confettiParticles.splice(i, 1);
+      i--;
+    }
+  }
+  requestAnimationFrame(loopConfetti);
+}
+
+// Курсор-ластик
+function initCursorEraser() {
+  const heater = document.getElementById("cursorHeater");
+  const select = document.getElementById("cursorEraserSelect");
+
+  let mode = localStorage.getItem("cursorEraserMode");
+  if (!mode) {
+    mode =
+      localStorage.getItem("cursorHeaterEnabled") === "true" ? "warm" : "none";
+  }
+
+  function updateHeaterVisual() {
+    if (!heater) return;
+    if (mode === "none") {
+      heater.style.display = "none";
+    } else {
+      heater.style.display = "block";
+      if (mode === "warm")
+        heater.style.background =
+          "radial-gradient(circle, rgba(255, 100, 0, 0.4) 0%, transparent 70%)";
+      else if (mode === "antiholiday")
+        heater.style.background =
+          "radial-gradient(circle, rgba(100, 100, 255, 0.4) 0%, transparent 70%)";
+      else if (mode === "cleanup")
+        heater.style.background =
+          "radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%)";
+    }
+  }
+
+  if (select) {
+    select.value = mode;
+    select.addEventListener("change", function () {
+      mode = this.value;
+      localStorage.setItem("cursorEraserMode", mode);
+      updateHeaterVisual();
+    });
+  }
+
+  updateHeaterVisual();
+
   document.addEventListener("mousemove", (e) => {
-    if (!active) return;
-    heater.style.left = e.clientX + "px";
-    heater.style.top = e.clientY + "px";
-    if (snowGrid.length) {
+    if (mode === "none") return;
+    if (heater) {
+      heater.style.left = e.clientX + "px";
+      heater.style.top = e.clientY + "px";
+    }
+
+    if ((mode === "warm" || mode === "cleanup") && snowGrid.length) {
       const gx = Math.floor(e.clientX / SNOW_BLOCK_SIZE);
       const gy = Math.floor(e.clientY / SNOW_BLOCK_SIZE);
       const r = Math.floor(40 / SNOW_BLOCK_SIZE);
@@ -560,6 +740,19 @@ function initCursorHeater() {
             if ((x - gx) ** 2 + (y - gy) ** 2 <= r * r)
               snowGrid[y * gridCols + x] = 0;
           }
+        }
+      }
+    }
+
+    if (
+      (mode === "antiholiday" || mode === "cleanup") &&
+      confettiParticles.length
+    ) {
+      for (let i = 0; i < confettiParticles.length; i++) {
+        let p = confettiParticles[i];
+        if (Math.hypot(p.x - e.clientX, p.y - e.clientY) < 40) {
+          confettiParticles.splice(i, 1);
+          i--;
         }
       }
     }
@@ -673,29 +866,24 @@ function getIconType(className) {
 
 function applyIcons(packName) {
   let target = packName;
-  if (packName === "auto") {
-    const now = new Date();
-    const m = now.getMonth();
-    const d = now.getDate();
-    target = "default";
+  if (packName === "auto") target = getCurrentHoliday();
 
-    if ((m === 9 && d >= 24) || (m === 10 && d <= 7)) target = "halloween";
-    if ((m === 11 && d >= 25) || (m === 0 && d != 2 && d <= 8))
-      target = "newyear";
-    if (m === 0 && d === 2) target = "birthday";
-  }
   const pack = iconPacks[target] || iconPacks.default;
+
   document
     .querySelectorAll(".menu-item i, .settings-category-title i")
     .forEach((icon) => {
       const type = getIconType(icon.className);
       if (type && pack[type]) icon.className = `fas ${pack[type]}`;
     });
+
   const emojiSpan = document.getElementById("usernameEmoji");
   if (emojiSpan) emojiSpan.textContent = pack.emoji;
+
   localStorage.setItem("iconPack", packName);
 }
 
+// Glitch Mode
 let glitchIntervals = [];
 let glitchAudio = null;
 let isGlitchActive = false;
@@ -716,9 +904,7 @@ function initGlitchMode() {
       enableGlitchMode();
     } else {
       localStorage.setItem("glitchEnabled", "false");
-      setTimeout(() => {
-        location.reload();
-      }, 300);
+      setTimeout(() => location.reload(), 300);
     }
   });
 }
@@ -726,9 +912,6 @@ function initGlitchMode() {
 function enableGlitchMode() {
   if (isGlitchActive) return;
   isGlitchActive = true;
-
-  console.log("🔥 ВКЛЮЧЕН GLITCH MODE 🔥");
-
   saveOriginalColors();
   document.body.classList.add("hard-glitched");
   createGlitchElements();
@@ -771,9 +954,7 @@ function enableGlitchMode() {
   const pixelInterval = setInterval(() => {
     if (!isGlitchActive) return;
     const pixelCount = Math.floor(Math.random() * 50) + 30;
-    for (let i = 0; i < pixelCount; i++) {
-      createGlitchPixel();
-    }
+    for (let i = 0; i < pixelCount; i++) createGlitchPixel();
     if (Math.random() > 0.4) {
       const flashColors = ["#00ff00", "#ff0000", "#0000ff", "#ffff00"];
       const randomColor =
@@ -786,102 +967,11 @@ function enableGlitchMode() {
   }, 40);
   glitchIntervals.push(pixelInterval);
 
-  const frameTearInterval = setInterval(() => {
-    if (!isGlitchActive) return;
-    if (Math.random() > 0.7) {
-      const elements = document.querySelectorAll(".container, .modal-content");
-      elements.forEach((el) => {
-        el.style.animation = "frame-tear 0.3s linear";
-        setTimeout(() => {
-          el.style.animation = "";
-        }, 200);
-      });
-    }
-  }, 300);
-  glitchIntervals.push(frameTearInterval);
-
-  const shakeInterval = setInterval(() => {
-    if (!isGlitchActive) return;
-    const elements = document.querySelectorAll(
-      ".container, .modal-content, .menu-sidebar, .menu-item, .social-icon",
-    );
-    elements.forEach((el) => {
-      if (Math.random() > 0.8) {
-        const shakeX = (Math.random() - 0.5) * 60;
-        const shakeY = (Math.random() - 0.5) * 60;
-        el.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
-        setTimeout(
-          () => {
-            el.style.transform = "";
-          },
-          Math.random() * 100 + 50,
-        );
-      }
-    });
-  }, 200);
-  glitchIntervals.push(shakeInterval);
-
   const textInterval = setInterval(() => {
     if (!isGlitchActive) return;
-    if (Math.random() > 0.5) {
-      distortRandomText();
-    }
+    if (Math.random() > 0.5) distortRandomText();
   }, 400);
   glitchIntervals.push(textInterval);
-
-  const colorInterval = setInterval(() => {
-    if (!isGlitchActive) return;
-    if (Math.random() > 0.7) {
-      const elements = document.querySelectorAll(
-        ".container, .menu-sidebar, .modal-content, .avatar, .social-icon",
-      );
-      elements.forEach((el) => {
-        const hue = Math.floor(Math.random() * 360);
-        el.style.backgroundColor = `hsl(${hue}, 100%, 20%)`;
-        el.style.color = `hsl(${(hue + 180) % 360}, 100%, 80%)`;
-        setTimeout(() => {
-          el.style.backgroundColor = "";
-          el.style.color = "";
-        }, 100);
-      });
-    }
-  }, 80);
-  glitchIntervals.push(colorInterval);
-
-  const rotationInterval = setInterval(() => {
-    if (!isGlitchActive) return;
-    if (Math.random() > 0.8) {
-      const elements = document.querySelectorAll(".container, .modal-content");
-      elements.forEach((el) => {
-        const rotation = (Math.random() - 0.5) * 15;
-        el.style.transform = `rotate(${rotation}deg)`;
-        setTimeout(() => {
-          el.style.transform = "";
-        }, 150);
-      });
-    }
-  }, 250);
-  glitchIntervals.push(rotationInterval);
-}
-
-function disableGlitchMode() {
-  console.log("Отключен Glitch-режим");
-  isGlitchActive = false;
-  glitchIntervals.forEach((i) => clearInterval(i));
-  glitchIntervals = [];
-  document.body.classList.remove("hard-glitched");
-  removeGlitchElements();
-  restoreOriginalColors();
-  stopGlitchMusic();
-  document.querySelectorAll("*").forEach((el) => {
-    el.style.transform = "";
-    el.style.filter = "";
-    el.style.color = "";
-    el.style.backgroundColor = "";
-    el.style.borderColor = "";
-    el.style.animation = "";
-    el.style.display = "";
-  });
 }
 
 function saveOriginalColors() {
@@ -898,16 +988,6 @@ function saveOriginalColors() {
   });
 }
 
-function restoreOriginalColors() {
-  for (const [el, colors] of Object.entries(originalColors)) {
-    if (el.style) {
-      el.style.backgroundColor = colors.background;
-      el.style.color = colors.color;
-      el.style.borderColor = colors.borderColor;
-    }
-  }
-}
-
 function createGlitchElements() {
   if (!document.getElementById("glitchPixelsContainer")) {
     const container = document.createElement("div");
@@ -916,52 +996,6 @@ function createGlitchElements() {
       "position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:99999;";
     document.body.appendChild(container);
   }
-
-  if (!document.getElementById("glitchSectorsContainer")) {
-    const container = document.createElement("div");
-    container.id = "glitchSectorsContainer";
-    container.style.cssText =
-      "position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:99998;";
-    document.body.appendChild(container);
-  }
-
-  if (!document.querySelector(".glitch-noise-overlay")) {
-    const noise = document.createElement("div");
-    noise.className = "glitch-noise-overlay";
-    noise.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.3"/></svg>');
-            pointer-events: none;
-            z-index: 99997;
-            opacity: 0;
-            mix-blend-mode: overlay;
-        `;
-    document.body.appendChild(noise);
-    setTimeout(() => {
-      noise.style.opacity = "0.4";
-    }, 100);
-  }
-}
-
-function removeGlitchElements() {
-  const elements = [
-    "glitchPixelsContainer",
-    "glitchSectorsContainer",
-    ".glitch-noise-overlay",
-    ".glitch-pixel",
-    ".glitch-sector",
-    ".text-glitch",
-  ];
-  elements.forEach((selector) => {
-    const el = selector.startsWith(".")
-      ? document.querySelector(selector)
-      : document.getElementById(selector);
-    if (el) el.remove();
-  });
 }
 
 function createGlitchPixel() {
@@ -973,28 +1007,11 @@ function createGlitchPixel() {
   const colors = ["#00ff00", "#ff0000", "#0000ff", "#ffff00"];
   const color = colors[Math.floor(Math.random() * colors.length)];
   pixel.style.cssText = `
-        position: absolute;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        width: ${size}px;
-        height: ${size}px;
-        background-color: ${color};
-        border-radius: ${Math.random() > 0.7 ? "50%" : "0"};
-        z-index: 99999;
-        pointer-events: none;
-        opacity: ${Math.random() * 0.9 + 0.1};
-        box-shadow: 0 0 ${size * 5}px ${color};
-    `;
+        position: absolute; left: ${Math.random() * 100}%; top: ${Math.random() * 100}%; width: ${size}px; height: ${size}px;
+        background-color: ${color}; border-radius: ${Math.random() > 0.7 ? "50%" : "0"};
+        z-index: 99999; pointer-events: none; opacity: ${Math.random() * 0.9 + 0.1}; box-shadow: 0 0 ${size * 5}px ${color};`;
   container.appendChild(pixel);
-  const duration = Math.random() * 600 + 300;
-  let opacity = pixel.style.opacity;
-  const flicker = setInterval(() => {
-    pixel.style.opacity = Math.random() > 0.5 ? opacity : "0";
-  }, 20);
-  setTimeout(() => {
-    clearInterval(flicker);
-    pixel.remove();
-  }, duration);
+  setTimeout(() => pixel.remove(), Math.random() * 600 + 300);
 }
 
 function distortRandomText() {
@@ -1008,30 +1025,14 @@ function distortRandomText() {
   let distorted = "";
   const chars = "!@#$%^&*()_+-=[]{}|;:,.<>?/~`";
   for (let i = 0; i < originalText.length; i++) {
-    if (Math.random() > 0.6) {
+    if (Math.random() > 0.6)
       distorted += chars[Math.floor(Math.random() * chars.length)];
-    } else if (Math.random() > 0.3) {
-      distorted += originalText[i].toUpperCase();
-    } else if (Math.random() > 0.2) {
-      distorted += originalText[i].toLowerCase();
-    } else {
-      distorted += originalText[i];
-    }
+    else distorted += originalText[i];
   }
-  const colors = ["#00ff00", "#ff0000", "#0000ff", "#ffff00"];
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
-  target.style.color = randomColor;
-  target.style.textShadow = `0 0 15px ${randomColor}`;
-  target.style.animation = "none";
-  void target.offsetWidth;
-  target.style.animation = "text-distortion 0.2s infinite";
   target.textContent = distorted;
   setTimeout(
     () => {
       target.textContent = originalText;
-      target.style.color = "";
-      target.style.textShadow = "";
-      target.style.animation = "";
     },
     Math.random() * 400 + 150,
   );
@@ -1043,32 +1044,15 @@ function playGlitchMusic() {
     glitchAudio = null;
   }
   try {
-    glitchAudio = new Audio("/assets/music/glitch_noise.mp3");
+    glitchAudio = new Audio("/assets/music/effects/glitch_noise.mp3");
     glitchAudio.volume = 0.4;
-    glitchAudio.playbackRate = 1.2;
     glitchAudio.loop = true;
-    const playPromise = glitchAudio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((error) => {
-        console.log("Автовоспроизведение музыки заблокировано.");
-        const enableOnClick = () => {
-          glitchAudio.play();
-          document.removeEventListener("click", enableOnClick);
-        };
-        document.addEventListener("click", enableOnClick);
+    glitchAudio.play().catch(() => {
+      document.addEventListener("click", () => glitchAudio.play(), {
+        once: true,
       });
-    }
-  } catch (error) {
-    console.log("Ошибка загрузки музыки:", error);
-  }
-}
-
-function stopGlitchMusic() {
-  if (glitchAudio) {
-    glitchAudio.pause();
-    glitchAudio.currentTime = 0;
-    glitchAudio = null;
-  }
+    });
+  } catch (e) {}
 }
 
 // Braille Mode
@@ -1267,17 +1251,15 @@ function renderAchievements() {
             <div class="ach-info">
                 <div class="ach-title">${ach.title}</div>
                 <div class="ach-desc">${ach.description}</div>
-            </div>
-        `;
+            </div>`;
     container.appendChild(el);
   });
 }
 
 function checkAllModalsAchievement() {
   const all = ["profileModal", "skillsModal", "projectsModal", "settingsModal"];
-  if (all.every((id) => localStorage.getItem(`modal_${id}_opened`))) {
+  if (all.every((id) => localStorage.getItem(`modal_${id}_opened`)))
     unlockAchievement("all_modals");
-  }
 }
 
 function showNotification(ach) {
@@ -1296,9 +1278,7 @@ function updateBirthdayCountdown() {
   const now = new Date();
   const currentYear = now.getFullYear();
   let nextBirthday = new Date(currentYear, 0, 2);
-  if (now > nextBirthday) {
-    nextBirthday.setFullYear(currentYear + 1);
-  }
+  if (now > nextBirthday) nextBirthday.setFullYear(currentYear + 1);
   const diff = nextBirthday - now;
   if (diff <= 0) {
     document.getElementById("birthdayCountdown").textContent =
@@ -1324,11 +1304,9 @@ function initBirthdayCountdown() {
   setInterval(updateBirthdayCountdown, 1000);
 }
 
-// --- ИНТЕГРАЦИЯ МИНИ-КОНФИГА РАЗРАБОТЧИКА ---
-
+// Конфиг разработчика
 function generateConfigText() {
   const color = localStorage.getItem("primaryColor") || "42, 171, 238";
-
   let snowState = localStorage.getItem("snowEnabled");
   if (snowState === null) {
     const now = new Date();
@@ -1337,39 +1315,17 @@ function generateConfigText() {
     const isWinter = m === 11 || m === 0 || m === 1 || (m === 2 && d === 1);
     snowState = isWinter ? "true" : "false";
   }
-
+  let confettiState = localStorage.getItem("confettiEnabled");
+  if (confettiState === null)
+    confettiState = checkIsHoliday() ? "true" : "false";
   const bg = localStorage.getItem("wallpaper") || "background.jpg";
   const theme = localStorage.getItem("theme") || "dark";
   const glitch = localStorage.getItem("glitchEnabled") || "false";
   const icons = localStorage.getItem("iconPack") || "auto";
-  const cursor = localStorage.getItem("cursorHeaterEnabled") || "false";
-
-  // ИСПРАВЛЕНИЕ ЗДЕСЬ: Берем из localStorage, а не ищем HTML элемент
+  const eraser = localStorage.getItem("cursorEraserMode") || "none";
   const blind = localStorage.getItem("brailleEnabled") || "false";
 
-  return `// Цвета
-color = ${color}
-
-// Снег
-snow = ${snowState}
-
-// Обои
-background = ${bg}
-
-// Тема
-theme = ${theme}
-
-// Glich mod
-glich = ${glitch}
-
-// Иконки
-icons = ${icons}
-
-// Теплый курсор
-wear_cursor = ${cursor}
-
-// Версия для слабовидящих
-blind = ${blind}`;
+  return `// Цвета\ncolor = ${color}\n\n// Снег\nsnow = ${snowState}\n\n// Конфетти\nconfetti = ${confettiState}\n\n// Обои\nbackground = ${bg}\n\n// Тема\ntheme = ${theme}\n\n// Glich mod\nglich = ${glitch}\n\n// Иконки\nicons = ${icons}\n\n// Курсор-ластик\neraser = ${eraser}\n\n// Версия для слабовидящих\nblind = ${blind}`;
 }
 
 let hyprlandErrorTimeout;
@@ -1402,28 +1358,26 @@ function initConfigEditor() {
     } else {
       textarea.value = generateConfigText();
       editorContainer.classList.add("open");
-
       setTimeout(() => {
         const modalContent = document.querySelector(
           "#settingsModal .modal-content",
         );
-        if (modalContent) {
+        if (modalContent)
           modalContent.scrollTo({
             top: modalContent.scrollHeight,
             behavior: "smooth",
           });
-        }
       }, 50);
     }
   });
 
-  closeBtn.addEventListener("click", () => {
-    editorContainer.classList.remove("open");
-  });
-
-  resetBtn.addEventListener("click", () => {
-    textarea.value = generateConfigText();
-  });
+  closeBtn.addEventListener("click", () =>
+    editorContainer.classList.remove("open"),
+  );
+  resetBtn.addEventListener(
+    "click",
+    () => (textarea.value = generateConfigText()),
+  );
 
   applyBtn.addEventListener("click", () => {
     const lines = textarea.value.split("\n");
@@ -1453,59 +1407,42 @@ function initConfigEditor() {
             );
           } else {
             const [r, g, b] = value.split(",").map((v) => parseInt(v.trim()));
-            if (r > 255 || g > 255 || b > 255) {
+            if (r > 255 || g > 255 || b > 255)
               errors.push(
                 `Config error in line ${i + 1}: RGB values must be between 0 and 255`,
               );
-            } else {
-              parsedConfig.color = `${r}, ${g}, ${b}`;
-            }
+            else parsedConfig.color = `${r}, ${g}, ${b}`;
           }
           break;
         case "snow":
-          if (value.toLowerCase() === "true") parsedConfig.snow = "true";
-          else if (value.toLowerCase() === "false") parsedConfig.snow = "false";
-          else
-            errors.push(
-              `Config error in line ${i + 1}: 'snow' must be 'true' or 'false'`,
-            );
-          break;
+        case "confetti":
         case "blind":
-          if (value.toLowerCase() === "true") parsedConfig.blind = "true";
+        case "glich":
+        case "glitch":
+          if (value.toLowerCase() === "true")
+            parsedConfig[key === "glich" ? "glitch" : key] = "true";
           else if (value.toLowerCase() === "false")
-            parsedConfig.blind = "false";
+            parsedConfig[key === "glich" ? "glitch" : key] = "false";
           else
             errors.push(
-              `Config error in line ${i + 1}: 'blind' must be 'true' or 'false'`,
+              `Config error in line ${i + 1}: '${key}' must be 'true' or 'false'`,
             );
           break;
         case "background":
           const allowedWallpapers = wallpapers.map((w) => w.file);
-          if (allowedWallpapers.includes(value)) {
+          if (allowedWallpapers.includes(value))
             parsedConfig.background = value;
-          } else {
+          else
             errors.push(
               `Config error in line ${i + 1}: unknown background file '${value}'`,
             );
-          }
           break;
         case "theme":
-          if (["dark", "light"].includes(value.toLowerCase())) {
+          if (["dark", "light"].includes(value.toLowerCase()))
             parsedConfig.theme = value.toLowerCase();
-          } else {
-            errors.push(
-              `Config error in line ${i + 1}: 'theme' must be 'dark' or 'light'`,
-            );
-          }
-          break;
-        case "glich":
-        case "glitch":
-          if (value.toLowerCase() === "true") parsedConfig.glitch = "true";
-          else if (value.toLowerCase() === "false")
-            parsedConfig.glitch = "false";
           else
             errors.push(
-              `Config error in line ${i + 1}: 'glich' must be 'true' or 'false'`,
+              `Config error in line ${i + 1}: 'theme' must be 'dark' or 'light'`,
             );
           break;
         case "icons":
@@ -1513,22 +1450,23 @@ function initConfigEditor() {
             ["auto", "default", "halloween", "newyear", "birthday"].includes(
               value.toLowerCase(),
             )
-          ) {
+          )
             parsedConfig.icons = value.toLowerCase();
-          } else {
+          else
             errors.push(
               `Config error in line ${i + 1}: unknown icon pack '${value}'`,
             );
-          }
           break;
-        case "wear_cursor":
-        case "warm_cursor":
-          if (value.toLowerCase() === "true") parsedConfig.warm_cursor = "true";
-          else if (value.toLowerCase() === "false")
-            parsedConfig.warm_cursor = "false";
+        case "eraser":
+          if (
+            ["none", "warm", "antiholiday", "cleanup"].includes(
+              value.toLowerCase(),
+            )
+          )
+            parsedConfig.eraser = value.toLowerCase();
           else
             errors.push(
-              `Config error in line ${i + 1}: 'wear_cursor' must be 'true' or 'false'`,
+              `Config error in line ${i + 1}: 'eraser' must be 'none', 'warm', 'antiholiday' or 'cleanup'`,
             );
           break;
         default:
@@ -1543,7 +1481,6 @@ function initConfigEditor() {
       return;
     }
 
-    // Применяем настройки
     let requiresReload = false;
 
     if (parsedConfig.color) {
@@ -1581,48 +1518,180 @@ function initConfigEditor() {
         document.getElementById("iconPackSelect").value = parsedConfig.icons;
       applyIcons(parsedConfig.icons);
     }
-    if (parsedConfig.warm_cursor) {
-      localStorage.setItem("cursorHeaterEnabled", parsedConfig.warm_cursor);
-      const heater = document.getElementById("cursorHeater");
-      const toggle = document.getElementById("cursorHeaterToggle");
-      if (toggle) toggle.checked = parsedConfig.warm_cursor === "true";
-      if (heater)
-        heater.style.display =
-          parsedConfig.warm_cursor === "true" ? "block" : "none";
-    }
-
-    // ИСПРАВЛЕНИЕ ЗДЕСЬ: Для снега, глитчей и шрифта Брайля перезагружаем страницу при изменении
-    if (
-      parsedConfig.snow &&
-      localStorage.getItem("snowEnabled") !== parsedConfig.snow
-    ) {
-      localStorage.setItem("snowEnabled", parsedConfig.snow);
-      requiresReload = true;
-    }
-    if (
-      parsedConfig.glitch &&
-      localStorage.getItem("glitchEnabled") !== parsedConfig.glitch
-    ) {
-      localStorage.setItem("glitchEnabled", parsedConfig.glitch);
-      requiresReload = true;
-    }
-    if (
-      parsedConfig.blind &&
-      localStorage.getItem("brailleEnabled") !== parsedConfig.blind
-    ) {
-      localStorage.setItem("brailleEnabled", parsedConfig.blind);
+    if (parsedConfig.eraser) {
+      localStorage.setItem("cursorEraserMode", parsedConfig.eraser);
+      const select = document.getElementById("cursorEraserSelect");
+      if (select) select.value = parsedConfig.eraser;
       requiresReload = true;
     }
 
-    if (requiresReload) {
-      location.reload();
-    } else {
-      editorContainer.classList.remove("open");
-    }
+    ["snow", "confetti", "glitch", "blind"].forEach((key) => {
+      const storageKey = key === "blind" ? "brailleEnabled" : key + "Enabled";
+      if (
+        parsedConfig[key] &&
+        localStorage.getItem(storageKey) !== parsedConfig[key]
+      ) {
+        localStorage.setItem(storageKey, parsedConfig[key]);
+        requiresReload = true;
+      }
+    });
+
+    if (requiresReload) location.reload();
+    else editorContainer.classList.remove("open");
   });
 }
 
-// Инициализация
+// --- МУЗЫКАЛЬНЫЙ ПЛЕЕР ---
+const musicPlayer = document.getElementById("musicPlayer");
+const musicPlayerWrapper = document.getElementById("musicPlayerWrapper");
+const playPauseBtn = document.getElementById("playPauseBtn");
+const prevTrackBtn = document.getElementById("prevTrackBtn");
+const nextTrackBtn = document.getElementById("nextTrackBtn");
+const playerCover = document.getElementById("playerCover");
+const playerTitle = document.getElementById("playerTitle");
+const playerAuthor = document.getElementById("playerAuthor");
+const progressSlider = document.getElementById("progressSlider");
+const currentTimeDisplay = document.getElementById("currentTimeDisplay");
+const durationDisplay = document.getElementById("durationDisplay");
+
+// Элементы громкости
+const volumeSlider = document.getElementById("volumeSlider");
+const muteBtn = document.getElementById("muteBtn");
+
+let bgAudio = new Audio();
+let trackList = [];
+let currentTrackIndex = 0;
+let isPlaying = false;
+let lastVolume = 1;
+
+async function initMusicPlayer() {
+  try {
+    const response = await fetch("/assets/config/music_list.json");
+    if (!response.ok) throw new Error("Config not found");
+
+    trackList = await response.json();
+
+    if (trackList.length > 0) {
+      musicPlayerWrapper.style.display = "flex";
+      loadTrack(currentTrackIndex);
+
+      // Загрузка сохраненной громкости
+      let savedVolume = localStorage.getItem("playerVolume");
+      if (savedVolume !== null) {
+        bgAudio.volume = parseFloat(savedVolume);
+        volumeSlider.value = bgAudio.volume * 100;
+        if (bgAudio.volume > 0) lastVolume = bgAudio.volume;
+      } else {
+        bgAudio.volume = 1;
+        volumeSlider.value = 100;
+      }
+      updateVolumeIcon(bgAudio.volume * 100);
+    }
+  } catch (error) {
+    console.warn("Музыка не загружена:", error.message);
+  }
+}
+
+function loadTrack(index) {
+  const track = trackList[index];
+  const basePath = `/assets/music/tracks/${track.folder_name}`;
+
+  bgAudio.src = `${basePath}/track.mp3`;
+  playerCover.src = `${basePath}/avatar.png`;
+  playerTitle.textContent = track.title;
+  playerAuthor.textContent = track.author;
+
+  progressSlider.value = 0;
+  currentTimeDisplay.textContent = "0:00";
+  durationDisplay.textContent = "0:00";
+
+  if (isPlaying) {
+    bgAudio.play();
+  }
+}
+
+function formatTime(seconds) {
+  if (isNaN(seconds)) return "0:00";
+  const min = Math.floor(seconds / 60);
+  const sec = Math.floor(seconds % 60);
+  return `${min}:${sec < 10 ? "0" : ""}${sec}`;
+}
+
+function togglePlay() {
+  if (isPlaying) {
+    bgAudio.pause();
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+  } else {
+    bgAudio.play();
+    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+  }
+  isPlaying = !isPlaying;
+}
+
+function playNext() {
+  currentTrackIndex = (currentTrackIndex + 1) % trackList.length;
+  loadTrack(currentTrackIndex);
+}
+
+function playPrev() {
+  currentTrackIndex =
+    (currentTrackIndex - 1 + trackList.length) % trackList.length;
+  loadTrack(currentTrackIndex);
+}
+
+// Управление громкостью
+function updateVolumeIcon(val) {
+  if (val == 0) {
+    muteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+  } else if (val < 50) {
+    muteBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+  } else {
+    muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+  }
+}
+
+volumeSlider.addEventListener("input", (e) => {
+  const val = e.target.value;
+  bgAudio.volume = val / 100;
+  localStorage.setItem("playerVolume", bgAudio.volume);
+  updateVolumeIcon(val);
+  if (val > 0) lastVolume = bgAudio.volume;
+});
+
+muteBtn.addEventListener("click", () => {
+  if (bgAudio.volume > 0) {
+    bgAudio.volume = 0;
+    volumeSlider.value = 0;
+    updateVolumeIcon(0);
+  } else {
+    bgAudio.volume = lastVolume;
+    volumeSlider.value = lastVolume * 100;
+    updateVolumeIcon(lastVolume * 100);
+  }
+  localStorage.setItem("playerVolume", bgAudio.volume);
+});
+
+playPauseBtn.addEventListener("click", togglePlay);
+nextTrackBtn.addEventListener("click", playNext);
+prevTrackBtn.addEventListener("click", playPrev);
+
+bgAudio.addEventListener("timeupdate", () => {
+  progressSlider.value = bgAudio.currentTime;
+  currentTimeDisplay.textContent = formatTime(bgAudio.currentTime);
+});
+
+bgAudio.addEventListener("loadedmetadata", () => {
+  progressSlider.max = bgAudio.duration;
+  durationDisplay.textContent = formatTime(bgAudio.duration);
+});
+
+progressSlider.addEventListener("input", () => {
+  bgAudio.currentTime = progressSlider.value;
+});
+
+bgAudio.addEventListener("ended", playNext);
+
+// --- ИНИЦИАЛИЗАЦИЯ ---
 document.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme === "light") {
@@ -1637,7 +1706,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initColorSettings();
   initWallpaperSettings();
   checkAchievements();
+
   initSnowLogic();
+  initConfettiLogic();
+  initCursorEraser();
   initBirthdayCountdown();
 
   const savedPack = localStorage.getItem("iconPack") || "auto";
@@ -1657,6 +1729,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initGlitchMode();
   initBrailleMode();
   initConfigEditor();
+  initMusicPlayer(); // Вызов плеера
 
   document
     .getElementById("refreshQuoteBtn")

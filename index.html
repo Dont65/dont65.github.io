@@ -4,7 +4,6 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Dont65 | Главная страница</title>
-        <!-- Шрифт Roboto для MD3 -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -12,7 +11,6 @@
             rel="stylesheet"
         />
 
-        <!-- Иконки FontAwesome -->
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -20,18 +18,15 @@
         <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
-        <!-- Плашка ошибки (Hyprland style) -->
         <div id="hyprlandErrorBar" class="hyprland-error-bar">
             <i class="fas fa-exclamation-triangle"></i>
             <span id="hyprlandErrorText">Config error: invalid syntax</span>
         </div>
 
-        <!-- Кнопка меню -->
         <button class="menu-btn" id="menuBtn">
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- Боковое меню -->
         <div class="menu-sidebar" id="menuSidebar">
             <div class="sidebar-header">
                 <h2>Меню</h2>
@@ -62,7 +57,6 @@
                 </div>
                 <div class="menu-item" id="openServer">
                     <i class="block-icon"></i>
-                    <!-- SVG Mask -->
                     <span>Мои сервера Minecraft</span>
                 </div>
 
@@ -85,20 +79,17 @@
             </div>
         </div>
 
-        <!-- Скрытые элементы эффектов -->
         <div id="activationStar" class="activation-star">
             <i class="fas fa-star"></i>
         </div>
 
-        <!-- Элементы для глитч-эффектов -->
         <div id="glitchPixelsContainer"></div>
         <div id="glitchSectorsContainer"></div>
 
         <canvas id="snowCanvas"></canvas>
-
+        <canvas id="confettiCanvas"></canvas>
         <div id="cursorHeater"></div>
 
-        <!-- Модальные окна -->
         <div class="modal" id="profileModal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -251,9 +242,7 @@
                     <div
                         class="achievements-container"
                         id="achievementsContainer"
-                    >
-                        <!-- Заполняется JS -->
-                    </div>
+                    ></div>
                 </div>
             </div>
         </div>
@@ -367,20 +356,33 @@
                             </div>
                             <div class="setting-item">
                                 <div class="setting-label">
-                                    <i class="fas fa-fire"></i>
-                                    <span>Теплый курсор</span>
+                                    <i class="fas fa-eraser"></i>
+                                    <span>Курсор-ластик</span>
                                 </div>
-                                <label class="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        id="cursorHeaterToggle"
-                                    />
-                                    <span class="slider"></span>
-                                </label>
+                                <div
+                                    class="select-wrapper"
+                                    style="width: auto; min-width: 150px"
+                                >
+                                    <select id="cursorEraserSelect">
+                                        <option value="none">Нет</option>
+                                        <option value="warm">
+                                            Теплый (Снег)
+                                        </option>
+                                        <option value="antiholiday">
+                                            Анти-праздник (Конфетти)
+                                        </option>
+                                        <option value="cleanup">
+                                            Уборка (Всё)
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="setting-note">
                                 <i class="fas fa-info-circle"></i>
-                                <span>Курсор плавит снег на фоне.</span>
+                                <span
+                                    >Взаимодействие курсора с частицами
+                                    (снег/конфетти) на фоне.</span
+                                >
                             </div>
                         </div>
 
@@ -389,9 +391,10 @@
                                 <i class="fas fa-image"></i>
                                 <span>Обои</span>
                             </div>
-                            <div class="wallpapers-grid" id="wallpapersGrid">
-                                <!-- JS заполнит -->
-                            </div>
+                            <div
+                                class="wallpapers-grid"
+                                id="wallpapersGrid"
+                            ></div>
                         </div>
 
                         <div
@@ -411,6 +414,20 @@
                                 </div>
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="snowToggle" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-gift"></i>
+                                    <span>Принудительное конфетти</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        id="confettiToggle"
+                                    />
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -491,7 +508,6 @@
                                 </div>
                             </div>
 
-                            <!-- Мини-конфиг разработчика -->
                             <div class="developer-config-section">
                                 <button
                                     id="openConfigBtn"
@@ -533,7 +549,6 @@
             </div>
         </div>
 
-        <!-- Основной контейнер -->
         <div class="container">
             <div class="avatar-container" id="profileLink">
                 <div class="avatar">
@@ -550,7 +565,6 @@
             </div>
 
             <div class="quote-container">
-                <!-- Таймер цитаты -->
                 <div class="quote-timer-bar" id="quoteTimerBar"></div>
 
                 <p class="quote" id="randomQuote">Загрузка...</p>
@@ -594,6 +608,75 @@
                 >
                     <div class="namemc-icon"></div>
                 </a>
+            </div>
+        </div>
+
+        <div
+            class="music-player-wrapper"
+            id="musicPlayerWrapper"
+            style="display: none"
+        >
+            <div class="music-player">
+                <!-- ВЕРХНИЙ РЯД: Обложка, Инфа, Кнопки -->
+                <div class="player-main-row">
+                    <img
+                        src=""
+                        alt="Обложка"
+                        class="player-cover"
+                        id="playerCover"
+                        onerror="this.src = 'assets/background/background.jpg'"
+                    />
+
+                    <div class="player-details">
+                        <div class="player-title" id="playerTitle">
+                            Загрузка...
+                        </div>
+                        <div class="player-author" id="playerAuthor">...</div>
+                    </div>
+
+                    <div class="player-controls">
+                        <button id="prevTrackBtn">
+                            <i class="fas fa-backward-step"></i>
+                        </button>
+                        <button id="playPauseBtn" class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button id="nextTrackBtn">
+                            <i class="fas fa-forward-step"></i>
+                        </button>
+
+                        <div class="controls-divider"></div>
+
+                        <!-- ВИДЖЕТ ГРОМКОСТИ -->
+                        <div class="volume-widget" id="volumeWidget">
+                            <button id="muteBtn" class="volume-btn">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                            <div class="volume-slider-wrapper">
+                                <input
+                                    type="range"
+                                    id="volumeSlider"
+                                    value="50"
+                                    min="0"
+                                    max="100"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- НИЖНИЙ РЯД: Прогресс бар -->
+                <div class="player-progress-container">
+                    <span id="currentTimeDisplay">0:00</span>
+                    <input
+                        type="range"
+                        id="progressSlider"
+                        value="0"
+                        min="0"
+                        max="100"
+                    />
+                    <span id="durationDisplay">0:00</span>
+                </div>
             </div>
         </div>
 
