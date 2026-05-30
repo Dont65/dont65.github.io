@@ -1,460 +1,849 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Терминал Dont65</title>
-    <style>
-        body {
-            background-color: #000;
-            color: #f0f0f0;
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
-        #terminal-container {
-            padding: 20px;
-            height: calc(100% - 40px);
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-        #output {
-            white-space: pre-wrap;
-            margin-bottom: 10px;
-            line-height: 1.3;
-        }
-        .input-line {
-            display: flex;
-            margin-bottom: 5px;
-        }
-        #prompt {
-            color: #33ff33;
-            margin-right: 10px;
-            white-space: nowrap;
-        }
-        #command {
-            background-color: transparent;
-            border: none;
-            color: #f0f0f0;
-            font-family: 'Courier New', monospace;
-            flex-grow: 1;
-            outline: none;
-            font-size: inherit;
-            caret-color: #f0f0f0;
-        }
-        .success { color: #33ff33; }
-        .error { color: #ff3333; }
-        .info { color: #3399ff; }
-        .warning { color: #ffff33; }
-        .system { color: #ff9933; }
-        
-        /* Курсор */
-        #command::after {
-            content: "▋";
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        
-        /* Полоса прокрутки */
-        #terminal-container::-webkit-scrollbar {
-            width: 10px;
-        }
-        #terminal-container::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-        #terminal-container::-webkit-scrollbar-thumb {
-            background: #333;
-        }
-        #terminal-container::-webkit-scrollbar-thumb:hover {
-            background: #444;
-        }
-    </style>
-</head>
-<body>
-    <div id="terminal-container">
-        <div id="output"></div>
-        <div class="input-line">
-            <span id="prompt">user@dont65:~$</span>
-            <input type="text" id="command" autofocus spellcheck="false">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Терминал Dont65</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <style>
+            :root {
+                --primary-color: 42, 171, 238;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+                background-color: #000;
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                font-family: "Courier New", monospace;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+
+            body::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: -1;
+            }
+
+            #terminal-window {
+                width: 90%;
+                max-width: 900px;
+                height: 85vh;
+                background-color: rgba(20, 20, 20, 0.75);
+                backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 16px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+                display: flex;
+                flex-direction: column;
+                box-sizing: border-box;
+                color: #f0f0f0;
+                position: relative;
+                transition: opacity 0.5s;
+                overflow: hidden;
+            }
+
+            #terminal-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px 20px 10px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                font-family: "Roboto", sans-serif;
+                font-size: 14px;
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .header-actions button {
+                background: none;
+                border: none;
+                color: inherit;
+                cursor: pointer;
+                font-size: 16px;
+                transition: color 0.2s;
+            }
+            .header-actions button:hover {
+                color: rgb(var(--primary-color));
+            }
+
+            #terminal-container {
+                flex-grow: 1;
+                overflow-y: auto;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            #output {
+                white-space: pre-wrap;
+                margin-bottom: 5px;
+                line-height: 1.4;
+                font-size: 15px;
+            }
+
+            .input-line {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                font-size: 15px;
+                position: relative;
+            }
+
+            #prompt {
+                margin-right: 8px;
+                white-space: nowrap;
+            }
+
+            .user-text {
+                color: #ffffff;
+            }
+            .accent-text {
+                color: rgb(var(--primary-color));
+                font-weight: bold;
+            }
+            .success {
+                color: #8bd450;
+            }
+            .error {
+                color: #ff5555;
+            }
+            .info {
+                color: #50b4d4;
+            }
+            .warning {
+                color: #f1fa8c;
+            }
+            .system {
+                color: #ffb86c;
+            }
+            .comment {
+                color: #6272a4;
+            }
+
+            /* Имитация ввода с курсором */
+            #visual-input {
+                white-space: pre-wrap;
+                word-break: break-all;
+                color: #f0f0f0;
+            }
+
+            .cursor {
+                color: rgb(var(--primary-color));
+                animation: blink 1s step-end infinite;
+                margin-left: 2px;
+            }
+
+            @keyframes blink {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0;
+                }
+            }
+
+            /* Настоящий, но невидимый инпут */
+            #command {
+                position: absolute;
+                opacity: 0;
+                width: 1px;
+                height: 1px;
+                border: none;
+                outline: none;
+                pointer-events: none;
+            }
+
+            /* Скроллбар */
+            #terminal-container::-webkit-scrollbar {
+                width: 8px;
+            }
+            #terminal-container::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 4px;
+            }
+            #terminal-container::-webkit-scrollbar-thumb {
+                background: rgba(var(--primary-color), 0.5);
+                border-radius: 4px;
+            }
+            #terminal-container::-webkit-scrollbar-thumb:hover {
+                background: rgba(var(--primary-color), 0.8);
+            }
+
+            /* NANO РЕДАКТОР */
+            #nano-container {
+                display: none;
+                flex-direction: column;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                font-family: "Courier New", monospace;
+            }
+            #nano-header {
+                background-color: #ddd;
+                color: #000;
+                text-align: center;
+                padding: 2px 10px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            #nano-editor {
+                flex-grow: 1;
+                background: transparent;
+                color: #f0f0f0;
+                border: none;
+                outline: none;
+                padding: 10px;
+                font-family: inherit;
+                font-size: 15px;
+                resize: none;
+            }
+            #nano-footer {
+                background-color: #ddd;
+                color: #000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 15px;
+                font-size: 14px;
+            }
+            .nano-buttons {
+                display: flex;
+                gap: 10px;
+            }
+            .nano-btn {
+                background: transparent;
+                border: 1px solid #000;
+                color: #000;
+                font-family: inherit;
+                font-size: 14px;
+                cursor: pointer;
+                padding: 4px 10px;
+                font-weight: normal;
+                transition: all 0.2s;
+            }
+            .nano-btn b {
+                margin-right: 4px;
+            }
+            .nano-btn:hover {
+                background: #000;
+                color: #fff;
+                border-color: #000;
+            }
+            #nano-status {
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="terminal-window">
+            <div id="terminal-header">
+                <span id="terminal-title"
+                    ><i class="fas fa-terminal"></i> dont65.conf — bash</span
+                >
+                <div class="header-actions">
+                    <button
+                        onclick="window.location.href = '/'"
+                        title="Вернуться на главную"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="terminal-container">
+                <div id="output"></div>
+                <div class="input-line" id="input-line-container">
+                    <span id="prompt"></span>
+                    <span id="visual-input"></span><span class="cursor">▋</span>
+                    <input
+                        type="text"
+                        id="command"
+                        autofocus
+                        spellcheck="false"
+                        autocomplete="off"
+                    />
+                </div>
+            </div>
+
+            <!-- Интерфейс Nano -->
+            <div id="nano-container">
+                <div id="nano-header">
+                    GNU nano 6.2 &nbsp;&nbsp;&nbsp;&nbsp; Файл:
+                    <span id="nano-filename"></span>
+                </div>
+                <textarea id="nano-editor" spellcheck="false"></textarea>
+                <div id="nano-footer">
+                    <div class="nano-buttons">
+                        <button
+                            id="nano-btn-exit"
+                            class="nano-btn"
+                            title="Сохранить и выйти"
+                        >
+                            <b>^X</b> Выход
+                        </button>
+                        <button
+                            id="nano-btn-save"
+                            class="nano-btn"
+                            title="Сохранить изменения"
+                        >
+                            <b>^S</b> Сохранить
+                        </button>
+                    </div>
+                    <span id="nano-status"></span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <script>
-        const commandInput = document.getElementById('command');
-        const output = document.getElementById('output');
-        const prompt = document.getElementById('prompt');
-        const terminalContainer = document.getElementById('terminal-container');
-
-        let commandHistory = [];
-        let historyIndex = -1;
-        let currentCommand = '';
-
-        // Начальное сообщение
-        printWelcome();
-
-        const commands = {
-            'help': {
-                description: 'Показать список доступных команд',
-                execute: () => {
-                    let helpText = 'Доступные команды:\n';
-                    const cmdList = Object.keys(commands).sort();
-                    for (const cmd of cmdList) {
-                        helpText += `  <span class="info">${cmd.padEnd(15)}</span> - ${commands[cmd].description}\n`;
-                    }
-                    return helpText;
-                }
-            },
-            'love': {
-                description: 'Показывает любовь',
-                execute: () => {
-                    return '<span class="error">Любви нет:</span> <span class="system">null</span> 😢';
-                }
-            },
-            'friends': {
-                description: 'Показывает друзей',
-                execute: () => {
-                    return '<span class="error">Друзья:</span> <span class="system">null</span> 😢';
-                }
-            },
-            'developer': {
-                description: 'Показывает создателя',
-                execute: () => {
-                    return 'Создатель этого терминала: <span class="info">Dont65</span>';
-                }
-            },
-            'sysinfo': {
-                description: 'Показать информацию о системе (симуляция)',
-                execute: () => {
-                const os = ['Linux', 'Windows', 'macOS'][Math.floor(Math.random() * 3)];
-                const proc = ['Intel Core i9-14900K', 'AMD Ryzen 9 7950X3D', 'Apple M3 Max', 'Qualcomm Snapdragon 8 Gen 3', 'Эльбрус-16C', 'Intel Core i7-14700K', 'AMD Ryzen 7 7800X3D', 'Apple M2 Ultra', 'Samsung Exynos 2400', 'MediaTek Dimensity 9300', 'Эльбрус-8SV', 'Intel Core i5-14600K', 'AMD Ryzen 5 7600X', 'Apple M1 Pro', 'Qualcomm Snapdragon 7+ Gen 2', 'Эльбрус-4C', 'Intel Xeon Platinum 8490H', 'AMD EPYC 9654P', 'Apple A17 Pro', 'Google Tensor G3', 'Эльбрус-2SM', 'Intel Core i3-14100', 'AMD Ryzen 3 7300X', 'Apple A16 Bionic', 'HiSilicon Kirin 9000S', 'Эльбрус-1C+', 'Intel Pentium Gold G7400', 'AMD Athlon Gold 7220U', 'Apple A15 Bionic', 'Qualcomm Snapdragon 8s Gen 2', 'Эльбрус-8C', 'Intel Celeron G6900', 'AMD Threadripper PRO 7995WX', 'Apple M1', 'Samsung Exynos 2200', 'MediaTek Dimensity 9200+', 'Эльбрус-4S', 'Intel Core i9-13900KS', 'AMD Ryzen 9 7900X', 'Apple A14 Bionic', 'Qualcomm Snapdragon 888', 'Эльбрус-2C+', 'Intel Core i7-13700KF', 'AMD Ryzen 7 5800X3D', 'Apple A13 Bionic', 'MediaTek Dimensity 8200', 'Эльбрус-1SM', 'Intel Core i5-13600KF', 'AMD Ryzen 5 5600X', 'Apple A12Z Bionic', 'Qualcomm Snapdragon 865+', 'Эльбрус-16S', 'Intel Xeon W9-3495X', 'AMD EPYC 9554P', 'Apple A12X Bionic', 'Google Tensor G2', 'Эльбрус-8S', 'Intel Core i3-13100F', 'AMD Ryzen 3 5300G', 'Apple A11 Bionic', 'HiSilicon Kirin 990 5G', 'Эльбрус-4SM', 'Intel Atom x7-E3950', 'AMD FX-9590', 'Apple A10X Fusion', 'Qualcomm Snapdragon 7 Gen 1', 'Эльбрус-2S', 'Intel Core m3-8100Y', 'AMD A12-9800', 'Apple A9X', 'Samsung Exynos 1080', 'MediaTek Helio G99', 'Эльбрус-1S', 'Intel N100', 'AMD Ryzen 7 5700G', 'Apple A8X', 'Qualcomm Snapdragon 778G', 'Эльбрус-32C'][Math.floor(Math.random() * 70)];
-                const memory = Math.floor(Math.random() * 64) + 4;
-                const disk = Math.floor(Math.random() * 700) + 100;
-        
-                return `
-<span class="info">Системная информация:</span>
-ОС: ${os}
-Память: ${memory} GB
-Диск: ${disk} GB
-Процессор: ${proc}
-`;
-                }
-            },
-            'sudo': {
-                description: 'Для использования супер-пользователя',
-                execute: (args) => {
-                    const fullCommand = args.join(' ');
-        
-                    if (fullCommand === 'rm -rf /*') return new Promise((resolve) => {
-                        // Имитация удаления
-                        const messages = [
-                            'Пароль: <span class="system">****</splan>',
-                            '<span class="error">Удаление системных файлов...</span>',
-                            '<span class="error">Удаление конфигураций...</span>',
-                            '<span class="error">Удаление пользовательских данных...</span>',
-                            '<span class="error">Очистка кеша...</span>',
-                            '<span class="error">Удаление ядра системы...</span>'
-                        ];
-                        
-                        let i = 0;
-                        const interval = setInterval(() => {
-                            if (i < messages.length) {
-                                printToTerminal(messages[i]);
-                                i++;
-                            } else {
-                                clearInterval(interval);
-                                printToTerminal('<span class="error">ВСЕ УДАЛЕНО!!!</span>');
-                                
-                                // Исчезновение терминала
-                                setTimeout(() => {
-                                    terminalContainer.style.opacity = '0';
-                                    terminalContainer.style.transition = 'opacity 0.2s';
-                                    
-                                    // Полная очистка и восстановление
-                                    setTimeout(() => {
-                                        output.innerHTML = '';
-                                        terminalContainer.style.opacity = '1';
-                                        printWelcome();
-                                        resolve('');
-                                    }, 1000);
-                                }, 1000);
-                            }
-                        }, 600);
-                    });
-                    else {
-                        printToTerminal('Пароль: <span class="system">****</splan>\n<span class="error">Не верно, попробуйте еще раз</splan>')
-                    }
-                }
-            },
-            'exit': {
-                description: 'Выйти на главную страницу',
-                execute: () => {
-                    window.location.href = '/';
-                    return '<span class="info">Переход на главную страницу...</span>';
-                }
-            },
-            'clear': {
-                description: 'Очистить терминал',
-                execute: () => {
-                    output.innerHTML = '';
-                    return '';
-                }
-            },
-            'ls': {
-                description: 'Список файлов',
-                execute: () => {
-                    return '<span>love.txt</span>  <span>friends.txt</span>  <span>creator.txt</span>';
-                }
-            },
-            'whoami': {
-                description: 'Показать текущего пользователя',
-                execute: () => {
-                    return '<span class="system">user</span>';
-                }
-            },
-            // Новые команды
-            'echo': {
-                description: 'Повторить введённый текст',
-                execute: (args) => args.join(' ') || '<span class="error">Ошибка: не указан текст</span>'
-            },
-            'time': {
-                description: 'Показать текущее время',
-                execute: () => {
-                    const now = new Date();
-                    return `<span class="info">Текущее время:</span> ${now.toLocaleTimeString()}`;
-                }
-            },
-            '8ball': {
-                description: 'Магический шар (ответ на вопрос)',
-                execute: (args) => {
-                    if (args.length === 0) return '<span class="error">Задайте вопрос</span>';
-                    
-                    const answers = [
-                        "Бесспорно", "Предрешено", "Никаких сомнений", "Определённо да",
-                        "Можешь быть уверен в этом", "Мне кажется — «да»", "Вероятнее всего",
-                        "Хорошие перспективы", "Знаки говорят — «да»", "Да",
-                        "Пока не ясно, попробуй снова", "Спроси позже", "Лучше не рассказывать",
-                        "Сейчас нельзя предсказать", "Сконцентрируйся и спроси опять",
-                        "Даже не думай", "Мой ответ — «нет»", "По моим данным — «нет»",
-                        "Перспективы не очень хорошие", "Весьма сомнительно"
-                    ];
-                    const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
-                    return `<span class="warning">🎱 Магический шар говорит:</span> ${randomAnswer}`;
-                }
-            },
-            'dice': {
-                description: 'Бросить кубик (1-6)',
-                execute: () => {
-                    const roll = Math.floor(Math.random() * 6) + 1;
-                    return `<span class="info">🎲 Выпало:</span> ${roll}`;
-                }
-            },
-            'calc': {
-                description: 'Простой калькулятор',
-                execute: (args) => {
-                    if (args.length === 0) return '<span class="error">Введите выражение, например: calc 2 + 2</span>';
-                    
-                    try {
-                        const expression = args.join(' ');
-                        const result = eval(expression); // Осторожно с eval!
-                        return `<span class="info">${expression} =</span> ${result}`;
-                    } catch (e) {
-                        return `<span class="error">Ошибка вычисления: ${e.message}</span>`;
-                    }
-                }
-            },
-            'ping': {
-                description: 'Проверить доступность сайта (симуляция). Параметры: -N (количество пингов), -result (только результат)',
-                execute: (args) => {
-                    if (args.length === 0) return '<span class="error">Укажите адрес, например: ping google.com</span>';
-                    
-                    // Парсинг аргументов
-                    let address = args[0];
-                    let count = 4; // По умолчанию 4 пинга
-                    let showDetails = true;
-                    let showOnlyResult = false;
-                    
-                    for (let i = 1; i < args.length; i++) {
-                        const arg = args[i].toLowerCase();
-                        if (arg.startsWith('-')) {
-                            if (!isNaN(arg.substring(1))) {
-                                count = parseInt(arg.substring(1));
-                            } else if (arg === '-result') {
-                                showOnlyResult = true;
-                                showDetails = false;
-                            }
-                        }
-                    }
-                    
-                    return new Promise(resolve => {
-                        if (showDetails) {
-                            printToTerminal(`<span class="info">PING ${address} (127.0.0.1):</span> 56 data bytes`);
-                        }
-                        
-                        let totalTime = 0;
-                        let minTime = Infinity;
-                        let maxTime = 0;
-                        let packetsTransmitted = count;
-                        let packetsReceived = 0;
-                        
-                        const doPing = (current) => {
-                            if (current >= count) {
-                                const packetLoss = ((packetsTransmitted - packetsReceived) / packetsTransmitted * 100).toFixed(1);
-                                const avgTime = totalTime / packetsReceived;
-                                
-                                const result = `<span class="success">--- ${address} ping statistics ---</span>\n` +
-                                    `${packetsTransmitted} packets transmitted, ${packetsReceived} received, ${packetLoss}% packet loss, time 0ms\n` +
-                                    `rtt min/avg/max = ${minTime}/${avgTime.toFixed(1)}/${maxTime} ms`;
-                                
-                                resolve(result);
-                                return;
-                            }
-                            
-                            const latency = Math.floor(Math.random() * 100) + 10;
-                            packetsReceived++;
-                            totalTime += latency;
-                            minTime = Math.min(minTime, latency);
-                            maxTime = Math.max(maxTime, latency);
-                            
-                            if (showDetails) {
-                                printToTerminal(`64 bytes from ${address}: icmp_seq=${current} ttl=64 time=${latency} ms`);
-                            }
-                            
-                            setTimeout(() => {
-                                doPing(current + 1);
-                            }, 800);
-                        };
-                        
-                        doPing(0);
-                    });
-                }
-            },
-            'ip': {
-                description: 'Показать IP-адрес (симуляция)',
-                execute: () => {
-                    const fakeIP = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-                    return `<span class="info">Ваш IP-адрес:</span> ${fakeIP}`;
-                }
-            }
-        };
-
-        // Обработка ввода команд
-        commandInput.addEventListener('keydown', (e) => {
-        // Tab - автодополнение
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const input = commandInput.value.trim();
-            if (input) {
-                const matches = Object.keys(commands).filter(cmd => 
-                    cmd.startsWith(input.split(' ')[0])
+        <script>
+            function initTheme() {
+                const savedColor =
+                    localStorage.getItem("primaryColor") || "42, 171, 238";
+                document.documentElement.style.setProperty(
+                    "--primary-color",
+                    savedColor,
                 );
-                if (matches.length === 1) {
-                    commandInput.value = matches[0] + (input.includes(' ') ? ' ' : '');
-                } else if (matches.length > 1) {
-                    printToTerminal('<span class="info">Возможные команды:</span> ' + matches.join(', '));
+                const savedBg =
+                    localStorage.getItem("wallpaper") || "background.jpg";
+                document.body.style.backgroundImage = `url('/assets/background/${savedBg}')`;
+            }
+            initTheme();
+
+            const commandInput = document.getElementById("command");
+            const visualInput = document.getElementById("visual-input");
+            const output = document.getElementById("output");
+            const prompt = document.getElementById("prompt");
+            const terminalContainer =
+                document.getElementById("terminal-container");
+            const terminalWindow = document.getElementById("terminal-window");
+
+            // Nano Элементы
+            const nanoContainer = document.getElementById("nano-container");
+            const nanoEditor = document.getElementById("nano-editor");
+            const nanoFilenameDisplay =
+                document.getElementById("nano-filename");
+            const terminalTitle = document.getElementById("terminal-title");
+            const nanoStatus = document.getElementById("nano-status");
+
+            let commandHistory = [];
+            let historyIndex = -1;
+            let currentCommand = "";
+            let isWaitingForPassword = false;
+
+            // Виртуальная Файловая Система
+            const virtualFS = {
+                "love.txt": "Любви нет: null 😢\n",
+                "friends.txt": "Друзья: null 😢\n",
+                "creator.txt": "Создатель этого терминала: Dont65\n",
+            };
+
+            const configMap = {
+                color: "primaryColor",
+                snow: "snowEnabled",
+                confetti: "confettiEnabled",
+                background: "wallpaper",
+                theme: "theme",
+                glitch: "glitchEnabled",
+                icons: "iconPack",
+                eraser: "cursorEraserMode",
+                blind: "brailleEnabled",
+            };
+
+            function setNormalPrompt() {
+                prompt.innerHTML = `<span class="user-text">user@</span><span class="accent-text">dont65</span><span class="user-text">:~$</span>`;
+            }
+            setNormalPrompt();
+
+            function printWelcome() {
+                printToTerminal(
+                    '<span class="accent-text">Dont65 WebOS (v2.0.1)</span>',
+                );
+                printToTerminal(
+                    'Type <span class="accent-text">help</span> to see available commands.',
+                );
+                printToTerminal(
+                    'Use <span class="accent-text">cat dont65.conf</span> or <span class="accent-text">setting list</span> to manage config.\n',
+                );
+            }
+            printWelcome();
+
+            let currentNanoFile = "";
+
+            function openNano(filename) {
+                currentNanoFile = filename;
+                terminalContainer.style.display = "none";
+                nanoContainer.style.display = "flex";
+                terminalTitle.innerHTML = `<i class="fas fa-edit"></i> nano — ${filename}`;
+                nanoFilenameDisplay.textContent = filename;
+                nanoEditor.value = virtualFS[filename] || "";
+                nanoStatus.textContent = ""; // Очистка статуса
+                nanoEditor.focus();
+            }
+
+            function closeNano() {
+                nanoContainer.style.display = "none";
+                terminalContainer.style.display = "flex";
+                terminalTitle.innerHTML = `<i class="fas fa-terminal"></i> dont65.conf — bash`;
+                commandInput.focus();
+            }
+
+            // Кнопки управления nano
+            document
+                .getElementById("nano-btn-save")
+                .addEventListener("click", () => {
+                    virtualFS[currentNanoFile] = nanoEditor.value;
+                    const lines = nanoEditor.value.split("\n").length;
+                    nanoStatus.textContent = `[ Записано строк: ${lines} ]`;
+                    setTimeout(() => {
+                        nanoStatus.textContent = "";
+                    }, 3000);
+                    nanoEditor.focus();
+                });
+
+            document
+                .getElementById("nano-btn-exit")
+                .addEventListener("click", () => {
+                    virtualFS[currentNanoFile] = nanoEditor.value;
+                    closeNano();
+                    printToTerminal(
+                        `<span class="info">Файл '${currentNanoFile}' сохранен.</span>`,
+                    );
+                });
+
+            // Клавиатурные сокращения nano (оставляем для профи, перехват стандартных действий)
+            nanoEditor.addEventListener("keydown", (e) => {
+                if (e.ctrlKey && e.key.toLowerCase() === "s") {
+                    e.preventDefault();
+                    document.getElementById("nano-btn-save").click();
                 }
-            }
-        }
-    
-        // Стрелка вверх - предыдущая команда
-        else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (commandHistory.length === 0) return;
-        
-            if (historyIndex === -1) {
-                currentCommand = commandInput.value;
-                historyIndex = commandHistory.length - 1;
-            } else if (historyIndex > 0) {
-                historyIndex--;
-            }
-        
-            commandInput.value = commandHistory[historyIndex];
-            moveCursorToEnd(commandInput);
-        }
-    
-        // Стрелка вниз - следующая команда
-        else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (historyIndex === -1) return;
-        
-            if (historyIndex < commandHistory.length - 1) {
-                historyIndex++;
-                commandInput.value = commandHistory[historyIndex];
-            } else {
-                historyIndex = -1;
-                commandInput.value = currentCommand;
-            }
-        
-            moveCursorToEnd(commandInput);
-        }
-    
-        // Enter - выполнение команды
-        else if (e.key === 'Enter') {
-                e.preventDefault();
-                const command = commandInput.value.trim();
-                commandInput.value = '';
-                
-                if (command === '') return;
-                
-                commandHistory.push(command);
-                historyIndex = -1;
-                
-                printToTerminal(`<span class="info">${prompt.textContent}</span> ${command}`);
-                
-                const commandParts = command.split(' ');
-                const commandName = commandParts[0].toLowerCase(); // Приводим имя команды к нижнему регистру
-                const args = commandParts.slice(1);
-                
-                // Находим команду без учёта регистра
-                const foundCommand = Object.keys(commands).find(cmd => cmd.toLowerCase() === commandName);
-                
-                if (foundCommand) {
-                    const result = commands[foundCommand].execute(args);
-                    
-                    if (result instanceof Promise) {
-                        result.then((message) => {
-                            if (message) printToTerminal(message);
-                        });
-                    } else {
-                        if (result) printToTerminal(result);
-                    }
+                if (e.ctrlKey && e.key.toLowerCase() === "x") {
+                    e.preventDefault();
+                    document.getElementById("nano-btn-exit").click();
+                }
+            });
+
+            const commands = {
+                help: {
+                    description: "Показать список доступных команд",
+                    execute: () => {
+                        let helpText = "Доступные команды:\n";
+                        const cmdList = Object.keys(commands).sort();
+                        for (const cmd of cmdList) {
+                            helpText += `  <span class="accent-text">${cmd.padEnd(15)}</span> - ${commands[cmd].description}\n`;
+                        }
+                        return helpText;
+                    },
+                },
+                setting: {
+                    description:
+                        "Управление настройками (list | get {имя} | set {имя} {значение})",
+                    execute: (args) => {
+                        if (args.length === 0)
+                            return '<span class="error">Использование: setting [list | get {имя} | set {имя} {значение}]</span>';
+                        const action = args[0].toLowerCase();
+
+                        if (action === "list") {
+                            let res =
+                                '<span class="info">Текущие настройки:</span>\n';
+                            for (const [key, storageKey] of Object.entries(
+                                configMap,
+                            )) {
+                                const val =
+                                    localStorage.getItem(storageKey) ||
+                                    "по умолчанию";
+                                res += `  <span class="accent-text">${key.padEnd(12)}</span> = ${val}\n`;
+                            }
+                            return res;
+                        }
+                        if (args.length < 2)
+                            return '<span class="error">Укажите имя параметра.</span>';
+
+                        const key = args[1].toLowerCase();
+                        const value = args.slice(2).join(" ");
+
+                        if (!configMap[key])
+                            return `<span class="error">Неизвестный параметр: ${key}</span>`;
+
+                        if (action === "get") {
+                            return `<span class="accent-text">${key}</span> = ${localStorage.getItem(configMap[key]) || "по умолчанию"}`;
+                        }
+                        if (action === "set") {
+                            if (!value)
+                                return '<span class="error">Ошибка: укажите значение.</span>';
+                            if (
+                                key === "color" &&
+                                !/^(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})$/.test(
+                                    value,
+                                )
+                            ) {
+                                return '<span class="error">Ошибка: формат цвета должен быть R, G, B</span>';
+                            }
+                            if (
+                                [
+                                    "snow",
+                                    "confetti",
+                                    "glitch",
+                                    "blind",
+                                ].includes(key) &&
+                                !["true", "false"].includes(value.toLowerCase())
+                            ) {
+                                return `<span class="error">Ошибка: ${key} может быть только true или false</span>`;
+                            }
+                            localStorage.setItem(configMap[key], value);
+                            if (key === "color")
+                                document.documentElement.style.setProperty(
+                                    "--primary-color",
+                                    value,
+                                );
+                            if (key === "background")
+                                document.body.style.backgroundImage = `url('/assets/background/${value}')`;
+                            return `<span class="success">Успешно:</span> Параметр <span class="accent-text">${key}</span> изменен на ${value}`;
+                        }
+                        return '<span class="error">Неизвестное действие (используйте list, get или set)</span>';
+                    },
+                },
+                nano: {
+                    description: "Текстовый редактор",
+                    execute: (args) => {
+                        if (args.length === 0)
+                            return '<span class="error">Использование: nano {имя_файла}</span>';
+                        const file = args[0];
+                        if (file === "dont65.conf")
+                            return '<span class="error">Отказано в доступе. Файл защищен системой.</span>';
+                        openNano(file);
+                        return null; // Ничего не печатаем сразу
+                    },
+                },
+                cat: {
+                    description: "Вывод содержимого файла",
+                    execute: (args) => {
+                        if (args.length === 0)
+                            return '<span class="error">Использование: cat {имя_файла}</span>';
+                        if (args[0] === "dont65.conf") {
+                            const c =
+                                localStorage.getItem("primaryColor") ||
+                                "42, 171, 238";
+                            const sn =
+                                localStorage.getItem("snowEnabled") || "false";
+                            const bg =
+                                localStorage.getItem("wallpaper") ||
+                                "background.jpg";
+                            return `<span class="comment">// Цвета</span>\ncolor = ${c}\n\n<span class="comment">// Снег</span>\nsnow = ${sn}\n\n<span class="comment">// Обои</span>\nbackground = ${bg}`;
+                        }
+                        if (virtualFS[args[0]] !== undefined)
+                            return virtualFS[args[0]];
+                        return `<span class="error">cat: ${args[0]}: Нет такого файла или каталога</span>`;
+                    },
+                },
+                time: {
+                    description: "Показать текущее время",
+                    execute: () =>
+                        `<span class="info">Текущее время:</span> ${new Date().toLocaleTimeString()}`,
+                },
+                date: {
+                    description: "Показать текущую дату",
+                    execute: () =>
+                        `<span class="info">Текущая дата:</span> ${new Date().toLocaleDateString("ru-RU", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`,
+                },
+                sysinfo: {
+                    description: "Показать информацию о системе",
+                    execute: () => {
+                        const os = [
+                            "Linux",
+                            "Windows",
+                            "macOS",
+                            "Dont65 WebOS",
+                        ][Math.floor(Math.random() * 4)];
+                        return `<span class="accent-text">Системная информация:</span>\nОС: ${os}\nПамять: ${Math.floor(Math.random() * 64) + 4} GB`;
+                    },
+                },
+                sudo: {
+                    description: "Выполнить команду от имени суперпользователя",
+                    execute: (args) => {
+                        const fullCommand = args.join(" ");
+                        if (fullCommand === "rm -rf /")
+                            return "rm: it is dangerous to operate recursively on '/'\nrm: use --no-preserve-root to override this failsafe";
+                        if (
+                            fullCommand === "rm -rf /*" ||
+                            fullCommand === "rm -rf / --no-preserve-root"
+                        ) {
+                            return new Promise((resolve) => {
+                                document.getElementById(
+                                    "input-line-container",
+                                ).style.display = "none";
+                                const dirs = [
+                                    "bin",
+                                    "boot",
+                                    "dev",
+                                    "etc",
+                                    "home",
+                                    "lib",
+                                    "root",
+                                    "sys",
+                                    "usr",
+                                    "var",
+                                ];
+                                let count = 0;
+                                const interval = setInterval(() => {
+                                    count++;
+                                    const dir =
+                                        dirs[
+                                            Math.floor(
+                                                Math.random() * dirs.length,
+                                            )
+                                        ];
+                                    const randomFile = Math.random()
+                                        .toString(36)
+                                        .substring(2, 8);
+
+                                    if (dir === "sys")
+                                        printToTerminal(
+                                            `rm: cannot remove '/${dir}/${Math.floor(Math.random() * 1000)}': Operation not permitted`,
+                                        );
+                                    else if (dir === "dev")
+                                        printToTerminal(
+                                            `rm: cannot remove '/${dir}/${randomFile}': Device or resource busy`,
+                                        );
+                                    else if (Math.random() > 0.8)
+                                        printToTerminal(
+                                            `rm: cannot remove '/${dir}/${randomFile}': Permission denied`,
+                                        );
+                                    else
+                                        printToTerminal(
+                                            `removed '/${dir}/${randomFile}'`,
+                                        );
+
+                                    if (count > 50) {
+                                        clearInterval(interval);
+                                        setTimeout(() => {
+                                            printToTerminal(
+                                                '<span class="error">Segmentation fault (core dumped)</span>\n<span class="warning">Kernel panic - not syncing: Attempted to kill init!</span>',
+                                            );
+                                            setTimeout(() => {
+                                                terminalWindow.style.opacity =
+                                                    "0";
+                                                setTimeout(() => {
+                                                    output.innerHTML = "";
+                                                    document.getElementById(
+                                                        "input-line-container",
+                                                    ).style.display = "flex";
+                                                    terminalWindow.style.opacity =
+                                                        "1";
+                                                    printWelcome();
+                                                    resolve("");
+                                                }, 2000);
+                                            }, 1500);
+                                        }, 500);
+                                    }
+                                }, 40);
+                            });
+                        }
+                        return '<span class="error">sudo: Отказано в доступе. Инцидент будет записан.</span>';
+                    },
+                },
+                exit: {
+                    description: "Выйти на главную страницу",
+                    execute: () => {
+                        window.location.href = "/";
+                        return '<span class="info">Переход на главную страницу...</span>';
+                    },
+                },
+                clear: {
+                    description: "Очистить терминал",
+                    execute: () => {
+                        output.innerHTML = "";
+                        return "";
+                    },
+                },
+                ls: {
+                    description: "Список файлов",
+                    execute: () => {
+                        const allFiles = [
+                            "dont65.conf",
+                            ...Object.keys(virtualFS),
+                        ];
+                        return allFiles
+                            .map((f) => `<span class="accent-text">${f}</span>`)
+                            .join("  ");
+                    },
+                },
+                whoami: {
+                    description: "Показать текущего пользователя",
+                    execute: () => "user",
+                },
+                echo: {
+                    description: "Повторить введённый текст",
+                    execute: (args) =>
+                        args.join(" ") ||
+                        '<span class="error">Ошибка: не указан текст</span>',
+                },
+            };
+
+            // Синхронизация визуального ввода с реальным
+            commandInput.addEventListener("input", () => {
+                if (isWaitingForPassword) {
+                    visualInput.textContent = ""; // Скрываем ввод пароля
                 } else {
-                    printToTerminal(`<span class="error">Команда не найдена:</span> ${commandName}. Введите '<span class="info">help</span>' для списка команд.`);
+                    visualInput.textContent = commandInput.value;
                 }
+            });
+
+            commandInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && isWaitingForPassword) {
+                    e.preventDefault();
+                    commandInput.value = "";
+                    visualInput.textContent = "";
+                    isWaitingForPassword = false;
+
+                    printToTerminal("");
+                    printToTerminal("su: Authentication failure");
+                    setNormalPrompt();
+                    return;
+                }
+
+                if (e.key === "Tab" && !isWaitingForPassword) {
+                    e.preventDefault();
+                    const rawInput = commandInput.value;
+                    const parts = rawInput.split(" ");
+
+                    if (parts.length === 1) {
+                        const matches = Object.keys(commands).filter((cmd) =>
+                            cmd.startsWith(parts[0]),
+                        );
+                        if (matches.length === 1)
+                            commandInput.value = matches[0] + " ";
+                        else if (matches.length > 1) {
+                            printToTerminal(`${prompt.innerHTML} ${rawInput}`);
+                            printToTerminal(
+                                '<span class="accent-text">' +
+                                    matches.join("  ") +
+                                    "</span>",
+                            );
+                        }
+                    } else if (parts.length === 2) {
+                        const cmd = parts[0].toLowerCase();
+                        const arg = parts[1];
+                        let matches = [];
+
+                        if (cmd === "setting")
+                            matches = ["get", "set", "list"].filter((s) =>
+                                s.startsWith(arg),
+                            );
+                        else if (cmd === "cat" || cmd === "nano")
+                            matches = [
+                                "dont65.conf",
+                                ...Object.keys(virtualFS),
+                            ].filter((f) => f.startsWith(arg));
+                        else if (cmd === "sudo")
+                            matches = Object.keys(commands).filter((c) =>
+                                c.startsWith(arg),
+                            );
+
+                        if (matches.length === 1)
+                            commandInput.value = `${parts[0]} ${matches[0]} `;
+                        else if (matches.length > 1) {
+                            printToTerminal(`${prompt.innerHTML} ${rawInput}`);
+                            printToTerminal(
+                                '<span class="info">' +
+                                    matches.join("  ") +
+                                    "</span>",
+                            );
+                        }
+                    }
+                    visualInput.textContent = commandInput.value;
+                } else if (e.key === "ArrowUp" && !isWaitingForPassword) {
+                    e.preventDefault();
+                    if (commandHistory.length === 0) return;
+                    if (historyIndex === -1) {
+                        currentCommand = commandInput.value;
+                        historyIndex = commandHistory.length - 1;
+                    } else if (historyIndex > 0) historyIndex--;
+                    commandInput.value = commandHistory[historyIndex];
+                    visualInput.textContent = commandInput.value;
+                } else if (e.key === "ArrowDown" && !isWaitingForPassword) {
+                    e.preventDefault();
+                    if (historyIndex === -1) return;
+                    if (historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        commandInput.value = commandHistory[historyIndex];
+                    } else {
+                        historyIndex = -1;
+                        commandInput.value = currentCommand;
+                    }
+                    visualInput.textContent = commandInput.value;
+                } else if (e.key === "Enter") {
+                    e.preventDefault();
+                    const command = commandInput.value.trim();
+                    commandInput.value = "";
+                    visualInput.textContent = "";
+
+                    if (command === "") {
+                        printToTerminal(prompt.innerHTML);
+                        return;
+                    }
+
+                    commandHistory.push(command);
+                    historyIndex = -1;
+
+                    printToTerminal(
+                        `${prompt.innerHTML} <span style="color: #fff">${command}</span>`,
+                    );
+
+                    const commandParts = command.split(" ");
+                    const commandName = commandParts[0].toLowerCase();
+                    const args = commandParts.slice(1);
+
+                    if (commandName === "su") {
+                        isWaitingForPassword = true;
+                        prompt.innerHTML = "Password: ";
+                        return;
+                    }
+
+                    const foundCommand = Object.keys(commands).find(
+                        (cmd) => cmd.toLowerCase() === commandName,
+                    );
+
+                    if (foundCommand) {
+                        const result = commands[foundCommand].execute(args);
+                        if (result instanceof Promise) {
+                            result.then((message) => {
+                                if (message) printToTerminal(message);
+                            });
+                        } else if (result !== null) {
+                            printToTerminal(result);
+                        }
+                    } else {
+                        printToTerminal(
+                            `<span class="error">bash: ${commandName}: команда не найдена</span>`,
+                        );
+                    }
+                }
+            });
+
+            // Клик переводит фокус в строку
+            document.addEventListener("click", (e) => {
+                if (
+                    window.getSelection().toString() === "" &&
+                    nanoContainer.style.display !== "flex"
+                ) {
+                    commandInput.focus();
+                }
+            });
+
+            function printToTerminal(text) {
+                output.innerHTML += `<div>${text}</div>`;
+                terminalContainer.scrollTop = terminalContainer.scrollHeight;
             }
-    });
-
-        // Фокус на поле ввода при клике в любом месте
-        document.addEventListener('click', () => {
-            commandInput.focus();
-        });
-
-        // Функции помощники
-        function printToTerminal(text) {
-            output.innerHTML += `<div>${text}</div>`;
-            terminalContainer.scrollTop = terminalContainer.scrollHeight;
-        }
-        
-        function printPrompt() {
-            output.innerHTML += `<div class="input-line"><span class="info">${prompt.textContent}</span> <input type="text" class="hidden-input" value="${commandInput.value}" readonly></div>`;
-            terminalContainer.scrollTop = terminalContainer.scrollHeight;
-            commandInput.focus();
-        }
-        
-        function printWelcome() {
-            printToTerminal('<span class="system">Добро пожаловать в терминал Dont65!</span>');
-            printToTerminal('Введите <span class="info">help</span> для списка команд.');
-        }
-        
-        function moveCursorToEnd(input) {
-            input.selectionStart = input.selectionEnd = input.value.length;
-        }
-    </script>
-</body>
+        </script>
+    </body>
 </html>
-
