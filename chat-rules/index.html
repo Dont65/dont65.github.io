@@ -20,6 +20,25 @@
         <link rel="stylesheet" href="/styles.css" />
 
         <style>
+            body {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+            body::before {
+                content: "";
+                position: fixed; /* Фиксирует слой на экране: он не сдвинется при раскрытии блоков */
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(
+                    0,
+                    0,
+                    0,
+                    0.5
+                ); /* Твое затемнение (0.5 = 50%) */
+                z-index: -1; /* Важно: слой встанет строго МЕЖДУ обоями body и текстом */
+                pointer-events: none; /* Клик сквозь этот слой будет работать штатно */
+            }
             /* Адаптация ширины контейнера под чтение правил */
             .container {
                 max-width: 900px !important;
