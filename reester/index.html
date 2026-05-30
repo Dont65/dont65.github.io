@@ -31,26 +31,28 @@
                 justify-content: center;
                 align-items: flex-start;
                 min-height: 100vh;
-                background-color: #121212;
-                /* Если этот файл лежит рядом с index.html, фон подтянется. Если нет - путь нужно будет поправить */
-                background-image: url("../assets/background/background.jpg");
+                background-image: url("assets/background/background.jpg");
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
                 color: #ffffff;
+                position: relative;
                 box-sizing: border-box;
             }
 
+            /* Затемнение фона для лучшей читаемости */
             body::before {
                 content: "";
-                position: fixed;
+                position: absolute;
                 inset: 0;
                 background-color: rgba(0, 0, 0, 0.4);
-                z-index: -1;
+                z-index: 0;
+                pointer-events: none;
             }
 
-            /* Основной контейнер со стекломорфизмом */
             .container {
+                position: relative;
+                z-index: 1;
                 width: 100%;
                 max-width: 800px;
                 padding: 40px;
@@ -59,146 +61,160 @@
                 -webkit-backdrop-filter: blur(16px);
                 border-radius: var(--border-radius-l);
                 border: 1px solid rgba(255, 255, 255, 0.1);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                animation: float 6s ease-in-out infinite;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
             }
 
-            @keyframes float {
-                0% {
-                    transform: translateY(0px);
-                }
-                50% {
-                    transform: translateY(-10px);
-                }
-                100% {
-                    transform: translateY(0px);
-                }
+            .back-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 14px;
+                padding: 10px 20px;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: var(--border-radius-m);
+                margin-bottom: 30px;
+                transition: all 0.2s ease;
             }
 
-            /* Заголовки (head/subhead) */
+            .back-btn:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateX(-4px);
+            }
+
             .block-header {
-                text-align: center;
-                margin-bottom: 32px;
-                padding-bottom: 24px;
+                margin-bottom: 24px;
+                padding-bottom: 16px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: left;
             }
 
             .block-header h1 {
-                margin: 0 0 12px 0;
-                font-size: 32px;
+                font-size: 28px;
+                margin: 0 0 8px 0;
                 font-weight: 700;
                 color: rgb(var(--primary-color));
             }
 
             .block-header h2 {
+                font-size: 16px;
                 margin: 0;
-                font-size: 18px;
-                color: rgba(255, 255, 255, 0.7);
                 font-weight: 400;
+                color: rgba(255, 255, 255, 0.7);
             }
 
-            /* Сетка для контента */
             .cards-grid {
-                display: flex;
-                flex-direction: column;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
                 gap: 16px;
+                margin-top: 16px;
             }
 
-            /* Карточки контента (title/text) в стиле .info-card */
             .info-card {
-                background-color: rgba(255, 255, 255, 0.05);
-                padding: 24px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 border-radius: var(--border-radius-m);
+                padding: 20px;
                 text-align: left;
-                transition:
-                    transform 0.2s,
-                    background-color 0.2s,
-                    border-color 0.2s;
-                border: 1px solid transparent;
+                transition: transform 0.2s ease, background 0.2s ease;
             }
 
             .info-card:hover {
-                transform: translateY(-4px);
-                background-color: rgba(var(--primary-color), 0.1);
-                border-color: rgba(var(--primary-color), 0.3);
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateY(-2px);
             }
 
             .info-label {
+                font-size: 12px;
                 font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
                 color: rgb(var(--primary-color));
-                font-size: 20px;
-                margin-bottom: 12px;
+                margin-bottom: 8px;
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 6px;
             }
 
             .info-value {
-                color: rgba(255, 255, 255, 0.9);
-                line-height: 1.6;
                 font-size: 16px;
+                color: rgba(255, 255, 255, 0.9);
+                line-height: 1.5;
+                word-break: break-word;
             }
 
-            /* Статусные сообщения */
             .status-message {
-                text-align: center;
-                font-size: 18px;
-                color: rgba(255, 255, 255, 0.7);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 15px;
+                justify-content: center;
+                gap: 12px;
+                padding: 40px 20px;
+                text-align: center;
+                font-size: 16px;
             }
 
             .status-message i {
-                font-size: 40px;
-                color: rgb(var(--primary-color));
+                font-size: 48px;
+                margin-bottom: 8px;
             }
 
-            .error i {
-                color: #ff5555;
-            }
-            .error {
-                color: #ff5555;
+            .status-message.error i {
+                color: #ffb4ab;
             }
 
-            /* Кнопка "назад" */
-            .back-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                color: rgba(255, 255, 255, 0.7);
-                text-decoration: none;
-                margin-bottom: 24px;
-                transition: 0.2s;
-                font-size: 14px;
+            /* --- Стили для светлой темы --- */
+            body.light-theme {
+                color: #1a1c1e;
             }
-            .back-btn:hover {
-                color: rgb(var(--primary-color));
+            body.light-theme::before {
+                background-color: rgba(255, 255, 255, 0.4);
             }
-
-            @media (max-width: 600px) {
-                .container {
-                    padding: 20px;
-                }
+            body.light-theme .container {
+                background-color: rgba(255, 255, 255, 0.75);
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            }
+            body.light-theme .back-btn {
+                color: #1a1c1e;
+                background: rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            body.light-theme .back-btn:hover {
+                background: rgba(0, 0, 0, 0.1);
+            }
+            body.light-theme .info-card {
+                background-color: rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(0, 0, 0, 0.06);
+            }
+            body.light-theme .info-card:hover {
+                background-color: rgba(0, 0, 0, 0.08);
+            }
+            body.light-theme .block-header h2,
+            body.light-theme .info-value,
+            body.light-theme .status-message {
+                color: rgba(0, 0, 0, 0.8);
+            }
+            body.light-theme .block-header {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            body.light-theme .status-message.error i {
+                color: #ba1a1a;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <a
-                href="#"
-                onclick="
-                    history.back();
-                    return false;
-                "
-                class="back-btn"
-            >
-                <i class="fas fa-arrow-left"></i> Назад
+            <a href="main.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> На главную
             </a>
+            
             <div id="app">
-                <div class="status-message" id="status">
-                    <i class="fas fa-circle-notch fa-spin"></i>
+                <div class="status-message">
+                    <i class="fas fa-spinner fa-spin" style="color: rgb(var(--primary-color));"></i>
                     <span>Загрузка данных...</span>
                 </div>
             </div>
@@ -207,17 +223,29 @@
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const appDiv = document.getElementById("app");
-                const statusDiv = document.getElementById("status");
 
-                // Если в localStorage сохранен цвет с главной страницы, применяем его
+                // 1. Импорт кастомного цвета
                 const savedColor = localStorage.getItem("primaryColor");
                 if (savedColor) {
                     document.documentElement.style.setProperty(
                         "--primary-color",
-                        savedColor,
+                        savedColor
                     );
                 }
 
+                // 2. Импорт выбранных обоев
+                const savedWallpaper = localStorage.getItem("wallpaper");
+                if (savedWallpaper) {
+                    document.body.style.backgroundImage = `url('assets/background/${savedWallpaper}')`;
+                }
+
+                // 3. Импорт темы оформления
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "light") {
+                    document.body.classList.add("light-theme");
+                }
+
+                // Парсинг GET-параметров строки запроса
                 const urlParams = new URLSearchParams(window.location.search);
                 const fileName = urlParams.get("file");
 
@@ -231,18 +259,18 @@
                     return;
                 }
 
+                // Получение и рендеринг JSON данных реестра
                 fetch(fileName)
                     .then((response) => {
                         if (!response.ok)
                             throw new Error(
-                                `Ошибка сервера (${response.status})`,
+                                `Ошибка сервера (${response.status})`
                             );
                         return response.json();
                     })
                     .then((data) => {
                         appDiv.innerHTML = "";
 
-                        // Создаем обертку-сетку для карточек
                         const cardsGrid = document.createElement("div");
                         cardsGrid.className = "cards-grid";
 
@@ -260,7 +288,6 @@
                                 if (item.subhead)
                                     headerBlock.innerHTML += `<h2>${item.subhead}</h2>`;
 
-                                // Заголовки добавляем напрямую в app
                                 appDiv.appendChild(headerBlock);
                             } else if (
                                 item.title !== undefined ||
@@ -270,13 +297,11 @@
                                     document.createElement("div");
                                 contentBlock.className = "info-card";
 
-                                // Добавим иконку списка к заголовку для стиля
                                 if (item.title)
                                     contentBlock.innerHTML += `<div class="info-label"><i class="fas fa-bars-staggered"></i> ${item.title}</div>`;
                                 if (item.text)
                                     contentBlock.innerHTML += `<div class="info-value">${item.text}</div>`;
 
-                                // Карточки добавляем в сетку
                                 cardsGrid.appendChild(contentBlock);
                             }
                         });
