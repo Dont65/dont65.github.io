@@ -31,7 +31,7 @@
                 justify-content: center;
                 align-items: flex-start;
                 min-height: 100vh;
-                background-image: url("assets/background/background.jpg");
+                background-image: url("../assets/background/background.jpg");
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
@@ -236,7 +236,7 @@
                 // 2. Импорт выбранных обоев
                 const savedWallpaper = localStorage.getItem("wallpaper");
                 if (savedWallpaper) {
-                    document.body.style.backgroundImage = `url('assets/background/${savedWallpaper}')`;
+                    document.body.style.backgroundImage = `url('../assets/background/${savedWallpaper}')`;
                 }
 
                 // 3. Импорт темы оформления
