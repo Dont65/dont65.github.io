@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Dont65 | Правила чатов</title>
 
-        <!-- Шрифт Roboto для MD3 -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -13,13 +12,11 @@
             rel="stylesheet"
         />
 
-        <!-- Иконки FontAwesome -->
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
 
-        <!-- Стили главной страницы (путь от корня) -->
         <link rel="stylesheet" href="/styles.css" />
 
         <style>
@@ -169,6 +166,17 @@
                 top: 0;
             }
 
+            /* Стили для ссылок внутри правил */
+            .rules-content a {
+                color: rgb(var(--primary-color));
+                text-decoration: underline;
+                transition: opacity 0.2s ease;
+                cursor: pointer;
+            }
+            .rules-content a:hover {
+                opacity: 0.8;
+            }
+
             .rule-last {
                 color: #707070;
                 text-decoration: underline;
@@ -216,21 +224,18 @@
         </style>
     </head>
     <body>
-        <!-- Элементы для эффектов -->
         <div id="glitchPixelsContainer"></div>
         <div id="glitchSectorsContainer"></div>
         <canvas id="snowCanvas"></canvas>
         <canvas id="confettiCanvas"></canvas>
         <div id="cursorHeater"></div>
 
-        <!-- Основной контейнер с Правилами -->
         <div class="container">
             <div class="header">
                 <h1><i class="fas fa-book"></i> Основные положения правил</h1>
                 <p>Обязательны к соблюдению всеми участниками сообщества</p>
             </div>
 
-            <!-- Контейнер для динамически загружаемых правил -->
             <div class="rules-accordion" id="rulesAccordion">
                 <div class="loading" id="loadingRules">
                     <i class="fas fa-spinner fa-spin"></i> Загрузка правил...
@@ -705,6 +710,34 @@
 
             // --- 2. ЛОГИКА ПРАВИЛ И ИНТЕРФЕЙСА --- //
 
+            // Функция парсинга Markdown-ссылок
+            function parseMarkdownLinks(text) {
+                if (!text) return "";
+
+                // Безопасное экранирование HTML, чтобы избежать XSS и поломок разметки
+                let escaped = text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+                // Регулярное выражение для поиска структуры [текст](ссылка)
+                const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+                return escaped.replace(
+                    markdownLinkRegex,
+                    (match, text, url) => {
+                        // Если это внешняя ссылка (http/https), открываем в новой вкладке, иначе (относительный путь) — в текущей
+                        const isExternal =
+                            url.startsWith("http://") ||
+                            url.startsWith("https://");
+                        const targetAttr = isExternal
+                            ? ' target="_blank" rel="noopener noreferrer"'
+                            : "";
+                        return `<a href="${url}"${targetAttr}>${text}</a>`;
+                    },
+                );
+            }
+
             async function loadRules() {
                 try {
                     const response = await fetch("./rules.json");
@@ -758,9 +791,12 @@
                         block.items.forEach((item) => {
                             const ruleItem = document.createElement("div");
                             ruleItem.className = "rule-item";
-                            ruleItem.textContent =
+
+                            // Собираем текст и парсим ссылки
+                            const rawText =
                                 (item.id ? item.id + " " : "") +
                                 (item.text || "");
+                            ruleItem.innerHTML = parseMarkdownLinks(rawText);
                             rulesContent.appendChild(ruleItem);
 
                             if (item.subitems && item.subitems.length > 0) {
@@ -768,7 +804,8 @@
                                     const ruleSubitem =
                                         document.createElement("div");
                                     ruleSubitem.className = "rule-subitem";
-                                    ruleSubitem.textContent = subitem;
+                                    ruleSubitem.innerHTML =
+                                        parseMarkdownLinks(subitem);
                                     rulesContent.appendChild(ruleSubitem);
                                 });
                             }
