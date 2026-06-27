@@ -243,6 +243,53 @@
             #nano-status {
                 font-style: italic;
             }
+
+            /* МОБИЛЬНЫЕ КНОПКИ УПРАВЛЕНИЯ */
+            #mobile-controls {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                display: none;
+                gap: 10px;
+                z-index: 100;
+            }
+
+            /* Показываем только на узких экранах */
+            @media (max-width: 768px) {
+                #mobile-controls {
+                    display: flex;
+                }
+            }
+
+            /* Скрываем кнопки, если запущен nano */
+            #terminal-window.nano-active #mobile-controls {
+                display: none !important;
+            }
+
+            .mobile-btn {
+                background-color: rgba(20, 20, 20, 0.85);
+                border: 1px solid rgba(var(--primary-color), 0.5);
+                color: rgb(var(--primary-color));
+                border-radius: 8px;
+                padding: 12px 18px;
+                font-family: inherit;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                backdrop-filter: blur(8px);
+                transition: all 0.1s;
+                /* Предотвращает выделение и зум на мобилках */
+                user-select: none;
+                -webkit-user-select: none;
+                -webkit-tap-highlight-color: transparent;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            }
+
+            .mobile-btn:active {
+                background-color: rgba(var(--primary-color), 0.4);
+                color: #fff;
+                transform: scale(0.95);
+            }
         </style>
     </head>
     <body>
@@ -303,6 +350,17 @@
                     <span id="nano-status"></span>
                 </div>
             </div>
+
+            <!-- Мобильные кнопки управления -->
+            <div id="mobile-controls">
+                <button class="mobile-btn" data-key="Tab">TAB</button>
+                <button class="mobile-btn" data-key="ArrowUp">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+                <button class="mobile-btn" data-key="ArrowDown">
+                    <i class="fas fa-arrow-down"></i>
+                </button>
+            </div>
         </div>
 
         <script>
@@ -345,6 +403,8 @@
                 "love.txt": "Любви нет: null 😢\n",
                 "friends.txt": "Друзья: null 😢\n",
                 "creator.txt": "Создатель этого терминала: Dont65\n",
+                "logo.txt":
+                    " ██████╗  \n ██╔══██╗ \n ██║  ██║ \n ██║  ██║ \n ██████╔╝ \n ╚═════╝  ",
             };
 
             const configMap = {
@@ -381,6 +441,7 @@
 
             function openNano(filename) {
                 currentNanoFile = filename;
+                terminalWindow.classList.add("nano-active"); // Скрывает мобильные кнопки
                 terminalContainer.style.display = "none";
                 nanoContainer.style.display = "flex";
                 terminalTitle.innerHTML = `<i class="fas fa-edit"></i> nano — ${filename}`;
@@ -393,6 +454,7 @@
             function closeNano() {
                 nanoContainer.style.display = "none";
                 terminalContainer.style.display = "flex";
+                terminalWindow.classList.remove("nano-active"); // Возвращает мобильные кнопки
                 terminalTitle.innerHTML = `<i class="fas fa-terminal"></i> dont65.conf — bash`;
                 commandInput.focus();
             }
@@ -420,7 +482,7 @@
                     );
                 });
 
-            // Клавиатурные сокращения nano (оставляем для профи, перехват стандартных действий)
+            // Клавиатурные сокращения nano
             nanoEditor.addEventListener("keydown", (e) => {
                 if (e.ctrlKey && e.key.toLowerCase() === "s") {
                     e.preventDefault();
@@ -430,6 +492,26 @@
                     e.preventDefault();
                     document.getElementById("nano-btn-exit").click();
                 }
+            });
+
+            // Обработчики мобильных кнопок (TAB, Вверх, Вниз)
+            document.querySelectorAll(".mobile-btn").forEach((btn) => {
+                const triggerAction = (e) => {
+                    e.preventDefault(); // Запрещаем сброс фокуса с input клавиатуры телефона
+                    const key = btn.getAttribute("data-key");
+                    const event = new KeyboardEvent("keydown", {
+                        key: key,
+                        bubbles: true,
+                        cancelable: true,
+                    });
+                    commandInput.dispatchEvent(event);
+                };
+
+                // Используем touchstart чтобы реагировать моментально и не давать прятать клавиатуру
+                btn.addEventListener("touchstart", triggerAction, {
+                    passive: false,
+                });
+                btn.addEventListener("mousedown", triggerAction);
             });
 
             const commands = {
@@ -555,16 +637,215 @@
                     execute: () =>
                         `<span class="info">Текущая дата:</span> ${new Date().toLocaleDateString("ru-RU", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`,
                 },
-                sysinfo: {
-                    description: "Показать информацию о системе",
+                fastfetch: {
+                    description: "Системная информация (полный хаос)",
                     execute: () => {
-                        const os = [
-                            "Linux",
-                            "Windows",
-                            "macOS",
+                        // Независимые списки (полный рандом)
+                        const oses = [
+                            // Windows
+                            "Windows 11",
+                            "Windows 10",
+                            "Windows 7",
+                            "Windows XP",
+                            "Windows 98",
+                            // macOS
+                            "macOS Sonoma",
+                            "macOS Ventura",
+                            "macOS Monterey",
+                            "macOS Catalina",
+                            "Mac OS X Snow Leopard",
+                            // Debian/Ubuntu Family
+                            "Debian GNU/Linux 12 (bookworm)",
+                            "Ubuntu 24.04 LTS",
+                            "Ubuntu 22.04 LTS",
+                            "Kali Linux",
+                            "Linux Mint 21.3",
+                            "Pop!_OS 22.04 LTS",
+                            "Parrot OS",
+                            // Arch Family
+                            "Arch Linux",
+                            "Manjaro Linux",
+                            "EndeavourOS",
+                            "Garuda Linux",
+                            "Artix Linux",
+                            // Fedora/RHEL Family
+                            "Fedora Linux 40",
+                            "CentOS Linux 8",
+                            "Rocky Linux 9",
+                            "AlmaLinux",
+                            "Red Hat Enterprise Linux",
+                            // Other Linux
+                            "Gentoo Linux",
+                            "openSUSE Tumbleweed",
+                            "Alpine Linux",
+                            "Void Linux",
+                            "NixOS",
+                            "Slackware Linux",
+                            // BSD / Unix
+                            "FreeBSD",
+                            "OpenBSD",
+                            "NetBSD",
+                            "GhostBSD",
+                            "Solaris",
+                            // Meme / Custom
+                            "Hannah Montana Linux",
+                            "TempleOS",
                             "Dont65 WebOS",
-                        ][Math.floor(Math.random() * 4)];
-                        return `<span class="accent-text">Системная информация:</span>\nОС: ${os}\nПамять: ${Math.floor(Math.random() * 64) + 4} GB`;
+                            "AmogOS",
+                            "Lindows",
+                        ];
+
+                        const kernels = [
+                            // Windows
+                            "NT 10.0.22631",
+                            "NT 5.1.2600",
+                            "NT 6.1.7601",
+                            // macOS
+                            "Darwin 23.4.0",
+                            "Darwin 17.0.0",
+                            "Darwin 21.6.0",
+                            // Linux
+                            "6.8.2-arch2-1",
+                            "5.15.0-101-generic",
+                            "6.5.0-kali3-amd64",
+                            "6.1.0-18-amd64",
+                            "Linux 2.6.32",
+                            // BSD & Other
+                            "13.2-RELEASE",
+                            "7.4",
+                            "DontKernel 2.0.1-web",
+                            "XNU 8020.101.4",
+                        ];
+
+                        const cpus = [
+                            "Apple A17 Pro",
+                            "Apple M3 Max",
+                            "Apple M1",
+                            "Intel Core i9-14900K (32) @ 6.00GHz",
+                            "Intel Core i3-2100 (2) @ 3.10GHz",
+                            "AMD Ryzen 9 7950X3D (32) @ 5.70GHz",
+                            "AMD FX-8350 (8) @ 4.00GHz",
+                            "Qualcomm Snapdragon X Elite",
+                            "Эльбрус-8С (8) @ 1.30GHz",
+                        ];
+
+                        const gpus = [
+                            "NVIDIA GeForce RTX 4090",
+                            "NVIDIA GeForce GTX 750 Ti",
+                            "AMD Radeon RX 7900 XTX",
+                            "ATI Radeon HD 5770",
+                            "Intel Arc A770",
+                            "Intel HD Graphics 4000",
+                            "Apple A17 Pro GPU",
+                            "Apple M3 Max 40-Core GPU",
+                            "3dfx Voodoo5 5500",
+                        ];
+
+                        const rams = [
+                            1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072,
+                        ];
+
+                        const drives = [
+                            { type: "NVMe SSD", size: 256 },
+                            { type: "NVMe SSD", size: 512 },
+                            { type: "NVMe SSD", size: 1024 },
+                            { type: "NVMe SSD", size: 2048 },
+                            { type: "NVMe SSD", size: 4096 },
+                            { type: "SATA SSD", size: 128 },
+                            { type: "SATA SSD", size: 500 },
+                            { type: "SATA SSD", size: 1000 },
+                            { type: "HDD", size: 500 },
+                            { type: "HDD", size: 1024 },
+                            { type: "HDD", size: 2048 },
+                            { type: "HDD", size: 8192 },
+                        ];
+
+                        // Выбираем абсолютно случайно и независимо
+                        const os =
+                            oses[Math.floor(Math.random() * oses.length)];
+                        const kernel =
+                            kernels[Math.floor(Math.random() * kernels.length)];
+
+                        // Процессор (Шанс 5%, что его "нет")
+                        let cpu = "None";
+                        if (Math.random() > 0.05) {
+                            cpu = cpus[Math.floor(Math.random() * cpus.length)];
+                        }
+
+                        // Видеокарта (Шанс 15%, что её "нет")
+                        let gpu = "None";
+                        if (Math.random() > 0.15) {
+                            gpu = gpus[Math.floor(Math.random() * gpus.length)];
+                        }
+
+                        // Память
+                        const totalRam =
+                            rams[Math.floor(Math.random() * rams.length)];
+                        const usedRam =
+                            Math.floor(Math.random() * (totalRam * 0.8)) + 128;
+
+                        // Диск
+                        const drive =
+                            drives[Math.floor(Math.random() * drives.length)];
+                        const usedDrive =
+                            Math.floor(Math.random() * (drive.size * 0.95)) + 5;
+                        const displayTotalSize =
+                            drive.size >= 1024
+                                ? drive.size / 1024 + "TB"
+                                : drive.size + "GB";
+                        const displayUsedSize =
+                            usedDrive >= 1024
+                                ? (usedDrive / 1024).toFixed(1) + "TB"
+                                : usedDrive + "GB";
+                        const diskStr = `${displayUsedSize} / ${displayTotalSize} (${drive.type})`;
+
+                        // Текстовая информация
+                        const info = [
+                            `<span class="accent-text">user</span>@<span class="accent-text">dont65</span>`,
+                            `------------`,
+                            `<span class="accent-text">OS</span>: ${os}`,
+                            `<span class="accent-text">Kernel</span>: ${kernel}`,
+                            `<span class="accent-text">CPU</span>: ${cpu}`,
+                            `<span class="accent-text">GPU</span>: ${gpu}`,
+                            `<span class="accent-text">Memory</span>: ${usedRam}MiB / ${totalRam}MiB`,
+                            `<span class="accent-text">Disk</span>: ${diskStr}`,
+                        ];
+
+                        // Загрузка кастомного логотипа из виртуальной файловой системы (nano редактирование)
+                        const rawLogo = virtualFS["logo.txt"] || "";
+                        let logoLines = rawLogo.split("\n");
+
+                        // Удаляем последнюю пустую строку, если она образовалась при переносе
+                        if (
+                            logoLines.length > 0 &&
+                            logoLines[logoLines.length - 1] === ""
+                        ) {
+                            logoLines.pop();
+                        }
+
+                        // Вычисляем максимальную ширину логотипа, чтобы выровнять текст справа
+                        let maxLogoWidth = 0;
+                        for (let line of logoLines) {
+                            if (line.length > maxLogoWidth)
+                                maxLogoWidth = line.length;
+                        }
+                        if (maxLogoWidth === 0) maxLogoWidth = 10; // Подстраховка
+
+                        // Сборка вывода
+                        let outputStr = "\n";
+                        const maxLines = Math.max(
+                            logoLines.length,
+                            info.length,
+                        );
+
+                        for (let i = 0; i < maxLines; i++) {
+                            let logoPart = logoLines[i] || "";
+                            logoPart = logoPart.padEnd(maxLogoWidth, " "); // Заполняем пробелами до максимальной длины
+                            const infoPart = info[i] || "";
+                            outputStr += `<span class="accent-text">${logoPart}</span>   ${infoPart}\n`;
+                        }
+
+                        return outputStr;
                     },
                 },
                 sudo: {
@@ -832,9 +1113,11 @@
 
             // Клик переводит фокус в строку
             document.addEventListener("click", (e) => {
+                // Если клик не по кнопкам мобильным, и текст не выделяется
                 if (
                     window.getSelection().toString() === "" &&
-                    nanoContainer.style.display !== "flex"
+                    nanoContainer.style.display !== "flex" &&
+                    !e.target.closest(".mobile-btn")
                 ) {
                     commandInput.focus();
                 }
