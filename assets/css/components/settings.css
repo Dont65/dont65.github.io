@@ -1,0 +1,58 @@
+.settings-category { background-color: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+body.light-theme .settings-category { background-color: rgba(0, 0, 0, 0.03); }
+.settings-category-title { color: rgb(var(--primary-color)); font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.setting-label { display: flex; align-items: center; gap: 12px; }
+.setting-note { text-align: left; display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; font-size: 0.9em; opacity: 0.8; }
+
+.toggle-switch { position: relative; width: 52px; height: 32px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; inset: 0; background-color: #555; border-radius: 32px; transition: 0.4s; border: 2px solid transparent; }
+.slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 2px; bottom: 2px; background-color: white; border-radius: 50%; transition: 0.4s; }
+input:checked + .slider { background-color: rgb(var(--primary-color)); border-color: rgb(var(--primary-color)); }
+input:checked + .slider:before { transform: translateX(20px); background-color: #fff; }
+
+.select-wrapper { position: relative; width: 100%; margin-top: 5px; border-radius: 50%; }
+.select-wrapper select { appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 100%; padding: 12px 16px; padding-right: 40px; background-color: rgba(30, 30, 30, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #ffffff; font-size: 16px; font-family: "Roboto", sans-serif; cursor: pointer; outline: none; transition: all 0.3s; }
+body.light-theme .select-wrapper select { background-color: rgba(255, 255, 255, 0.9); border-color: rgba(0, 0, 0, 0.1); color: #1a1c1e; }
+.select-wrapper select:hover { border-color: rgb(var(--primary-color)); }
+.select-wrapper::after { content: "\f078"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); pointer-events: none; font-size: 12px; color: rgb(var(--primary-color)); }
+.select-wrapper select option { background-color: #202020 !important; color: #ffffff !important; padding: 12px; font-size: 16px; }
+body.light-theme .select-wrapper select option { background-color: #ffffff !important; color: #1a1c1e !important; }
+@-moz-document url-prefix() { .select-wrapper select { padding-right: 16px; text-indent: 0.01px; text-overflow: ""; } .select-wrapper::after { display: none; } }
+.select-wrapper select::-webkit-scrollbar { width: 8px; }
+.select-wrapper select::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 4px; }
+.select-wrapper select::-webkit-scrollbar-thumb { background: rgb(var(--primary-color)); border-radius: 4px; }
+.select-wrapper select::-webkit-scrollbar-thumb:hover { background: rgba(var(--primary-color), 0.8); }
+
+.wallpapers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.wallpaper-option { border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; aspect-ratio: 16/9; border: 3px solid transparent; }
+.wallpaper-option.selected { border-color: rgb(var(--primary-color)); }
+.wallpaper-preview { width: 100%; height: 100%; object-fit: cover; }
+.wallpaper-name { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7); padding: 4px; font-size: 12px; text-align: center; }
+
+.color-options { display: flex; gap: 12px; flex-wrap: wrap; }
+.color-option { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+.color-option.selected { transform: scale(1.2); border-color: white; }
+body.light-theme .color-option.selected { border-color: #333; }
+
+.developer-info { text-align: left; }
+.developer-info h4 { margin-bottom: 8px; color: rgb(var(--primary-color)); }
+.developer-info p { margin: 4px 0; font-size: 0.9em; opacity: 0.8; }
+
+.hyprland-error-bar { position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(255, 51, 51, 0.95); color: white; padding: 12px 24px; font-family: monospace; font-size: 14px; font-weight: bold; z-index: 999999; transform: translateY(-100%); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); display: flex; align-items: center; gap: 12px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
+.hyprland-error-bar.show { transform: translateY(0); }
+
+.developer-config-section { margin-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 16px; }
+body.light-theme .developer-config-section { border-top-color: rgba(0, 0, 0, 0.1); }
+.dev-config-btn { width: 100%; padding: 12px; background-color: rgba(var(--primary-color), 0.1); color: rgb(var(--primary-color)); border: 1px solid rgb(var(--primary-color)); border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+.dev-config-btn:hover { background-color: rgb(var(--primary-color)); color: white; }
+.config-editor-container { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.2, 0, 0, 1), margin-top 0.4s; background-color: #1e1e2e; border-radius: 12px; border: 1px solid #313244; margin-top: 0; }
+.config-editor-container.open { max-height: 500px; margin-top: 16px; }
+.config-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background-color: #11111b; color: #a6adc8; font-family: monospace; font-size: 12px; }
+.config-header button { background: none; border: none; color: #f38ba8; cursor: pointer; font-size: 14px; }
+#configTextarea { width: 100%; height: 250px; background-color: #1e1e2e; color: #cdd6f4; font-family: monospace; font-size: 14px; padding: 12px; border: none; outline: none; resize: none; box-sizing: border-box; }
+.config-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 12px; background-color: #11111b; }
+.config-actions button { padding: 6px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 12px; }
+#resetConfigBtn { background-color: #45475a; color: white; }
+#applyConfigBtn { background-color: #a6e3a1; color: #11111b; }

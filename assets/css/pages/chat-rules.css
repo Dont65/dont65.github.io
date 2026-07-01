@@ -1,0 +1,204 @@
+/* Адаптация ширины контейнера под чтение правил */
+.rules-container {
+    max-width: 900px !important;
+    width: 90%;
+}
+
+.header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(var(--primary-color), 0.3);
+}
+
+.header h1 {
+    margin: 0;
+    color: rgb(var(--primary-color));
+    font-size: 2em;
+}
+
+.header p {
+    margin: 10px 0 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1em;
+}
+
+body.light-theme .header p {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.rules-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.rules-block {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(var(--primary-color), 0.3);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.light-theme .rules-block {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.rules-block.active {
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 15px rgba(var(--primary-color), 0.4);
+}
+
+body.light-theme .rules-block.active {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.rules-header {
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(var(--primary-color), 0.1);
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+.rules-block.active .rules-header {
+    background-color: rgba(var(--primary-color), 0.2);
+    border-bottom-color: rgba(var(--primary-color), 0.5);
+}
+
+.rules-header h2 {
+    margin: 0;
+    color: rgb(var(--primary-color));
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.rules-header h2 i {
+    margin-right: 10px;
+}
+
+.rules-indicator {
+    font-size: 1.5em;
+    color: rgb(var(--primary-color));
+    transition: transform 0.3s ease;
+}
+
+.rules-block.active .rules-indicator {
+    transform: rotate(90deg);
+}
+
+.rules-content {
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    text-align: left;
+}
+
+.rules-block.active .rules-content {
+    padding: 20px;
+}
+
+.rule-item {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.light-theme .rule-item {
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.rule-item:before {
+    content: "•";
+    color: rgb(var(--primary-color));
+    font-size: 1.5em;
+    position: absolute;
+    left: 0;
+    top: -6px;
+}
+
+.rule-subitem {
+    color: rgba(var(--primary-color), 0.9);
+    margin-left: 20px;
+    margin-bottom: 5px;
+    padding-left: 15px;
+    position: relative;
+}
+
+.rule-subitem:before {
+    content: "* ";
+    color: #fcb738;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.rules-content a {
+    color: rgb(var(--primary-color));
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.rules-content a:hover {
+    opacity: 0.8;
+}
+
+.rule-last {
+    color: #707070;
+    text-decoration: underline;
+    text-align: left;
+    display: block;
+    margin-top: 15px;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+    padding: 12px 24px;
+    background-color: rgba(var(--primary-color), 0.1);
+    color: rgb(var(--primary-color));
+    border: 1px solid rgb(var(--primary-color));
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.back-btn:hover {
+    background-color: rgb(var(--primary-color));
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--primary-color), 0.3);
+}
+
+.loading {
+    color: rgb(var(--primary-color));
+    font-size: 1.2em;
+    padding: 20px;
+}
+
+.error {
+    color: #ff6b6b;
+    font-size: 1.2em;
+    padding: 20px;
+    border: 1px solid #ff6b6b;
+    border-radius: 8px;
+    background-color: rgba(255, 107, 107, 0.1);
+}

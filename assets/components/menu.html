@@ -1,0 +1,381 @@
+<!-- Кнопка вызова меню -->
+<button class="menu-btn" id="menuBtn">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Боковое меню -->
+<div class="menu-sidebar" id="menuSidebar">
+    <div class="sidebar-header">
+        <h2>Меню</h2>
+        <button class="close-btn" id="closeBtn">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+    </div>
+
+    <div class="menu-items">
+        <div class="menu-item" id="openProfileModal">
+            <i class="fas fa-user"></i>
+            <span>Информация о профиле</span>
+        </div>
+
+        <div class="menu-item" id="openSkillsModal">
+            <i class="fas fa-code"></i>
+            <span>Навыки и работа</span>
+        </div>
+
+        <div class="menu-item" id="openProjectsModal">
+            <i class="fas fa-project-diagram"></i>
+            <span>Мои проекты</span>
+        </div>
+
+        <!-- Ссылки на другие страницы -->
+        <div class="menu-item" onclick="window.location.href='/terminal'">
+            <i class="fas fa-terminal"></i>
+            <span>Терминал</span>
+        </div>
+        <div class="menu-item" onclick="window.location.href='/minecraft-server'">
+            <i class="block-icon"></i>
+            <span>Мои сервера Minecraft</span>
+        </div>
+
+        <div class="menu-item" onclick="window.location.href='/chat-rules'">
+            <i class="fas fa-book"></i>
+            <span>Правила чата</span>
+        </div>
+
+        <div class="menu-item" id="openAchievementsModal">
+            <i class="fas fa-trophy"></i>
+            <span>Ваши достижения</span>
+        </div>
+    </div>
+
+    <div class="menu-footer">
+        <div class="menu-item" id="openSettingsModal">
+            <i class="fas fa-cog"></i>
+            <span>Настройки</span>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: Профиль -->
+<div class="modal" id="profileModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Информация о профиле</h3>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="info-card">
+                <div class="info-label">Имя</div>
+                <div class="info-value">Dont65</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Возраст</div>
+                <div class="info-value"><span id="age"></span></div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">День рождения через:</div>
+                <div class="info-value" id="birthdayCountdown">
+                    загрузка...
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Местоположение</div>
+                <div class="info-value">Россия</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: Навыки -->
+<div class="modal" id="skillsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Навыки и работа</h3>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="info-card">
+                <div class="info-label">Род занятий</div>
+                <div class="info-value">Студент / Разработчик</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">
+                    <i class="crutch-icon"></i> Навыки программирования
+                </div>
+            </div>
+            <div class="info-label">
+                <div class="skills-container">
+                    <span class="skill"><i class="python-icon"></i> Python</span>
+                    <span class="skill"><i class="html-icon"></i> HTML/CSS</span>
+                    <span class="skill"><i class="javascript-icon"></i> JavaScript</span>
+                    <span class="skill"><i class="java-icon"></i> Java</span>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Текущие проекты</div>
+                <div class="info-value">В разработке...</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Опыт</div>
+                <div class="info-value">Более 2 лет опыта программирования</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: Проекты -->
+<div class="modal" id="projectsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Мои проекты</h3>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="projects-container">
+                <a href="https://t.me/dont_65bot" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-robot"></i> Телеграм бот</div>
+                    <div class="project-description">Бот для обратной связи со мной</div>
+                </a>
+                <a href="https://github.com/Dont65/game_case" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-gamepad"></i> Игра на python (Case)</div>
+                    <div class="project-description">Симулятор кейсов на Python</div>
+                </a>
+                <a href="/terminal" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-terminal"></i> Терминал</div>
+                    <div class="project-description">Веб-терминал в браузере</div>
+                </a>
+                <a href="/old" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-history"></i> Старая версия</div>
+                    <div class="project-description">Архивная версия сайта</div>
+                </a>
+                <a href="https://github.com/Dont65/tgmail_bot" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-envelope"></i> TGMail Bot</div>
+                    <div class="project-description">Бот для получения Email в Telegram</div>
+                </a>
+                <a href="https://github.com/Dont65/dontrp" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-scroll"></i> DontRP (1.16.5)</div>
+                    <div class="project-description">Плагин Minecraft на РП команды</div>
+                </a>
+                <a href="https://github.com/Dont65/ClickToMe" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-hand-pointer"></i> ClickToMe (1.16.5)</div>
+                    <div class="project-description">Меню игрока при клике на него</div>
+                </a>
+                <a href="https://github.com/Dont65/dontpass" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-passport"></i> DontPass (1.16.5)</div>
+                    <div class="project-description">Плагин на настраиваемые паспорта</div>
+                </a>
+                <a href="https://github.com/Dont65/Game-D-D" class="project-card" target="_blank">
+                    <div class="project-title"><i class="fas fa-dice-d20"></i> Game D&D</div>
+                    <div class="project-description">Вайпкодинг игра по мотивам D&D</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: Достижения -->
+<div class="modal" id="achievementsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Ваши достижения</h3>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="achievements-container" id="achievementsContainer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: Настройки -->
+<div class="modal" id="settingsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Настройки</h3>
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="settings-container">
+                <div class="settings-category">
+                    <div class="settings-category-title">
+                        <i class="fas fa-palette"></i>
+                        <span>Внешний вид</span>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-sun"></i>
+                            <span>Светлая тема</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-fill-drip"></i>
+                            <span>Цветовой акцент</span>
+                        </div>
+                        <div class="color-options" id="colorOptions">
+                            <div class="color-option" style="background-color: rgb(42, 171, 238);" data-color="42, 171, 238"></div>
+                            <div class="color-option" style="background-color: rgb(88, 101, 242);" data-color="88, 101, 242"></div>
+                            <div class="color-option" style="background-color: rgb(87, 242, 135);" data-color="87, 242, 135"></div>
+                            <div class="color-option" style="background-color: rgb(254, 231, 92);" data-color="254, 231, 92"></div>
+                            <div class="color-option" style="background-color: rgb(235, 69, 158);" data-color="235, 69, 158"></div>
+                            <div class="color-option" style="background-color: rgb(237, 66, 69);" data-color="237, 66, 69"></div>
+                            <div class="color-option" style="background-color: rgb(155, 89, 182);" data-color="155, 89, 182"></div>
+                            <div class="color-option" style="background-color: rgb(230, 126, 34);" data-color="230, 126, 34"></div>
+                            <div class="color-option" style="background-color: rgb(255, 255, 255);" data-color="255, 255, 255"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-category">
+                    <div class="settings-category-title">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <span>Интерактив</span>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-eraser"></i>
+                            <span>Курсор-ластик</span>
+                        </div>
+                        <div class="select-wrapper" style="width: auto; min-width: 150px">
+                            <select id="cursorEraserSelect">
+                                <option value="none">Нет</option>
+                                <option value="warm">Теплый (Снег)</option>
+                                <option value="antiholiday">Анти-праздник (Конфетти)</option>
+                                <option value="cleanup">Уборка (Всё)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-note">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Взаимодействие курсора с частицами (снег/конфетти) на фоне.</span>
+                    </div>
+                </div>
+
+                <div class="settings-category">
+                    <div class="settings-category-title">
+                        <i class="fas fa-image"></i>
+                        <span>Обои</span>
+                    </div>
+                    <div class="wallpapers-grid" id="wallpapersGrid"></div>
+                </div>
+
+                <div class="settings-category" id="developerSettingsCategory" style="display: none">
+                    <div class="settings-category-title">
+                        <i class="fas fa-tools"></i>
+                        <span>Разработчик</span>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-snowflake"></i>
+                            <span>Принудительный снег</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="snowToggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-gift"></i>
+                            <span>Принудительное конфетти</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="confettiToggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>Тема иконок</span>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="iconPackSelect">
+                                <option value="auto">Автоматически</option>
+                                <option value="default">Стандартные</option>
+                                <option value="halloween">Хэллоуин</option>
+                                <option value="newyear">Новый год</option>
+                                <option value="birthday">День рождения</option>
+                                <option value="valentines">День влюбленных</option>
+                                <option value="defenders">23 Февраля</option>
+                                <option value="womens">8 Марта</option>
+                                <option value="space">День космонавтики</option>
+                                <option value="victory">День Победы</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-bug"></i>
+                            <span>Glitch-режим</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="glitchToggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-note" style="color: #ff6666">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Интенсивные визуальные эффекты! Может вызвать эпилепсию.</span>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <i class="fas fa-braille"></i>
+                            <span>Версия для слабовидящих</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="brailleToggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="developer-info">
+                        <div class="info-item">
+                            <h4>System Info</h4>
+                            <p id="currentTime">--:--</p>
+                            <p id="currentDate">--.--.----</p>
+                        </div>
+                    </div>
+
+                    <div class="developer-config-section">
+                        <button id="openConfigBtn" class="dev-config-btn">
+                            <i class="fas fa-file-code"></i> Открыть конфиг (dont65.conf)
+                        </button>
+                        <div id="configEditorContainer" class="config-editor-container">
+                            <div class="config-header">
+                                <span><i class="fas fa-terminal"></i> dont65.conf</span>
+                                <button id="closeConfigBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <textarea id="configTextarea" spellcheck="false"></textarea>
+                            <div class="config-actions">
+                                <button id="resetConfigBtn">Сбросить</button>
+                                <button id="applyConfigBtn">Применить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

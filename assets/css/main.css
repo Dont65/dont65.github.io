@@ -1,0 +1,9 @@
+@import url('./global/global.css');
+@import url('./pages/home.css');
+@import url('./components/menu.css');
+@import url('./components/modals.css');
+@import url('./components/settings.css');
+@import url('./components/icons.css');
+@import url('./components/player.css');
+@import url('./effects/visuals.css');
+@import url('./effects/glitch.css');

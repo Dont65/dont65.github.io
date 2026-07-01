@@ -1,0 +1,26 @@
+.avatar-container { display: flex; flex-direction: column; align-items: center; cursor: pointer; margin-bottom: 24px; }
+.avatar { width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid rgba(var(--primary-color), 0.5); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease, border-color 0.3s; }
+.avatar:hover { transform: scale(1.05); border-color: rgba(var(--primary-color), 1); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.username { font-size: 32px; font-weight: 500; margin-top: 16px; }
+.age { font-size: 16px; opacity: 0.7; margin-top: 4px; transition: color 0.3s; }
+.age:hover { color: rgb(var(--primary-color)); opacity: 1; }
+
+.quote-container { background-color: rgba(var(--primary-color), 0.1); border-radius: var(--border-radius-m); padding: 20px; margin: 24px 0; position: relative; overflow: hidden; }
+.quote-timer-bar { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background-color: rgb(var(--primary-color)); transform-origin: center; transform: scaleX(1); will-change: transform; }
+.quote { font-style: italic; font-size: 16px; line-height: 1.5; margin: 0; }
+.quote-author { margin-top: 8px; font-size: 14px; opacity: 0.8; text-align: right; }
+.refresh-quote-btn { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: inherit; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+body.light-theme .refresh-quote-btn { border-color: rgba(0, 0, 0, 0.1); }
+.refresh-quote-btn:hover { background-color: rgba(var(--primary-color), 0.2); }
+.refresh-quote-btn.rotating i { animation: rotate 1s linear; }
+@keyframes rotate { 100% { transform: rotate(360deg); } }
+
+.social-icons { display: flex; justify-content: center; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
+.social-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+.social-icon:hover { transform: translateY(-4px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); }
+.discord-icon { background-color: #5865f2; }
+.telegram-icon { background-color: #24a1de; }
+.steam-icon { background-color: #171a21; }
+.github-icon { background-color: #24292e; }
+.namemc-link { background-color: #000000; }
