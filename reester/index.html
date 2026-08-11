@@ -7,14 +7,12 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-            rel="stylesheet"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        
+        <link rel="stylesheet" href="/assets/css/pages/chat-rules.css" />
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="/assets/scripts/site-warning.js" defer></script>
 
         <style>
             :root {
@@ -22,166 +20,41 @@
                 --border-radius-l: 28px;
                 --border-radius-m: 16px;
             }
-
             body {
                 font-family: "Roboto", sans-serif;
-                margin: 0;
-                padding: 40px 20px;
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
+                margin: 0; padding: 40px 20px;
+                display: flex; justify-content: center; align-items: flex-start;
                 min-height: 100vh;
-                background-color: #121212;
-                /* Если этот файл лежит рядом с index.html, фон подтянется. Если нет - путь нужно будет поправить */
-                background-image: url("../assets/background/background.jpg");
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                color: #ffffff;
-                box-sizing: border-box;
+                background-color: #121212; background-size: cover; background-position: center; background-attachment: fixed;
+                color: #ffffff; box-sizing: border-box;
             }
+            body::before { content: ""; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.4); z-index: -1; }
+            body.light-theme { color: #1a1c1e; }
+            body.light-theme::before { background-color: rgba(255, 255, 255, 0.4); }
 
-            body::before {
-                content: "";
-                position: fixed;
-                inset: 0;
-                background-color: rgba(0, 0, 0, 0.4);
-                z-index: -1;
-            }
-
-            /* Основной контейнер со стекломорфизмом */
             .container {
-                width: 100%;
-                max-width: 800px;
-                padding: 40px;
+                width: 100%; max-width: 900px; padding: 40px;
                 background-color: rgba(30, 30, 30, 0.75);
                 backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
                 border-radius: var(--border-radius-l);
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                animation: float 6s ease-in-out infinite;
             }
+            body.light-theme .container { background-color: rgba(255, 255, 255, 0.75); border-color: rgba(0, 0, 0, 0.1); }
 
-            @keyframes float {
-                0% {
-                    transform: translateY(0px);
-                }
-                50% {
-                    transform: translateY(-10px);
-                }
-                100% {
-                    transform: translateY(0px);
-                }
-            }
+            .block-header { text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+            body.light-theme .block-header { border-bottom-color: rgba(0, 0, 0, 0.1); }
+            .block-header h1 { margin: 0 0 12px 0; font-size: 32px; font-weight: 700; color: rgb(var(--primary-color)); }
 
-            /* Заголовки (head/subhead) */
-            .block-header {
-                text-align: center;
-                margin-bottom: 32px;
-                padding-bottom: 24px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
+            .cards-grid { display: flex; flex-direction: column; gap: 16px; }
+            .info-card { background-color: rgba(255, 255, 255, 0.05); padding: 24px; border-radius: var(--border-radius-m); text-align: left; }
+            body.light-theme .info-card { background-color: rgba(0, 0, 0, 0.05); }
+            .info-label { font-weight: 700; color: rgb(var(--primary-color)); font-size: 20px; margin-bottom: 12px; }
 
-            .block-header h1 {
-                margin: 0 0 12px 0;
-                font-size: 32px;
-                font-weight: 700;
-                color: rgb(var(--primary-color));
-            }
-
-            .block-header h2 {
-                margin: 0;
-                font-size: 18px;
-                color: rgba(255, 255, 255, 0.7);
-                font-weight: 400;
-            }
-
-            /* Сетка для контента */
-            .cards-grid {
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            /* Карточки контента (title/text) в стиле .info-card */
-            .info-card {
-                background-color: rgba(255, 255, 255, 0.05);
-                padding: 24px;
-                border-radius: var(--border-radius-m);
-                text-align: left;
-                transition:
-                    transform 0.2s,
-                    background-color 0.2s,
-                    border-color 0.2s;
-                border: 1px solid transparent;
-            }
-
-            .info-card:hover {
-                transform: translateY(-4px);
-                background-color: rgba(var(--primary-color), 0.1);
-                border-color: rgba(var(--primary-color), 0.3);
-            }
-
-            .info-label {
-                font-weight: 700;
-                color: rgb(var(--primary-color));
-                font-size: 20px;
-                margin-bottom: 12px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .info-value {
-                color: rgba(255, 255, 255, 0.9);
-                line-height: 1.6;
-                font-size: 16px;
-            }
-
-            /* Статусные сообщения */
-            .status-message {
-                text-align: center;
-                font-size: 18px;
-                color: rgba(255, 255, 255, 0.7);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
-
-            .status-message i {
-                font-size: 40px;
-                color: rgb(var(--primary-color));
-            }
-
-            .error i {
-                color: #ff5555;
-            }
-            .error {
-                color: #ff5555;
-            }
-
-            /* Кнопка "назад" */
-            .back-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                color: rgba(255, 255, 255, 0.7);
-                text-decoration: none;
-                margin-bottom: 24px;
-                transition: 0.2s;
-                font-size: 14px;
-            }
-            .back-btn:hover {
-                color: rgb(var(--primary-color));
-            }
-
-            @media (max-width: 600px) {
-                .container {
-                    padding: 20px;
-                }
-            }
+            .status-message { text-align: center; font-size: 18px; margin-top: 50px; }
+            .error { color: #ff5555; }
+            .back-btn { display: inline-flex; align-items: center; gap: 8px; color: rgb(var(--primary-color)); text-decoration: none; margin-bottom: 24px; font-weight: bold; padding: 10px 20px; background: rgba(var(--primary-color), 0.1); border-radius: 12px; border: 1px solid rgb(var(--primary-color)); transition: 0.3s; }
+            .back-btn:hover { background: rgb(var(--primary-color)); color: white; }
         </style>
     </head>
     <body>
@@ -189,6 +62,19 @@
             <a href="#" onclick="history.back(); return false;" class="back-btn">
                 <i class="fas fa-arrow-left"></i> Назад
             </a>
+
+            <!-- ПОИСК С ПОДСКАЗКАМИ (НОВЫЙ ДИЗАЙН) -->
+            <div class="search-wrapper" id="searchBox" style="display: none;">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Поиск по документу..." autocomplete="off">
+                    <button class="search-action-btn" id="searchBtn">
+                        Поиск <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+
             <div id="app">
                 <div class="status-message" id="status">
                     <i class="fas fa-circle-notch fa-spin"></i>
@@ -198,93 +84,153 @@
         </div>
 
         <script>
+            function initSmartSearch(container) {
+                const searchInput = document.getElementById('searchInput');
+                const searchBtn = document.getElementById('searchBtn');
+                const suggestionsBox = document.getElementById('searchSuggestions');
+                
+                const rawText = container.textContent || "";
+                const words = rawText.match(/[а-яА-Яa-zA-ZёЁ]+/g) || []; 
+                const uniqueWords = Array.from(new Set(words.map(w => w.toLowerCase()))).filter(w => w.length > 2);
+
+                function performSearch(term) {
+                    suggestionsBox.style.display = 'none';
+
+                    container.querySelectorAll('mark.search-highlight').forEach(mark => {
+                        const parent = mark.parentNode;
+                        parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                        parent.normalize();
+                    });
+
+                    if (!term) return;
+
+                    const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`(${escapedTerm})`, 'gi');
+                    let firstMatch = null;
+                    const nodesToReplace = [];
+
+                    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+                    while (walker.nextNode()) {
+                        const node = walker.currentNode;
+                        if (node.parentNode.nodeName === 'MARK' || node.parentNode.nodeName === 'SCRIPT') continue;
+                        if (regex.test(node.nodeValue)) nodesToReplace.push(node);
+                    }
+
+                    nodesToReplace.forEach(node => {
+                        const span = document.createElement('span');
+                        span.innerHTML = node.nodeValue.replace(regex, '<mark class="search-highlight">$1</mark>');
+                        while (span.firstChild) {
+                            const child = span.firstChild;
+                            node.parentNode.insertBefore(child, node);
+                            if (!firstMatch && child.nodeName === 'MARK') firstMatch = child;
+                        }
+                        node.parentNode.removeChild(node);
+                    });
+
+                    if (firstMatch) {
+                        setTimeout(() => {
+                            firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
+                    }
+                }
+
+                searchInput.addEventListener('input', (e) => {
+                    const val = e.target.value.toLowerCase().trim();
+                    suggestionsBox.innerHTML = '';
+                    if (val.length < 2) { 
+                        suggestionsBox.style.display = 'none'; 
+                        if (!val) performSearch(""); 
+                        return; 
+                    }
+
+                    const matches = uniqueWords.filter(w => w.includes(val)).slice(0, 5);
+                    if (matches.length > 0) {
+                        matches.forEach(match => {
+                            const div = document.createElement('div');
+                            div.className = 'suggestion-item';
+                            div.textContent = match;
+                            div.addEventListener('click', () => {
+                                searchInput.value = match;
+                                performSearch(match);
+                            });
+                            suggestionsBox.appendChild(div);
+                        });
+                        suggestionsBox.style.display = 'block';
+                    } else {
+                        suggestionsBox.style.display = 'none';
+                    }
+                });
+
+                searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') performSearch(searchInput.value.trim()); });
+                searchBtn.addEventListener('click', () => performSearch(searchInput.value.trim()));
+                document.addEventListener('click', (e) => { if (!e.target.closest('.search-container')) suggestionsBox.style.display = 'none'; });
+            }
+
             document.addEventListener("DOMContentLoaded", () => {
                 const appDiv = document.getElementById("app");
-                const statusDiv = document.getElementById("status");
-
-                // Если в localStorage сохранен цвет с главной страницы, применяем его
+                const searchBox = document.getElementById("searchBox");
+                
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "light") document.body.classList.add("light-theme");
                 const savedColor = localStorage.getItem("primaryColor");
-                const savedWallpaper =
-                    localStorage.getItem("wallpaper") || "background.jpg";
-                document.body.style.backgroundImage = `url('../assets/background/${savedWallpaper}')`;
-                if (savedColor) {
-                    document.documentElement.style.setProperty(
-                        "--primary-color",
-                        savedColor,
-                    );
-                }
+                if (savedColor) document.documentElement.style.setProperty("--primary-color", savedColor);
+                const savedWallpaper = localStorage.getItem("wallpaper") || "background.jpg";
+                document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const fileName = urlParams.get("file");
 
                 if (!fileName) {
-                    appDiv.innerHTML = `
-                    <div class="status-message error">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span><b>Ошибка:</b> Не указан параметр file.</span>
-                        <span style="font-size: 14px; opacity: 0.7;">Пример использования: ?file=file.json</span>
-                    </div>`;
+                    appDiv.innerHTML = `<div class="status-message error"><i class="fas fa-exclamation-triangle"></i><span>Не указан параметр file.</span></div>`;
                     return;
                 }
 
+                const fileExt = fileName.split('.').pop().toLowerCase();
+
                 fetch(fileName)
-                    .then((response) => {
-                        if (!response.ok)
-                            throw new Error(
-                                `Ошибка сервера (${response.status})`,
-                            );
-                        return response.json();
+                    .then(response => {
+                        if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
+                        return response.text();
                     })
-                    .then((data) => {
+                    .then(text => {
                         appDiv.innerHTML = "";
+                        searchBox.style.display = "block"; 
 
-                        // Создаем обертку-сетку для карточек
-                        const cardsGrid = document.createElement("div");
-                        cardsGrid.className = "cards-grid";
+                        if (fileExt === 'json') {
+                            const data = JSON.parse(text);
+                            const cardsGrid = document.createElement("div");
+                            cardsGrid.className = "cards-grid";
 
-                        data.forEach((item) => {
-                            if (
-                                item.head !== undefined ||
-                                item.subhead !== undefined
-                            ) {
-                                const headerBlock =
-                                    document.createElement("div");
-                                headerBlock.className = "block-header";
+                            data.forEach(item => {
+                                if (item.head !== undefined) {
+                                    const hd = document.createElement("div");
+                                    hd.className = "block-header";
+                                    hd.innerHTML = `<h1>${item.head}</h1>${item.subhead ? `<p style="opacity:0.8">${item.subhead}</p>` : ""}`;
+                                    appDiv.appendChild(hd);
+                                } else {
+                                    const cd = document.createElement("div");
+                                    cd.className = "info-card";
+                                    cd.innerHTML = `<div class="info-label"><i class="fas fa-bars-staggered"></i> ${item.title}</div><div>${item.text}</div>`;
+                                    cardsGrid.appendChild(cd);
+                                }
+                            });
+                            appDiv.appendChild(cardsGrid);
+                        } else if (fileExt === 'md') {
+                            const mdDiv = document.createElement("div");
+                            mdDiv.className = "info-card markdown-body";
+                            mdDiv.innerHTML = marked.parse(text);
+                            appDiv.appendChild(mdDiv);
+                        } else {
+                            const txtDiv = document.createElement("div");
+                            txtDiv.className = "info-card txt-body";
+                            txtDiv.innerHTML = `<pre>${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>`;
+                            appDiv.appendChild(txtDiv);
+                        }
 
-                                if (item.head)
-                                    headerBlock.innerHTML += `<h1>${item.head}</h1>`;
-                                if (item.subhead)
-                                    headerBlock.innerHTML += `<h2>${item.subhead}</h2>`;
-
-                                // Заголовки добавляем напрямую в app
-                                appDiv.appendChild(headerBlock);
-                            } else if (
-                                item.title !== undefined ||
-                                item.text !== undefined
-                            ) {
-                                const contentBlock =
-                                    document.createElement("div");
-                                contentBlock.className = "info-card";
-
-                                // Добавим иконку списка к заголовку для стиля
-                                if (item.title)
-                                    contentBlock.innerHTML += `<div class="info-label"><i class="fas fa-bars-staggered"></i> ${item.title}</div>`;
-                                if (item.text)
-                                    contentBlock.innerHTML += `<div class="info-value">${item.text}</div>`;
-
-                                // Карточки добавляем в сетку
-                                cardsGrid.appendChild(contentBlock);
-                            }
-                        });
-
-                        appDiv.appendChild(cardsGrid);
+                        initSmartSearch(appDiv);
                     })
-                    .catch((error) => {
-                        appDiv.innerHTML = `
-                        <div class="status-message error">
-                            <i class="fas fa-times-circle"></i>
-                            <span><b>Не удалось загрузить файл</b><br>${error.message}</span>
-                        </div>`;
+                    .catch(err => {
+                        appDiv.innerHTML = `<div class="status-message error"><i class="fas fa-times-circle"></i><span>Не удалось загрузить файл<br>${err.message}</span></div>`;
                     });
             });
         </script>

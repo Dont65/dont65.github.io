@@ -10,9 +10,10 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         
-        <!-- Глобальные стили -->
         <link rel="stylesheet" href="/assets/css/main.css" />
         <link rel="stylesheet" href="/assets/css/pages/chat-rules.css" />
+
+        <script src="/assets/scripts/site-warning.js" defer></script>
     </head>
     <body>
         <div id="hyprlandErrorBar" class="hyprland-error-bar"><span id="hyprlandErrorText"></span></div>
@@ -27,6 +28,18 @@
             <div class="header">
                 <h1><i class="fas fa-book"></i> Основные положения правил</h1>
                 <p>Обязательны к соблюдению всеми участниками сообщества</p>
+            </div>
+
+            <!-- СТРОКА ПОИСКА (НОВЫЙ ДИЗАЙН) -->
+            <div class="search-wrapper" id="searchBox">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Поиск по правилам..." autocomplete="off">
+                    <button class="search-action-btn" id="searchBtn">
+                        Поиск <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="search-suggestions" id="searchSuggestions"></div>
             </div>
 
             <div class="rules-accordion" id="rulesAccordion">
@@ -46,13 +59,10 @@
 
         <footer>© Dont65 | 2025 - 2026</footer>
 
-        <!-- СКРИПТЫ -->
         <script src="/assets/scripts/settings.js"></script>
         <script src="/assets/scripts/menu.js"></script>
         <script src="/assets/scripts/effects.js"></script>
         <script src="/assets/scripts/developer.js"></script>
-        
-        <!-- Скрипт логики самих правил -->
         <script src="/assets/scripts/pages/chat-rules.js"></script>
     </body>
 </html>

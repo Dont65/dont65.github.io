@@ -1,13 +1,7 @@
 function parseMarkdownLinks(text) {
     if (!text) return "";
-
-    let escaped = text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
+    let escaped = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-
     return escaped.replace(markdownLinkRegex, (match, text, url) => {
         const isExternal = url.startsWith("http://") || url.startsWith("https://");
         const targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
@@ -46,13 +40,11 @@ function renderRules(rulesData) {
     rulesData.blocks.forEach((block) => {
         const rulesBlock = document.createElement("div");
         rulesBlock.className = "rules-block";
-        if (block.id) rulesBlock.dataset.id = block.id;
-
-        const rulesHeader = document.createElement("div");
-        rulesHeader.className = "rules-header";
-        rulesHeader.innerHTML = `
-            <h2><i class="${block.icon || "fas fa-circle"}"></i> ${block.title}</h2>
-            <span class="rules-indicator"><i class="fas fa-chevron-right"></i></span>
+        rulesBlock.innerHTML = `
+            <div class="rules-header">
+                <h2><i class="${block.icon || "fas fa-circle"}"></i> ${block.title}</h2>
+                <span class="rules-indicator"><i class="fas fa-chevron-right"></i></span>
+            </div>
         `;
 
         const rulesContent = document.createElement("div");
@@ -62,7 +54,6 @@ function renderRules(rulesData) {
             block.items.forEach((item) => {
                 const ruleItem = document.createElement("div");
                 ruleItem.className = "rule-item";
-
                 const rawText = (item.id ? item.id + " " : "") + (item.text || "");
                 ruleItem.innerHTML = parseMarkdownLinks(rawText);
                 rulesContent.appendChild(ruleItem);
@@ -76,54 +67,164 @@ function renderRules(rulesData) {
                     });
                 }
             });
-        } else {
-            const emptyMessage = document.createElement("div");
-            emptyMessage.className = "rule-item";
-            emptyMessage.textContent = "Пункты правил отсутствуют.";
-            rulesContent.appendChild(emptyMessage);
         }
-
-        rulesBlock.appendChild(rulesHeader);
         rulesBlock.appendChild(rulesContent);
         accordionContainer.appendChild(rulesBlock);
     });
 
     initAccordion();
+    initSmartSearch(accordionContainer); // Запускаем индексацию поиска после рендера!
 }
 
 function showError(message) {
-    const accordionContainer = document.getElementById("rulesAccordion");
-    accordionContainer.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
+    document.getElementById("rulesAccordion").innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
 }
 
 function initAccordion() {
     const accordionBlocks = document.querySelectorAll(".rules-block");
-
     accordionBlocks.forEach((block) => {
         const header = block.querySelector(".rules-header");
         const content = block.querySelector(".rules-content");
-
         header.addEventListener("click", () => {
             const isActive = block.classList.contains("active");
-            
             accordionBlocks.forEach((otherBlock) => {
                 if (otherBlock.classList.contains("active")) {
                     otherBlock.classList.remove("active");
-                    const otherContent = otherBlock.querySelector(".rules-content");
-                    otherContent.style.maxHeight = "0";
+                    otherBlock.querySelector(".rules-content").style.maxHeight = "0";
                 }
             });
-
             if (!isActive) {
                 block.classList.add("active");
-                content.style.maxHeight = content.scrollHeight + 50 + "px";
+                content.style.maxHeight = content.scrollHeight + 500 + "px";
             }
         });
     });
 }
 
-// Запускаем напрямую, так как мы на странице правил
-// Надежный запуск скрипта страницы правил
+// ==== ЛОГИКА УМНОГО ПОИСКА ====
+function initSmartSearch(container) {
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const suggestionsBox = document.getElementById('searchSuggestions');
+    if (!searchInput || !container || !suggestionsBox) return;
+
+    // 1. Собираем уникальные слова из текста
+    const rawText = container.textContent || "";
+    // Извлекаем только буквы (русские и английские)
+    const words = rawText.match(/[а-яА-Яa-zA-ZёЁ]+/g) || []; 
+    const uniqueWords = Array.from(new Set(words.map(w => w.toLowerCase()))).filter(w => w.length > 2);
+
+    // Функция поиска и выделения (срабатывает только по нажатию Enter / кнопки)
+    function performSearch(term) {
+        suggestionsBox.style.display = 'none'; // прячем подсказки
+
+        // Очищаем старые маркеры
+        container.querySelectorAll('mark.search-highlight').forEach(mark => {
+            const parent = mark.parentNode;
+            parent.replaceChild(document.createTextNode(mark.textContent), mark);
+            parent.normalize();
+        });
+
+        if (!term) {
+            // Закрываем все вкладки, если поиск пуст
+            container.querySelectorAll('.rules-block.active').forEach(b => {
+                b.classList.remove('active');
+                b.querySelector('.rules-content').style.maxHeight = "0";
+            });
+            return;
+        }
+
+        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+        let firstMatch = null;
+        const nodesToReplace = [];
+
+        // Ищем только по текстовым узлам
+        const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            if (node.parentNode.nodeName === 'MARK' || node.parentNode.nodeName === 'SCRIPT') continue;
+            if (regex.test(node.nodeValue)) nodesToReplace.push(node);
+        }
+
+        nodesToReplace.forEach(node => {
+            const span = document.createElement('span');
+            span.innerHTML = node.nodeValue.replace(regex, '<mark class="search-highlight">$1</mark>');
+            while (span.firstChild) {
+                const child = span.firstChild;
+                node.parentNode.insertBefore(child, node);
+                if (!firstMatch && child.nodeName === 'MARK') firstMatch = child;
+            }
+            node.parentNode.removeChild(node);
+        });
+
+        if (firstMatch) {
+            // Открываем аккордеон, где найдено слово
+            const allMarks = container.querySelectorAll('mark.search-highlight');
+            allMarks.forEach(m => {
+                const block = m.closest('.rules-block');
+                if (block && !block.classList.contains('active')) {
+                    block.classList.add('active');
+                    const content = block.querySelector('.rules-content');
+                    content.style.maxHeight = content.scrollHeight + 500 + 'px';
+                }
+            });
+            // Прыгаем к первому совпадению
+            setTimeout(() => {
+                firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }
+
+    // Обработка подсказок при вводе
+    searchInput.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase().trim();
+        suggestionsBox.innerHTML = '';
+        
+        if (val.length < 2) {
+            suggestionsBox.style.display = 'none';
+            if (val.length === 0) performSearch(""); // очистка если стерли текст
+            return;
+        }
+
+        const matches = uniqueWords.filter(w => w.includes(val)).slice(0, 5); // берем топ 5 слов
+        
+        if (matches.length > 0) {
+            matches.forEach(match => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = match;
+                div.addEventListener('click', () => {
+                    searchInput.value = match;
+                    performSearch(match);
+                });
+                suggestionsBox.appendChild(div);
+            });
+            suggestionsBox.style.display = 'block';
+        } else {
+            suggestionsBox.style.display = 'none';
+        }
+    });
+
+    // Триггеры самого поиска
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            performSearch(searchInput.value.trim());
+        }
+    });
+
+    searchBtn.addEventListener('click', () => {
+        performSearch(searchInput.value.trim());
+    });
+
+    // Прятать подсказки при клике вне поиска
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-container')) {
+            suggestionsBox.style.display = 'none';
+        }
+    });
+}
+
 function initRulesPage() {
     if (document.getElementById("rulesAccordion")) {
         loadRules();
@@ -135,9 +236,8 @@ function initRulesPage() {
     }
 }
 
-// Проверяем, загрузилась ли уже страница
 if (document.readyState === 'loading') {
     document.addEventListener("DOMContentLoaded", initRulesPage);
 } else {
-    initRulesPage(); // Если уже загрузилась - запускаем сразу
+    initRulesPage();
 }

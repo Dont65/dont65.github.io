@@ -22,6 +22,11 @@ function applySavedSettings() {
     // Цвет
     const savedColor = localStorage.getItem("primaryColor") || "42, 171, 238";
     window.updatePrimaryColor(savedColor);
+
+    // Покачивание блока
+    if (localStorage.getItem("blockSway") === "off") {
+        document.body.classList.add("no-sway");
+    }
 }
 
 applySavedSettings();
@@ -33,6 +38,8 @@ document.addEventListener("menuLoaded", () => {
     initThemeSettings();
     initColorSettings();
     initWallpaperSettings();
+    initSwaySettings();
+    initSiteWarningSettings();
 });
 
 let themeToggleCounter = 0;
@@ -158,5 +165,44 @@ function initWallpaperSettings() {
         });
         
         grid.appendChild(div);
+    });
+}
+
+// =====================================================================
+// 3. ПОКАЧИВАНИЕ БЛОКА (Включение/выключение анимации float у .container)
+// =====================================================================
+function initSwaySettings() {
+    const swayToggle = document.getElementById("swayToggle");
+    if (!swayToggle) return;
+
+    swayToggle.checked = localStorage.getItem("blockSway") !== "off";
+
+    swayToggle.addEventListener("change", function () {
+        if (this.checked) {
+            document.body.classList.remove("no-sway");
+            localStorage.setItem("blockSway", "on");
+        } else {
+            document.body.classList.add("no-sway");
+            localStorage.setItem("blockSway", "off");
+        }
+        document.dispatchEvent(new Event("swayChanged"));
+    });
+}
+
+// =====================================================================
+// 4. ПРЕДУПРЕЖДЕНИЕ ПРИ ЗАХОДЕ НА САЙТ (Настройка видимости)
+// =====================================================================
+function initSiteWarningSettings() {
+    const warningToggle = document.getElementById("siteWarningToggle");
+    if (!warningToggle) return;
+
+    warningToggle.checked = localStorage.getItem("siteWarningDismissed") !== "true";
+
+    warningToggle.addEventListener("change", function () {
+        if (this.checked) {
+            localStorage.removeItem("siteWarningDismissed");
+        } else {
+            localStorage.setItem("siteWarningDismissed", "true");
+        }
     });
 }

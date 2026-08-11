@@ -202,3 +202,184 @@ body.light-theme .rule-item {
     border-radius: 8px;
     background-color: rgba(255, 107, 107, 0.1);
 }
+
+/* ==== СТИЛИ ПОИСКА (НОВЫЙ ДИЗАЙН) ==== */
+.search-wrapper {
+    position: relative;
+    margin-bottom: 25px;
+    width: 100%;
+    z-index: 100;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(var(--primary-color), 0.1);
+    border-radius: 30px;
+    padding: 6px 6px 6px 20px;
+    transition: all 0.3s ease;
+}
+
+body.light-theme .search-container {
+    background-color: rgba(240, 240, 240, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.search-container:focus-within {
+    border-color: rgb(var(--primary-color));
+    box-shadow: 0 0 10px rgba(var(--primary-color), 0.3);
+    background-color: rgba(30, 30, 30, 0.9);
+}
+
+body.light-theme .search-container:focus-within {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.search-icon {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    margin-right: 12px;
+}
+
+body.light-theme .search-icon {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.search-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    min-width: 0;
+    padding: 8px 0;
+}
+
+body.light-theme .search-input {
+    color: #000;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+body.light-theme .search-input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.search-action-btn {
+    background-color: rgba(101, 101, 101, 0.15);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+body.light-theme .search-action-btn {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #000;
+}
+
+.search-action-btn:hover {
+    background-color: rgb(var(--primary-color));
+    color: #fff;
+}
+
+.search-action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Подсказки */
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background-color: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(var(--primary-color), 0.5);
+    border-radius: 16px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    text-align: left;
+}
+
+body.light-theme .search-suggestions {
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.suggestion-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.light-theme .suggestion-item {
+    color: #000;
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+.suggestion-item:hover {
+    background-color: rgba(var(--primary-color), 0.2);
+    color: rgb(var(--primary-color));
+}
+
+/* Выделение */
+mark.search-highlight {
+    background-color: rgba(var(--primary-color), 0.6);
+    color: white;
+    border-radius: 4px;
+    padding: 0 2px;
+    box-shadow: 0 0 5px rgba(var(--primary-color), 0.8);
+}
+
+body.light-theme mark.search-highlight {
+    color: #000;
+}
+
+/* Стили для Реестра (MD и TXT) */
+.markdown-body, .txt-body {
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+    color: rgb(var(--primary-color));
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.markdown-body p, .markdown-body li {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.light-theme .markdown-body p, body.light-theme .markdown-body li {
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.markdown-body pre, .txt-body pre {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+body.light-theme .markdown-body pre, body.light-theme .txt-body pre {
+    background: rgba(255, 255, 255, 0.5);
+}
