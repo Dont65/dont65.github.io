@@ -1,32 +1,5 @@
-const birthDate = new Date("2008-01-02");
-const formattedBirthDate = "02.01.2008";
-
-function calculateAge() {
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const month = today.getMonth() - birthDate.getMonth();
-    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-    }
-    return age;
-}
-
-function updateAgeDisplay() {
-    const ageElement = document.getElementById("age");
-    if (!ageElement) return;
-
-    const calculatedAge = calculateAge();
-    ageElement.textContent = calculatedAge;
-    ageElement.dataset.hoverText = formattedBirthDate;
-
-    ageElement.addEventListener("mouseover", () => {
-        ageElement.textContent = ageElement.dataset.hoverText;
-    });
-
-    ageElement.addEventListener("mouseout", () => {
-        ageElement.textContent = calculatedAge;
-    });
-}
+// Возраст и счётчик до ДР теперь считаются в assets/scripts/profile-info.js —
+// это общий скрипт, который работает на любой странице с меню, а не только тут.
 
 const quotes = [
     { text: "Бог дал нам крылья, но мы их отрезали", author: "Неизвестный" },
@@ -114,43 +87,8 @@ function updateQuote() {
     }
 }
 
-function updateBirthdayCountdown() {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    let nextBirthday = new Date(currentYear, 0, 2);
-    if (now > nextBirthday) nextBirthday.setFullYear(currentYear + 1);
-    const diff = nextBirthday - now;
-    
-    const countdownEl = document.getElementById("birthdayCountdown");
-    if(!countdownEl) return;
-
-    if (diff <= 0) {
-        countdownEl.textContent = "🎉 С Днем Рождения! 🎉";
-        return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    let countdownStr = "";
-    if (days > 0) countdownStr += `${days}д `;
-    if (hours > 0 || days > 0) countdownStr += `${hours}ч `;
-    if (minutes > 0 || hours > 0 || days > 0) countdownStr += `${minutes}м `;
-    countdownStr += `${seconds}с`;
-
-    countdownEl.textContent = countdownStr;
-}
-
 document.addEventListener("menuLoaded", () => {
-    updateAgeDisplay();
     updateQuote();
-    
-    if (document.getElementById("birthdayCountdown")) {
-        updateBirthdayCountdown();
-        setInterval(updateBirthdayCountdown, 1000);
-    }
 
     const refreshQuoteBtn = document.getElementById("refreshQuoteBtn");
     if (refreshQuoteBtn) {

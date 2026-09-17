@@ -2,7 +2,7 @@
 <html lang="ru">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
         <title>Dont65 | Просмотр реестра</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -93,7 +93,18 @@
                 const words = rawText.match(/[а-яА-Яa-zA-ZёЁ]+/g) || []; 
                 const uniqueWords = Array.from(new Set(words.map(w => w.toLowerCase()))).filter(w => w.length > 2);
 
-                function performSearch(term) {
+                function updateSearchUrl(term) {
+                    const url = new URL(window.location);
+                    if (term) {
+                        url.searchParams.set('search', term);
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+                    history.replaceState(null, '', url);
+                }
+
+                function performSearch(term, skipUrlUpdate) {
+                    if (!skipUrlUpdate) updateSearchUrl(term);
                     suggestionsBox.style.display = 'none';
 
                     container.querySelectorAll('mark.search-highlight').forEach(mark => {
@@ -164,6 +175,13 @@
                 searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') performSearch(searchInput.value.trim()); });
                 searchBtn.addEventListener('click', () => performSearch(searchInput.value.trim()));
                 document.addEventListener('click', (e) => { if (!e.target.closest('.search-container')) suggestionsBox.style.display = 'none'; });
+
+                // Если в ссылке уже есть ?search=..., подставляем и сразу ищем
+                const initialTerm = new URLSearchParams(window.location.search).get('search');
+                if (initialTerm) {
+                    searchInput.value = initialTerm;
+                    performSearch(initialTerm, true);
+                }
             }
 
             document.addEventListener("DOMContentLoaded", () => {

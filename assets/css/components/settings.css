@@ -40,7 +40,7 @@ body.light-theme .color-option.selected { border-color: #333; }
 .developer-info h4 { margin-bottom: 8px; color: rgb(var(--primary-color)); }
 .developer-info p { margin: 4px 0; font-size: 0.9em; opacity: 0.8; }
 
-.hyprland-error-bar { position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(255, 51, 51, 0.95); color: white; padding: 12px 24px; font-family: monospace; font-size: 14px; font-weight: bold; z-index: 999999; transform: translateY(-100%); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); display: flex; align-items: center; gap: 12px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
+.hyprland-error-bar { position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(255, 51, 51, 0.95); color: white; padding: calc(12px + env(safe-area-inset-top)) 24px 12px; font-family: monospace; font-size: 14px; font-weight: bold; z-index: 999999; transform: translateY(-100%); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); display: flex; align-items: center; gap: 12px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); cursor: pointer; }
 .hyprland-error-bar.show { transform: translateY(0); }
 
 .developer-config-section { margin-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 16px; }

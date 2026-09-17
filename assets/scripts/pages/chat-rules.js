@@ -114,8 +114,20 @@ function initSmartSearch(container) {
     const words = rawText.match(/[а-яА-Яa-zA-ZёЁ]+/g) || []; 
     const uniqueWords = Array.from(new Set(words.map(w => w.toLowerCase()))).filter(w => w.length > 2);
 
+    // Обновляем адресную строку без перезагрузки страницы
+    function updateSearchUrl(term) {
+        const url = new URL(window.location);
+        if (term) {
+            url.searchParams.set('search', term);
+        } else {
+            url.searchParams.delete('search');
+        }
+        history.replaceState(null, '', url);
+    }
+
     // Функция поиска и выделения (срабатывает только по нажатию Enter / кнопки)
-    function performSearch(term) {
+    function performSearch(term, skipUrlUpdate) {
+        if (!skipUrlUpdate) updateSearchUrl(term);
         suggestionsBox.style.display = 'none'; // прячем подсказки
 
         // Очищаем старые маркеры
@@ -223,6 +235,13 @@ function initSmartSearch(container) {
             suggestionsBox.style.display = 'none';
         }
     });
+
+    // Если в ссылке уже есть ?search=..., подставляем и сразу ищем
+    const initialTerm = new URLSearchParams(window.location.search).get('search');
+    if (initialTerm) {
+        searchInput.value = initialTerm;
+        performSearch(initialTerm, true);
+    }
 }
 
 function initRulesPage() {

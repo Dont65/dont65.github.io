@@ -162,6 +162,15 @@ function showHyprlandError(message) {
         text.textContent = message;
         bar.classList.add("show");
 
+        // Тап/клик по плашке сразу закрывает её, не дожидаясь таймера
+        if (!bar.dataset.dismissBound) {
+            bar.addEventListener("click", () => {
+                bar.classList.remove("show");
+                clearTimeout(hyprlandErrorTimeout);
+            });
+            bar.dataset.dismissBound = "true";
+        }
+
         clearTimeout(hyprlandErrorTimeout);
         hyprlandErrorTimeout = setTimeout(() => {
             bar.classList.remove("show");

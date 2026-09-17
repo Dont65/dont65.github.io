@@ -251,11 +251,14 @@ body.light-theme .search-icon {
     background: transparent;
     border: none;
     color: #fff;
-    font-size: 16px;
+    font-size: 16px; /* держим >=16px, иначе iOS Safari зумит страницу при фокусе */
     font-family: inherit;
     outline: none;
     min-width: 0;
     padding: 8px 0;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0; /* сбрасываем скругление/тень, которые iOS ставит по умолчанию */
 }
 
 body.light-theme .search-input {
@@ -284,6 +287,9 @@ body.light-theme .search-input::placeholder {
     gap: 8px;
     transition: all 0.2s ease;
     white-space: nowrap;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation; /* убирает задержку тапа 300мс на iOS */
 }
 
 body.light-theme .search-action-btn {
@@ -311,8 +317,10 @@ body.light-theme .search-action-btn {
     border-radius: 16px;
     max-height: 200px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: none;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     text-align: left;
 }

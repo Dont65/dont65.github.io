@@ -1,6 +1,6 @@
-.modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 500; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); z-index: 500; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
 .modal.active { opacity: 1; pointer-events: all; }
-.modal-content { background-color: rgba(30, 30, 30, 0.95); width: 90%; max-width: 560px; max-height: 85vh; border-radius: 28px; padding: 24px; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); overflow-y: auto; border: 1px solid rgba(255, 255, 255, 0.1); }
+.modal-content { background-color: rgba(30, 30, 30, 0.95); width: 90%; max-width: 560px; max-height: 85vh; max-height: 85dvh; border-radius: 28px; padding: 24px; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; border: 1px solid rgba(255, 255, 255, 0.1); }
 body.light-theme .modal-content { background-color: #fff; color: #1a1c1e; border: none; }
 .modal.active .modal-content { transform: scale(1); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
@@ -24,7 +24,7 @@ body.light-theme .project-card { background-color: rgba(0, 0, 0, 0.05); }
 .project-description { text-align: left; color: rgba(255, 255, 255, 0.9); }
 body.light-theme .project-description { color: rgba(0, 0, 0, 0.8); }
 
-.achievement-notification { position: fixed; bottom: 20px; right: 20px; background: #202020; color: white; padding: 16px 24px; border-radius: 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); transform: translateY(100px); opacity: 0; transition: all 0.5s; z-index: 1000; border-left: 4px solid rgb(var(--primary-color)); }
+.achievement-notification { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom)); right: calc(20px + env(safe-area-inset-right)); background: #202020; color: white; padding: 16px 24px; border-radius: 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); transform: translateY(100px); opacity: 0; transition: all 0.5s; z-index: 1000; border-left: 4px solid rgb(var(--primary-color)); }
 .achievement-notification.show { transform: translateY(0); opacity: 1; }
 .achievement-notification i { font-size: 24px; color: rgb(var(--primary-color)); }
 .achievement-card { display: flex; align-items: center; gap: 16px; padding: 12px; border-radius: 12px; margin-bottom: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid transparent; text-align: left; }
