@@ -73,8 +73,15 @@
             }
             .markdown-body blockquote > :first-child { margin-top: 0; }
             .markdown-body blockquote > :last-child { margin-bottom: 0; }
-            .markdown-body a { color: rgb(var(--primary-color)); text-decoration: none; border-bottom: 1px solid rgba(var(--primary-color), 0.4); transition: 0.2s; }
-            .markdown-body a:hover { border-bottom-color: rgb(var(--primary-color)); }
+            /* Ссылки — в цвет акцента (markdown, json-карточки, txt) */
+            .container a:not(.back-btn),
+            .container a:not(.back-btn):visited {
+                color: rgb(var(--primary-color)) !important;
+                text-decoration: none;
+                border-bottom: 1px solid rgba(var(--primary-color), 0.4);
+                transition: 0.2s;
+            }
+            .container a:not(.back-btn):hover { border-bottom-color: rgb(var(--primary-color)); }
 
             /* Заголовки + якоря */
             .markdown-body h1, .markdown-body h2, .markdown-body h3,
@@ -103,7 +110,8 @@
             .markdown-body h3:hover .heading-anchor, .markdown-body h4:hover .heading-anchor,
             .markdown-body h5:hover .heading-anchor, .markdown-body h6:hover .heading-anchor,
             .heading-anchor:focus { opacity: 1; }
-            .heading-anchor.copied { opacity: 1; color: #4ade80; }
+            .heading-anchor.copied { opacity: 1; }
+            .container .heading-anchor.copied:not(.back-btn) { color: #4ade80 !important; }
             @media (max-width: 700px) {
                 body { padding: 16px 10px; }
                 .container { padding: 20px; }
