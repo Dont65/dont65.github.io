@@ -134,37 +134,22 @@
             .table-wrap tbody tr { transition: background 0.15s; }
             .table-wrap tbody tr:hover { background: rgba(var(--primary-color), 0.12); }
 
-            /* Блоки кода */
-            .code-block {
-                margin: 20px 0; border-radius: var(--border-radius-m); overflow: hidden;
-                background: rgba(0, 0, 0, 0.4);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            body.light-theme .code-block { background: rgba(0, 0, 0, 0.06); border-color: rgba(0, 0, 0, 0.12); }
-            .code-header {
-                display: flex; align-items: center; justify-content: space-between;
-                padding: 8px 8px 8px 16px;
-                background: rgba(255, 255, 255, 0.06);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-                font-size: 13px;
-            }
-            body.light-theme .code-header { background: rgba(0, 0, 0, 0.05); border-bottom-color: rgba(0, 0, 0, 0.08); }
-            .code-lang { text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.65; font-weight: 500; }
+            /* Блоки кода: стиль <pre> не трогаем, только иконка копирования в углу */
+            .code-block { position: relative; }
             .copy-btn {
-                display: inline-flex; align-items: center; gap: 6px;
-                font: inherit; font-size: 13px; color: inherit; cursor: pointer;
-                padding: 6px 12px; border-radius: 8px;
-                background: transparent; border: 1px solid rgba(255, 255, 255, 0.18);
-                transition: 0.2s;
+                position: absolute; top: 8px; right: 8px; z-index: 2;
+                width: 32px; height: 32px; padding: 0;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 14px; color: #fff; cursor: pointer;
+                background: rgba(0, 0, 0, 0.45);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 8px;
+                opacity: 0; transition: opacity 0.2s, background 0.2s, border-color 0.2s;
             }
-            body.light-theme .copy-btn { border-color: rgba(0, 0, 0, 0.2); }
-            .copy-btn:hover { background: rgba(var(--primary-color), 0.2); border-color: rgb(var(--primary-color)); }
-            .copy-btn.copied { background: rgba(74, 222, 128, 0.2); border-color: #4ade80; color: #4ade80; }
-            .code-block pre { margin: 0; padding: 16px; overflow-x: auto; }
-            .code-block code, .markdown-body :not(pre) > code, .txt-body pre {
-                font-family: "JetBrains Mono", "Fira Code", Consolas, "Courier New", monospace;
-            }
-            .code-block code { font-size: 14px; line-height: 1.6; background: none; padding: 0; white-space: pre; }
+            .code-block:hover .copy-btn, .copy-btn:focus-visible, .copy-btn.copied { opacity: 1; }
+            .copy-btn:hover { background: rgba(var(--primary-color), 0.6); border-color: rgb(var(--primary-color)); }
+            .copy-btn.copied { background: rgba(74, 222, 128, 0.35); border-color: #4ade80; }
+            @media (hover: none) { .copy-btn { opacity: 0.8; } }
             .markdown-body :not(pre) > code {
                 font-size: 0.9em; padding: 2px 7px; border-radius: 6px;
                 background: rgba(var(--primary-color), 0.15);
@@ -290,40 +275,36 @@
                     wrap.appendChild(table);
                 });
 
-                // 4) Блоки кода с кнопкой «Копировать»
+                // 4) Блоки кода: значок «копировать» в углу, оформление не меняем
                 root.querySelectorAll('pre').forEach(pre => {
                     if (pre.parentElement.classList.contains('code-block')) return;
                     const code = pre.querySelector('code');
-                    const langMatch = code && /language-([\w+#.-]+)/.exec(code.className);
-                    const lang = langMatch ? langMatch[1] : 'code';
 
                     const block = document.createElement('div');
                     block.className = 'code-block';
 
-                    const header = document.createElement('div');
-                    header.className = 'code-header';
-                    header.setAttribute('data-nosearch', '');
-                    header.innerHTML = `<span class="code-lang"></span>
-                        <button type="button" class="copy-btn"><i class="far fa-copy"></i><span>Копировать</span></button>`;
-                    header.querySelector('.code-lang').textContent = lang;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'copy-btn';
+                    btn.title = 'Копировать';
+                    btn.setAttribute('aria-label', 'Копировать код');
+                    btn.setAttribute('data-nosearch', '');
+                    btn.innerHTML = '<i class="far fa-copy"></i>';
 
-                    const btn = header.querySelector('.copy-btn');
                     btn.addEventListener('click', async () => {
                         const text = (code || pre).textContent.replace(/\n$/, '');
                         const ok = await copyText(text);
                         btn.classList.toggle('copied', ok);
-                        btn.innerHTML = ok
-                            ? '<i class="fas fa-check"></i><span>Скопировано</span>'
-                            : '<i class="fas fa-xmark"></i><span>Ошибка</span>';
+                        btn.innerHTML = ok ? '<i class="fas fa-check"></i>' : '<i class="fas fa-xmark"></i>';
                         setTimeout(() => {
                             btn.classList.remove('copied');
-                            btn.innerHTML = '<i class="far fa-copy"></i><span>Копировать</span>';
-                        }, 2000);
+                            btn.innerHTML = '<i class="far fa-copy"></i>';
+                        }, 1800);
                     });
 
                     pre.parentNode.insertBefore(block, pre);
-                    block.appendChild(header);
                     block.appendChild(pre);
+                    block.appendChild(btn);
                 });
 
                 // 5) Клики по внутренним ссылкам (#...) и якорям заголовков
