@@ -414,6 +414,34 @@
                 font-size: 0.95em;
             }
 
+            .punishment-editor {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 10px 0 10px 20px;
+            }
+
+            .punishment-editor label {
+                white-space: nowrap;
+                font-weight: 600;
+                color: rgb(var(--primary-color));
+            }
+
+            .punishment-input {
+                flex: 1;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 5px;
+                color: white;
+                padding: 8px;
+                font-size: 0.95em;
+            }
+
+            .punishment-input:focus {
+                outline: none;
+                border-color: rgba(var(--primary-color), 0.5);
+            }
+
             .subitem-input:focus {
                 outline: none;
                 border-color: rgba(var(--warning-color), 0.5);
@@ -1022,6 +1050,11 @@
                                     txtContent += `${subitem}\n`;
                                 });
                             }
+                            // Наказание (если указано)
+                            const punishment = typeof item.punishment === "string" ? item.punishment.trim() : "";
+                            if (punishment) {
+                                txtContent += `Наказание: ${punishment}\n`;
+                            }
                             // Пустая строка между правилами для читаемости
                             txtContent += `\n`;
                         });
@@ -1141,6 +1174,15 @@
                     <div class="subitems-container" id="subitems-${blockIndex}-${itemIndex}">
                         <h4>Подпункты:</h4>
                         ${renderSubitems(item.subitems, blockIndex, itemIndex)}
+                    </div>
+
+                    <div class="punishment-editor">
+                        <label>Наказание:</label>
+                        <input type="text" class="punishment-input"
+                               value="${escapeHtml(item.punishment || "")}"
+                               data-block-index="${blockIndex}"
+                               data-item-index="${itemIndex}"
+                               placeholder="Не указано (не будет отображаться)">
                     </div>
 
                     <button class="btn btn-primary add-subitem-btn"
@@ -1272,6 +1314,21 @@
                         const itemIndex = parseInt(e.target.dataset.itemIndex);
                         currentRules.blocks[blockIndex].items[itemIndex].text =
                             e.target.value;
+                    });
+                });
+
+                // Обновление наказания (пустое значение -> ключ удаляется)
+                document.querySelectorAll(".punishment-input").forEach((input) => {
+                    input.addEventListener("input", (e) => {
+                        const blockIndex = parseInt(e.target.dataset.blockIndex);
+                        const itemIndex = parseInt(e.target.dataset.itemIndex);
+                        const item = currentRules.blocks[blockIndex].items[itemIndex];
+                        const value = e.target.value;
+                        if (value.trim()) {
+                            item.punishment = value;
+                        } else {
+                            delete item.punishment;
+                        }
                     });
                 });
 

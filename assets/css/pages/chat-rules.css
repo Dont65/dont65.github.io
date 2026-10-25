@@ -108,8 +108,17 @@ body.light-theme .rules-block.active {
     padding: 20px;
 }
 
+/* Одно правило = пункт + подпункты + наказание. Пустая строка только после всего блока */
+.rule-group {
+    margin-bottom: 1.5em;
+}
+
+.rule-group:last-child {
+    margin-bottom: 0;
+}
+
 .rule-item {
-    margin-bottom: 10px;
+    margin-bottom: 0;
     padding-left: 20px;
     position: relative;
     line-height: 1.5;
@@ -130,19 +139,34 @@ body.light-theme .rule-item {
 }
 
 .rule-subitem {
-    color: rgba(var(--primary-color), 0.9);
-    margin-left: 20px;
-    margin-bottom: 5px;
-    padding-left: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: 32px;
+    margin-bottom: 0;
+    padding-left: 18px;
     position: relative;
+    line-height: 1.5;
+}
+
+body.light-theme .rule-subitem {
+    color: rgba(0, 0, 0, 0.9);
 }
 
 .rule-subitem:before {
-    content: "* ";
-    color: #fcb738;
+    content: "*";
+    color: rgb(var(--primary-color));
     position: absolute;
     left: 0;
     top: 0;
+}
+
+.rule-punishment {
+    margin-top: 0.4em;
+    padding-left: 20px;
+}
+
+.rule-punishment .punishment-label {
+    color: rgb(var(--primary-color));
+    font-weight: 600;
 }
 
 .rules-content a {

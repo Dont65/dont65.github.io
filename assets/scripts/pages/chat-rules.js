@@ -52,20 +52,33 @@ function renderRules(rulesData) {
 
         if (block.items && block.items.length > 0) {
             block.items.forEach((item) => {
+                const ruleGroup = document.createElement("div");
+                ruleGroup.className = "rule-group";
+
                 const ruleItem = document.createElement("div");
                 ruleItem.className = "rule-item";
                 const rawText = (item.id ? item.id + " " : "") + (item.text || "");
                 ruleItem.innerHTML = parseMarkdownLinks(rawText);
-                rulesContent.appendChild(ruleItem);
+                ruleGroup.appendChild(ruleItem);
 
                 if (item.subitems && item.subitems.length > 0) {
                     item.subitems.forEach((subitem) => {
                         const ruleSubitem = document.createElement("div");
                         ruleSubitem.className = "rule-subitem";
                         ruleSubitem.innerHTML = parseMarkdownLinks(subitem);
-                        rulesContent.appendChild(ruleSubitem);
+                        ruleGroup.appendChild(ruleSubitem);
                     });
                 }
+
+                const punishment = typeof item.punishment === "string" ? item.punishment.trim() : "";
+                if (punishment) {
+                    const rulePunishment = document.createElement("div");
+                    rulePunishment.className = "rule-punishment";
+                    rulePunishment.innerHTML = `<strong class="punishment-label">Наказание:</strong> ${parseMarkdownLinks(punishment)}`;
+                    ruleGroup.appendChild(rulePunishment);
+                }
+
+                rulesContent.appendChild(ruleGroup);
             });
         }
         rulesBlock.appendChild(rulesContent);
