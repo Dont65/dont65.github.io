@@ -90,6 +90,32 @@ function updateQuote() {
 document.addEventListener("menuLoaded", () => {
     updateQuote();
 
+    const discordTrigger = document.getElementById("discordPopoverTrigger");
+    const discordPopover = document.getElementById("discordPopover");
+    if (discordTrigger && discordPopover) {
+        const closeDiscordPopover = () => {
+            discordTrigger.setAttribute("aria-expanded", "false");
+            discordPopover.setAttribute("aria-hidden", "true");
+            discordPopover.classList.remove("show");
+        };
+
+        discordTrigger.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const isOpen = discordPopover.classList.toggle("show");
+            discordTrigger.setAttribute("aria-expanded", String(isOpen));
+            discordPopover.setAttribute("aria-hidden", String(!isOpen));
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!discordPopover.contains(event.target) && event.target !== discordTrigger) {
+                closeDiscordPopover();
+            }
+        });
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeDiscordPopover();
+        });
+    }
+
     const refreshQuoteBtn = document.getElementById("refreshQuoteBtn");
     if (refreshQuoteBtn) {
         refreshQuoteBtn.addEventListener("click", function () {

@@ -271,6 +271,10 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/components/menu.css">
+    <link rel="stylesheet" href="/assets/css/components/modals.css">
+    <link rel="stylesheet" href="/assets/css/components/settings.css">
+    <link rel="stylesheet" href="/assets/css/components/icons.css">
 </head>
 <body>
     <div class="container">
@@ -342,7 +346,7 @@
 
             // Проверка выбранного фона
             const savedWallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-            document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
+            if (window.applyWallpaper) window.applyWallpaper(savedWallpaper);
 
             // Проверка основного цвета
             function adjustColorForTheme(color) {
@@ -361,6 +365,10 @@
         });
 
     </script>
+    <script src="/assets/scripts/settings.js"></script>
+    <script src="/assets/scripts/menu.js"></script>
+    <script src="/assets/scripts/profile-info.js"></script>
+    <script src="/assets/scripts/developer.js"></script>
 </body>
 
 </html>

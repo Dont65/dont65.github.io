@@ -528,7 +528,11 @@
                 }
             }
         </style>
-    </head>
+        <link rel="stylesheet" href="/assets/css/components/menu.css">
+    <link rel="stylesheet" href="/assets/css/components/modals.css">
+    <link rel="stylesheet" href="/assets/css/components/settings.css">
+    <link rel="stylesheet" href="/assets/css/components/icons.css">
+</head>
     <body>
         <div class="container">
             <!-- Шапка админки -->
@@ -731,7 +735,7 @@
                 // Применяем сохраненный фон
                 const savedWallpaper = localStorage.getItem("wallpaper");
                 if (savedWallpaper) {
-                    document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
+                    if (window.applyWallpaper) window.applyWallpaper(savedWallpaper);
                 }
 
                 // Применяем сохраненный цвет
@@ -1649,5 +1653,9 @@
                 });
             }
         </script>
-    </body>
+        <script src="/assets/scripts/settings.js"></script>
+    <script src="/assets/scripts/menu.js"></script>
+    <script src="/assets/scripts/profile-info.js"></script>
+    <script src="/assets/scripts/developer.js"></script>
+</body>
 </html>

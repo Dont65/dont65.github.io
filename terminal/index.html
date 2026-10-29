@@ -294,7 +294,11 @@
                 transform: scale(0.95);
             }
         </style>
-    </head>
+        <link rel="stylesheet" href="/assets/css/components/menu.css">
+    <link rel="stylesheet" href="/assets/css/components/modals.css">
+    <link rel="stylesheet" href="/assets/css/components/settings.css">
+    <link rel="stylesheet" href="/assets/css/components/icons.css">
+</head>
     <body>
         <div id="terminal-window">
             <div id="terminal-header">
@@ -376,7 +380,7 @@
                 );
                 const savedBg =
                     localStorage.getItem("wallpaper") || "background.jpg";
-                document.body.style.backgroundImage = `url('/assets/background/${savedBg}')`;
+                if (window.applyWallpaper) window.applyWallpaper(savedBg);
             }
             initTheme();
 
@@ -591,7 +595,7 @@
                                     value,
                                 );
                             if (key === "background")
-                                document.body.style.backgroundImage = `url('/assets/background/${value}')`;
+                                if (window.applyWallpaper) window.applyWallpaper(value);
                             return `<span class="success">Успешно:</span> Параметр <span class="accent-text">${key}</span> изменен на ${value}`;
                         }
                         return '<span class="error">Неизвестное действие (используйте list, get или set)</span>';
@@ -1131,5 +1135,9 @@
                 terminalContainer.scrollTop = terminalContainer.scrollHeight;
             }
         </script>
-    </body>
+        <script src="/assets/scripts/settings.js"></script>
+    <script src="/assets/scripts/menu.js"></script>
+    <script src="/assets/scripts/profile-info.js"></script>
+    <script src="/assets/scripts/developer.js"></script>
+</body>
 </html>

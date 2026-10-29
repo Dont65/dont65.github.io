@@ -165,7 +165,11 @@
 
             mark.search-highlight { background: rgba(var(--primary-color), 0.45); color: inherit; border-radius: 3px; padding: 0 2px; }
         </style>
-    </head>
+        <link rel="stylesheet" href="/assets/css/components/menu.css">
+    <link rel="stylesheet" href="/assets/css/components/modals.css">
+    <link rel="stylesheet" href="/assets/css/components/settings.css">
+    <link rel="stylesheet" href="/assets/css/components/icons.css">
+</head>
     <body>
         <div class="container">
             <a href="#" onclick="history.back(); return false;" class="back-btn">
@@ -459,7 +463,7 @@
                 const savedColor = localStorage.getItem("primaryColor");
                 if (savedColor) document.documentElement.style.setProperty("--primary-color", savedColor);
                 const savedWallpaper = localStorage.getItem("wallpaper") || "background.jpg";
-                document.body.style.backgroundImage = `url('/assets/background/${savedWallpaper}')`;
+                if (window.applyWallpaper) window.applyWallpaper(savedWallpaper);
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const fileName = urlParams.get("file");
@@ -524,5 +528,9 @@
                     });
             });
         </script>
-    </body>
+        <script src="/assets/scripts/settings.js"></script>
+    <script src="/assets/scripts/menu.js"></script>
+    <script src="/assets/scripts/profile-info.js"></script>
+    <script src="/assets/scripts/developer.js"></script>
+</body>
 </html>

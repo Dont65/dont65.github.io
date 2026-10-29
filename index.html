@@ -14,12 +14,6 @@
         <script src="/assets/scripts/site-warning.js" defer></script>
     </head>
     <body>
-        <!-- Панель ошибки конфигурации -->
-        <div id="hyprlandErrorBar" class="hyprland-error-bar">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span id="hyprlandErrorText">Config error: invalid syntax</span>
-        </div>
-
         <!-- Контейнеры для визуальных эффектов -->
         <div id="activationStar" class="activation-star"><i class="fas fa-star"></i></div>
         <div id="glitchPixelsContainer"></div>
@@ -52,7 +46,14 @@
             </div>
 
             <div class="social-icons">
-                <a href="https://discord.gg/s4DzndW9jR" target="_blank" class="social-icon discord-icon"><i class="fab fa-discord"></i></a>
+                <div class="discord-popover-wrapper">
+                    <button type="button" class="social-icon discord-icon discord-popover-trigger" id="discordPopoverTrigger" aria-controls="discordPopover" aria-expanded="false" aria-label="Показать Discord">
+                        <i class="fab fa-discord"></i>
+                    </button>
+                    <div class="discord-popover" id="discordPopover" role="status" aria-hidden="true">
+                        <span>.dont65</span>
+                    </div>
+                </div>
                 <a href="https://t.me/dont65bio" target="_blank" class="social-icon telegram-icon"><i class="fab fa-telegram"></i></a>
                 <a href="https://steamcommunity.com/id/3TO_Dont65" target="_blank" class="social-icon steam-icon"><i class="fab fa-steam"></i></a>
                 <a href="https://github.com/Dont65" target="_blank" class="social-icon github-icon"><i class="fab fa-github"></i></a>

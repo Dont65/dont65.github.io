@@ -78,6 +78,16 @@ function initMenuLogic() {
     }
 
     // Ссылки на другие страницы
+    const homeBtn = document.getElementById("openHome");
+    if (homeBtn) {
+        homeBtn.addEventListener("click", () => {
+            window.location.href = "/";
+        });
+        if (window.location.pathname === "/" || window.location.pathname === "/index.html") {
+            homeBtn.style.display = "none";
+        }
+    }
+
     const terminalBtn = document.getElementById("openTerminal");
     if (terminalBtn) {
         terminalBtn.addEventListener("click", () => {

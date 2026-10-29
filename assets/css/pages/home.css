@@ -19,6 +19,11 @@ body.light-theme .refresh-quote-btn { border-color: rgba(0, 0, 0, 0.1); }
 .social-icons { display: flex; justify-content: center; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
 .social-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
 .social-icon:hover { transform: translateY(-4px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); }
+.discord-popover-wrapper { position: relative; width: 48px; height: 48px; }
+.discord-popover-trigger { position: relative; padding: 0; border: 0; font-family: inherit; cursor: pointer; }
+.discord-popover { position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%) translateY(6px); padding: 8px 14px; border-radius: 10px; background: rgba(30, 30, 30, 0.95); color: #fff; font-size: 14px; line-height: 1; white-space: nowrap; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s, transform 0.2s, visibility 0.2s; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); z-index: 2; }
+.discord-popover.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+body.light-theme .discord-popover { background: rgba(255, 255, 255, 0.95); color: #1a1c1e; }
 .discord-icon { background-color: #5865f2; }
 .telegram-icon { background-color: #24a1de; }
 .steam-icon { background-color: #171a21; }

@@ -156,26 +156,8 @@ function generateConfigText() {
 let hyprlandErrorTimeout;
 
 function showHyprlandError(message) {
-    const bar = document.getElementById("hyprlandErrorBar");
-    const text = document.getElementById("hyprlandErrorText");
-    if (bar && text) {
-        text.textContent = message;
-        bar.classList.add("show");
-
-        // Тап/клик по плашке сразу закрывает её, не дожидаясь таймера
-        if (!bar.dataset.dismissBound) {
-            bar.addEventListener("click", () => {
-                bar.classList.remove("show");
-                clearTimeout(hyprlandErrorTimeout);
-            });
-            bar.dataset.dismissBound = "true";
-        }
-
-        clearTimeout(hyprlandErrorTimeout);
-        hyprlandErrorTimeout = setTimeout(() => {
-            bar.classList.remove("show");
-        }, 5000);
-    }
+    // Ошибки редактора конфигурации не должны появляться ни в одном браузере.
+    return;
 }
 
 function initConfigEditor() {
@@ -316,7 +298,7 @@ function initConfigEditor() {
 
         if (parsedConfig.background) {
             localStorage.setItem("wallpaper", parsedConfig.background);
-            document.body.style.backgroundImage = `url('/assets/background/${parsedConfig.background}')`;
+            if (window.applyWallpaper) window.applyWallpaper(parsedConfig.background);
             document.querySelectorAll(".wallpaper-option").forEach((el) => {
                 el.classList.remove("selected");
                 if (el.dataset.file === parsedConfig.background) {
