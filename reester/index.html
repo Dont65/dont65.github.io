@@ -49,8 +49,9 @@
             .block-header h1 { margin: 0 0 12px 0; font-size: 32px; font-weight: 700; color: rgb(var(--primary-color)); }
 
             .cards-grid { display: flex; flex-direction: column; gap: 16px; }
-            .info-card { background-color: rgba(255, 255, 255, 0.05); padding: 24px; border-radius: var(--border-radius-m); text-align: left; }
-            body.light-theme .info-card { background-color: rgba(0, 0, 0, 0.05); }
+            /* .container .info-card — выше по специфичности, чем .info-card в modals.css (там display:flex ломал раскладку) */
+            .container .info-card { display: block; justify-content: normal; margin-bottom: 0; background-color: rgba(255, 255, 255, 0.05); padding: 24px; border-radius: var(--border-radius-m); text-align: left; min-width: 0; }
+            body.light-theme .container .info-card { background-color: rgba(0, 0, 0, 0.05); }
             .info-label { font-weight: 700; color: rgb(var(--primary-color)); font-size: 20px; margin-bottom: 12px; }
 
             .status-message { text-align: center; font-size: 18px; margin-top: 50px; }
